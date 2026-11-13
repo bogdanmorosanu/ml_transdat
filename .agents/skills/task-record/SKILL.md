@@ -15,8 +15,10 @@ This skill serves as the **documentation orchestrator** for the `ml_transdat` re
 1. **Single Entrypoint for Task Wrap-up**:
    - Executed at the conclusion of every development session, experiment run, or significant milestone.
 
-2. **Outcome-Oriented Technical Truth**:
-   - Documents tangible outcomes: data generated, model architectures tested, performance against `pytransdat` ground-truth benchmark, and clear next steps.
+2. **Outcome-Oriented Technical Truth & Scoped Context**:
+   - Documents tangible, completed outcomes: actions taken, code/data generated, architectures tested, performance metrics, and decisions made.
+   - Accurately captures only the unrecorded work from the current conversation context since the previous task record.
+   - Does **not** hypothesize or prescribe future "Next Steps"—focuses strictly on what has already been accomplished.
 
 3. **No Web App / API Artifacts**:
    - Focuses on ML models, training pipelines, evaluation metrics, and geodetic algorithms.
@@ -25,15 +27,16 @@ This skill serves as the **documentation orchestrator** for the `ml_transdat` re
 
 ## Execution Workflow
 
-### Step 1: Discover Session Changes & Artifacts
-Inspect modified files, generated data files, model checkpoints, and task history:
-- `git status -s`
+### Step 1: Discover Unrecorded Context & Artifacts
+Analyze conversation history and workspace changes:
+- Determine what activities and milestones were completed since the last recorded task.
+- Inspect modified/untracked files via `git status -s`.
 - Check any generated scripts, notebooks, or evaluation artifacts.
 
 ### Step 2: Determine Next Sequential Task File
 - Inspect `.agents/tasks/`.
-- Identify the highest numbered task file: `YYYY-MM-DD-task-N-<slug>.md`.
-- Increment `N` or create a new entry for the current session.
+- Identify the highest numbered task file: `001-<taskname>.md` (zero-padded 3-digit numbering starting from `001`, no date prefix).
+- Increment the number or create a new entry for the current session.
 
 ### Step 3: Write Task Record
 Create the task record file in `.agents/tasks/` using the standard structure:
@@ -59,9 +62,6 @@ Create the task record file in `.agents/tasks/` using the standard structure:
   - Max Error: <ΔX, ΔY, ΔZ in meters or millimeters>
   - Mean Absolute Error (MAE): <...>
 - **Inference Speed**: <latency per point or batch throughput>
-
-## Next Steps
-- <Immediate next experiment or action item>
 ```
 
 ### Step 4: Synchronize Living Documentation (`docs/`)

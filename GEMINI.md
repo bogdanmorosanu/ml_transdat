@@ -33,6 +33,7 @@ Both direct ($ETRS89 \to Stereo70$) and inverse ($Stereo70 \to ETRS89$) directio
 The following living documentation files are maintained in the repository:
 - [`docs/core_engine.md`](docs/core_engine.md): Mathematical formulations, projection equations, coordinate systems, and precision standards.
 - [`docs/grid.md`](docs/grid.md): Specification of the `.spg` binary grid file, bilineary interpolation mechanics, and distortion field coverage.
+- [`docs/research/roadmap.md`](docs/research/roadmap.md): Living research map tracking active branches, hypotheses, rationales, and discoveries.
 
 ---
 

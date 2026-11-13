@@ -17,7 +17,7 @@ Through empirical trial-and-error, explore, design, train, and evaluate machine 
 - **Direct direction**: $ETRS89 \to Stereo70$
 - **Inverse direction**: $Stereo70 \to ETRS89$
 
-The models will be benchmarked on accuracy (millimetric/sub-millimetric tolerance) and inference performance against the analytical ground-truth baseline.
+The models will be benchmarked on accuracy (with **$\le 1\text{ cm}$** as an ideal aspirational goal across Northing, Easting, and Elevation), computational efficiency, and explainability against the analytical ground-truth baseline.
 
 ---
 
@@ -39,6 +39,7 @@ python example_transform.py
 Detailed mathematical background and grid specifications are maintained under [`docs/`](docs/):
 - [`docs/core_engine.md`](docs/core_engine.md): Formulas for the Krasovsky 1940 ellipsoid, conformal sphere mapping, Oblique Stereographic projection, and 3D height conversions.
 - [`docs/grid.md`](docs/grid.md): Specification of the `.spg` binary shift grid and bilinear interpolation boundaries.
+- [`docs/research/roadmap.md`](docs/research/roadmap.md): Living research map tracking branches, hypotheses, rationales, and discoveries.
 
 ---
 
