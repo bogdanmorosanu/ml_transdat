@@ -1,0 +1,50 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE and Editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+# Environments & tool caches
+.venv/
+venv/
+ENV/
+.ruff_cache/
+.pytest_cache/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# ML Datasets, Checkpoints & Training Artifacts
+data/
+datasets/
+*.csv
+*.parquet
+*.h5
+*.hdf5
+checkpoints/
+models/
+*.pt
+*.pth
+*.onnx
+*.pkl
+
+# Experiment tracking & logs
+runs/
+wandb/
+mlruns/
+logs/
+*.log
+
+# Scratch scripts and temporary files
+scratch/
+temp/
+tmp/
