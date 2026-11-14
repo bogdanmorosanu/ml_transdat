@@ -24,10 +24,10 @@ dist/
 *.egg
 
 # ML Datasets, Checkpoints & Training Artifacts
-data/
+data/*
+!data/benchmarks/
+!data/benchmarks/**
 datasets/
-*.csv
-*.parquet
 *.h5
 *.hdf5
 checkpoints/
@@ -37,7 +37,9 @@ models/
 *.onnx
 *.pkl
 
-# Experiment tracking & logs
+# Experiment tracking, plots & logs
+plots/
+*.png
 runs/
 wandb/
 mlruns/
@@ -45,6 +47,7 @@ logs/
 *.log
 
 # Scratch scripts and temporary files
-scratch/
+scratch/*
+!scratch/README.md
 temp/
 tmp/

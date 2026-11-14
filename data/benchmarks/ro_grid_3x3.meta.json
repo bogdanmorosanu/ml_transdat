@@ -1,0 +1,50 @@
+{
+  "name": "ro_grid_3x3",
+  "description": "Canonical bidirectional 3x3 interior (4x4 non-overlapping tile, 2.75 km spacing) benchmark across all valid cells of the official Romanian SPG distortion grid.",
+  "spg_grid_file": "rom_grid3d_25.09.spg",
+  "subgrid_offsets": [
+    0.0,
+    0.25,
+    0.5,
+    0.75
+  ],
+  "grid_step_m": [
+    11000.0,
+    11000.0
+  ],
+  "subgrid_spacing_m": [
+    2750.0,
+    2750.0
+  ],
+  "total_candidates": 59072,
+  "forward_valid_count": 36581,
+  "forward_rejected_by_error": {
+    "OutOfGrid2DErr": 4347,
+    "NoDataGridErr": 18125,
+    "OutOfGrid1DErr": 19
+  },
+  "bidirectional_valid_count": 36435,
+  "inverse_rejected_by_error": {
+    "NoDataGridErr": 146
+  },
+  "node_count": 2222,
+  "interior_count": 34213,
+  "unique_cells_covered": 2297,
+  "bounds": {
+    "st70_n_min": 227384.564,
+    "st70_n_max": 766384.564,
+    "st70_e_min": 123533.04,
+    "st70_e_max": 877033.04,
+    "etrs89_lat_deg_min": 43.54307757828668,
+    "etrs89_lat_deg_max": 48.383048087040976,
+    "etrs89_lon_deg_min": 20.12118299210902,
+    "etrs89_lon_deg_max": 29.799650812936775
+  },
+  "roundtrip_max_err_m": {
+    "northing": 0.00046780009870417416,
+    "easting": 0.00025425676722079515,
+    "height": 0.0
+  },
+  "generation_time_s": 3.377,
+  "parquet_file": "data/benchmarks/ro_grid_3x3.parquet"
+}

@@ -1,0 +1,46 @@
+{
+  "name": "ro_corridor_snw",
+  "description": "Canonical bidirectional South -> Northeast -> West corridor benchmark (2 grid cells = 22 km wide, ordered along path for spatial locality).",
+  "spg_grid_file": "rom_grid3d_25.09.spg",
+  "seed": 42,
+  "waypoints_st70_m": [
+    [
+      265000.0,
+      470000.0
+    ],
+    [
+      685000.0,
+      665000.0
+    ],
+    [
+      515000.0,
+      175000.0
+    ]
+  ],
+  "corridor_width_m": 22000.0,
+  "corridor_width_cells": 2.0,
+  "oversampled_candidates": 40078,
+  "forward_valid_count": 40078,
+  "forward_rejected_by_error": {},
+  "bidirectional_valid_pool": 40078,
+  "inverse_rejected_by_error": {},
+  "final_point_count": 36435,
+  "unique_cells_covered": 283,
+  "bounds": {
+    "st70_n_min": 260808.8795170543,
+    "st70_n_max": 694916.2332343955,
+    "st70_e_min": 171978.32559839755,
+    "st70_e_max": 674682.8310836721,
+    "etrs89_lat_deg_min": 43.84678059302527,
+    "etrs89_lat_deg_max": 47.73354755138149,
+    "etrs89_lon_deg_min": 20.75039315654538,
+    "etrs89_lon_deg_max": 27.321597533796805
+  },
+  "roundtrip_max_err_m": {
+    "northing": 0.00014633650425821543,
+    "easting": 8.230991079472005e-05,
+    "height": 0.0
+  },
+  "generation_time_s": 2.195,
+  "parquet_file": "data/benchmarks/ro_corridor_snw.parquet"
+}
