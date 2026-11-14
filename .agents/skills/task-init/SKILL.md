@@ -39,7 +39,7 @@ Scan the workspace for context:
    - `docs/core_engine.md` (projection math, Krasovsky ellipsoid, datum parameters)
    - `docs/grid.md` (grid interpolation, bounding box, shift mechanics)
 2. **Recent Tasks**:
-   - Check `.agents/tasks/` for the latest task file to understand ongoing experiments or recent progress.
+   - Check `.agents/tasks/` using `Get-ChildItem -Path .agents/tasks` or Python `pathlib` (avoid IDE/MCP tree listings which may ignore dot-prefixed directories) to find the latest task file and understand ongoing experiments or recent progress.
 
 ### Step 3: Verify Python Environment
 Verify that the active interpreter matches the invariant:

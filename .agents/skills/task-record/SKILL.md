@@ -34,9 +34,11 @@ Analyze conversation history and workspace changes:
 - Check any generated scripts, notebooks, or evaluation artifacts.
 
 ### Step 2: Determine Next Sequential Task File
-- Inspect `.agents/tasks/`.
-- Identify the highest numbered task file: `001-<taskname>.md` (zero-padded 3-digit numbering starting from `001`, no date prefix).
-- Increment the number or create a new entry for the current session.
+- Inspect `.agents/tasks/` using filesystem commands (`Get-ChildItem -Path .agents/tasks` in PowerShell or `python -c "import pathlib; print([p.name for p in pathlib.Path('.agents/tasks').glob('*.md')])"`).
+  > [!CAUTION]
+  > Do **not** rely on IDE/MCP tree-listing tools for dot-prefixed directories like `.agents/` as they frequently omit hidden/dot folders or their contents, leading to false-empty results. Always verify directly via shell or Python `pathlib`.
+- Parse all existing files matching `[0-9]{3}-*.md` and identify the current highest integer prefix.
+- Increment the highest number by 1 (e.g. if `002-...` is highest, use `003-<descriptive-slug>.md`). Only start at `001` if `.agents/tasks/` contains zero matching markdown files after verified shell/pathlib inspection.
 
 ### Step 3: Write Task Record
 Create the task record file in `.agents/tasks/` using the standard structure:

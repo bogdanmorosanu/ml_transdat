@@ -12,6 +12,7 @@ This directory contains modular, self-contained scientific experiments evaluatin
 |:---|:---|:---|:---:|:---|
 | **01** | [`01_spg_grid_analysis/`](01_spg_grid_analysis/) | **SPG 2D Distortion Grid Analysis**: Physical profiling of official CNC bicubic distortion field ($dN, dE$) and vector orientations. | `Validated` | $\text{Mean}=0.372\,\text{m}$, $\text{Max}=2.757\,\text{m}$. Identifies major distortion nodes in Banat/West, Maramureș, and Dobrogea. |
 | **02** | [`02_pyproj_baseline/`](02_pyproj_baseline/) | **Standard PROJ Baseline**: Benchmarking `pyproj` (`EPSG:3844`) against ground-truth `pytransdat` on nationwide $3 \times 3$ grid. | `Validated` | $\text{Mean 2D}=0.3601\,\text{m}$, $\text{RMSE}=0.4348\,\text{m}$, $\text{Max}=2.82\,\text{m}$. Validates baseline without local grid shifts. |
+| **03** | [`03_helmert2d_baseline/`](03_helmert2d_baseline/) | **2D 4-Parameter Helmert Baseline**: Closed-form OLS refit of 4-parameter 2D Helmert on valid SPG nodes (`StereoProj` + `Helmert2D`, no grid). | `Validated` | $\text{Mean 2D}=0.3743\,\text{m}$, $\text{RMSE}=0.4429\,\text{m}$, $\text{Max}=2.6811\,\text{m}$, $<1\,\text{m}=98.1\%$. Optimal 2D conformal floor. |
 
 ---
 
@@ -42,16 +43,7 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.01_spg_grid_analysis.run
 
 # Run Unit 02: PyProj Baseline
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.02_pyproj_baseline.run_unit
+
+# Run Unit 03: 2D 4-Parameter Helmert Baseline
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.03_helmert2d_baseline.run_unit
 ```
-
----
-
-## 4. Guidelines for Adding a New Research Unit
-
-When initiating a new experiment:
-1. **Assign Sequential Prefix**: Pick the next unused 2-digit number (e.g., `03_neural_mlp_direct/`).
-2. **Subclass `ResearchUnit`**: Implement `run_unit.py` using `src.core` metrics, samplers, and visualizers.
-3. **Generate Dual Documentation**:
-   - `report.md`: For human inspection and review.
-   - `README_AI.md` & `unit_brief.json`: For fast token-efficient agent AI priming.
-4. **Update Registry & Roadmap**: Register the unit here in `experiments/README.md` and link the branch in `docs/research/roadmap.md`.

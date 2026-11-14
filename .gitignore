@@ -31,7 +31,7 @@ datasets/
 *.h5
 *.hdf5
 checkpoints/
-models/
+/models/
 *.pt
 *.pth
 *.onnx
