@@ -74,6 +74,13 @@ Two overarching paradigms emerge:
 
 ---
 
+## Category 3: National Geodetic Grid Interpolation Standards & Continuity
+
+For our detailed investigation into whether the derivative discontinuity (slope "kink") identified at cell boundaries in Romania's `.spg` / RomGEO transformation is an isolated bug or standard historical geodetic practice, see the standalone research report:
+* **[`literature/geodetic_grid_interpolation_standards.md`](geodetic_grid_interpolation_standards.md)**: Comprehensive study covering Canada (NTv2), the United States (NADCON 1–5), Great Britain (OSTN02/OSTN15), PROJ standards, the mathematical anatomy of the *Numerical Recipes* local bicubic patch algorithm, and why geodetic agencies historically accepted slope kinks.
+
+---
+
 ## Searched & Not Found (Knowledge Gaps)
 
 1. **ETRS89 ↔ Stereo 70 (Romania) via Machine Learning**: No published papers, preprints, or technical reports were found applying ML/ANNs to `Stereo 70`, `TransDatRO`, or Romania's `.spg` distortion grid.

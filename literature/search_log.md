@@ -25,6 +25,11 @@ This log records all web search queries executed during the initial literature s
 | **F. Tree-Based ML** | `"XGBoost" OR "Random Forest" OR "Gradient Boosting" "coordinate transformation" geodesy datum` | All | **Found** (Per-axis XGBoost/RF for 3D datum conversions; high $R^2$ but poor extrapolation & bulky models) |
 | **F. Tree-Based ML** | `"decision tree" OR "random forest" OR "XGBoost" "datum transformation" OR "distortion grid" geodesy` | All | **Found** (XGBoost/RF as residual correctors; requires spatial block CV) |
 | **F. Tree-Based ML** | `"XGBoost" OR "Random Forest" "geoid" OR "grid shift" interpolation geodesy` | All | **Found** (XGBoost & Random Forest Spatial Interpolation - RFSI for geoid & grid-shift surfaces) |
+| **G. Grid Interpolation Standards** | `"NTv2" interpolation "bilinear" "bicubic" Geodetic Survey of Canada` | All | **Found** (NTv2 mandates bilinear C0; bicubic rejected to prevent oscillation/overshoot) |
+| **G. Grid Interpolation Standards** | `"NADCON" OR "NADCON5" "interpolation" "biquadratic" "bicubic" "bilinear" NGS` | All | **Found** (NADCON 1-4 bilinear; NADCON5 biquadratic 9-node; bicubic rejected for RAM/stability) |
+| **G. Grid Interpolation Standards** | `"OSTN15" OR "OSTN02" "interpolation" "bilinear" "bicubic" "tps" "grid" Ordnance Survey` | All | **Found** (Ordnance Survey uses dense 1 km grid with bilinear interpolation) |
+| **G. Grid Interpolation Standards** | `"PROJ" "gridshift" "bilinear" "bicubic" "interpolation" PROJ.4` | All | **Found** (PROJ defaults to bilinear/biquadratic; restricts unconstrained bicubic) |
+| **G. Grid Interpolation Standards** | `"bcucof" "Numerical Recipes" bicubic interpolation derivatives` | All | **Found** (Classic 16-coeff patch formula; assembly from local finite differences) |
 
 ---
 

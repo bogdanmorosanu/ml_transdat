@@ -58,5 +58,19 @@ This index catalogs all sources retrieved during the initial literature survey f
 | ID | Source / Domain | Topic & Relevance | Link |
 | :--- | :--- | :--- | :--- |
 | **R2.13** | ResearchGate | XGBoost & Random Forest for 3D coordinate/datum transformations (per-axis models) | [researchgate.net](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQHtnHkbhcXaTgB2ujyAJaBbeSFYlSSBLZKuNaveOAsEjoQRUWV9HF20_7k6CEGiSZQFHiHS2iqWAKIRxeoFTOleNCVb0L5p-ZrCajNJWX-5UIv5529ta5cbXnst6f-Nf2nbO-DYyhVMzUEFuCY-yYb2cU5GEqZF9tZA1Gv43ej4HRzTBU1R8qdFpdJ_IsZBR5bFLw-X0yYStg3hTS_8qwSZdQAp_yb9oLpps_6XEJC2kP2eZJekycJ2uvHA8_1_UPMsdriu-xX2l2Js4AEgp3aUYaex1l-Yb9dQqf7rOQJF) |
+
+---
+
+## Category 3: National Geodetic Grid Interpolation Standards & Algorithms
+
+| ID | Author / Agency | Year | Topic & Formal Specification | Link / Reference |
+| :--- | :--- | :---: | :--- | :--- |
+| **R3.1** | Natural Resources Canada (GSD) | 1995 | **NTv2 Specification**: Bilinear interpolation mandate for binary `.gsb` shift grids | [geod.nrcan.gc.ca](https://ftp.geod.nrcan.gc.ca/pub/GSD/tools/ntv2/) |
+| **R3.2** | NOAA / National Geodetic Survey (NGS) | 2017 | **NADCON 5 (NOS NGS 63)**: Evaluation of bilinear vs biquadratic vs bicubic splines | [geodesy.noaa.gov](https://www.ngs.noaa.gov/library/pdfs/NOAA_TR_NOS_NGS_0063.pdf) |
+| **R3.3** | NOAA / National Geodetic Survey (NGS) | 2020 | **NADCON 5 (NOS NGS 84)**: Adoption of biquadratic 9-node stencil for datum transformations | [geodesy.noaa.gov](https://www.ngs.noaa.gov/library/pdfs/NOAA_TM_NOS_NGS_0084.pdf) |
+| **R3.4** | Ordnance Survey (OSGB) | 2016 | **OSTN15 / OSGM15**: High-density 1 km grid with bilinear interpolation | [ordnancesurvey.co.uk](https://www.ordnancesurvey.co.uk/documents/resources/guide-coordinate-systems-great-britain.pdf) |
+| **R3.5** | Press et al. (Cambridge Univ. Press) | 1992 | **Numerical Recipes in C** (Ch 3.6): 16-coefficient local bicubic patch interpolation (`bcucof`) | ISBN 0-521-43108-5 |
+| **R3.6** | Evers & Knudsen (FIG / OSGeo) | 2017 | **Transformation Pipelines in PROJ.4**: Standards for gridshift operations and interpolation constraints | [fig.net](https://www.fig.net/resources/proceedings/fig_proceedings/fig2017/papers/ts04e/TS04E_evers_knudsen_8534.pdf) |
+
 | **R2.14** | Cambridge Research Pub | XGBoost & Random Forest for local geoid height prediction | [cambridgeresearchpub.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFQNAxtGAYYtwBntRrItSquYRJQmctIH1hba4ftUYA-dIMpqGV49MI0-veD4SGkYh44lb7mmOayDrx1gVA0IxELCOCaeztV26At6YJuLPC7oN3l3yw2IM5Hs0uOyhtK4r15X6aCyTxMeCYuBMCipKOmA-scaKUo) |
 | **R2.15** | ResearchGate | Random Forest Spatial Interpolation (RFSI) for grid-shift & spatial fields | [researchgate.net](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGL2bbcsMJQ-7K4noPRXZpxO0n_4S9qZLJjAzPhgSELKxRzbVe3Fl44vmIvtNukSNn45VDcGvJlo8N5SRjzGpn1_TlAoNp32cn-0II-9keOpvC7q3CMDwBgpMKGH4kKrb_WkAayvnusuTekkuOZ5i2cwbZsjZv2F6nPyvegOpFq_BSOZXF1nD1KghRxnQ==) |
