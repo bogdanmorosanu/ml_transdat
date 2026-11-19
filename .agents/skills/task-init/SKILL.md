@@ -1,45 +1,31 @@
 ---
 name: task-init
-description: Initializes any ML TransDat development task or chat session. Discovers user intent, dynamically indexes living architecture docs (docs/) and task history (.agents/tasks/), verifies Python environment readiness, and outputs a 4-bullet readiness briefing. Use at the start of any new session or task.
+description: Initializes any ML TransDat development task or chat session. Discovers user intent, checks active git branch and status, dynamically indexes living architecture/research docs and task history (.agents/tasks/master_tasks.md), verifies Python environment readiness, and outputs a 4-bullet readiness briefing. Use at the start of any new session or task.
 ---
 
 # Task Initialization Skill (`task-init`)
 
 ## Purpose
-This skill serves as the **universal entrypoint** for all development, research, data generation, and model training sessions in the `ml_transdat` repository. It dynamically primes the agent context with living documentation and task history, verifies the dedicated Python environment (`D:\anaconda3\envs\ml_transdat`), and outputs a high-signal readiness briefing.
-
----
-
-## Operating Principles
-
-1. **Universal Applicability**:
-   - Adapts to any task domain: data generation, baseline transformation benchmarks, ML feature engineering, model architecture prototyping, evaluation, and documentation.
-
-2. **Dynamic Context Priming (Zero Guesswork)**:
-   - Discovers authoritative documentation in `docs/` and historical task records in `.agents/tasks/`.
-
-3. **No Web Server Checks**:
-   - Focuses strictly on Python environment integrity, GPU/CPU availability (if PyTorch/ML libraries are used), and workspace cleanliness.
+This skill serves as the **universal entrypoint** for sessions in `ml_transdat`. It primes context with living documentation, research state, task history, git branch status, and Python environment readiness.
 
 ---
 
 ## Execution Workflow
 
-Execute these steps sequentially when initialized:
-
 ### Step 1: Discover User Intent & Task Context
 Analyze the user's initial prompt to identify:
-- **Category**: Data Generation, Baseline Benchmarking, Feature Engineering, Model Training, Evaluation, or Documentation.
+- **Category**: Data Generation, Baseline Benchmarking, Feature Engineering, Model Training, Architecture/Refactoring, Literature Research, Evaluation, or Documentation.
 - **Direction**: Direct ($ETRS89 \to Stereo70$), Inverse ($Stereo70 \to ETRS89$), or Bidirectional.
-- **Reference**: Ground truth baseline (`pytransdat`) vs. candidate ML model.
+- **Persona(s)**: Select the appropriate persona file(s) per `GEMINI.md` (or Default/General mode for admin/git tasks).
 
-### Step 2: Index Living Documentation & Task History
-Scan the workspace for context:
-1. **Core Documentation**:
-   - `docs/core_engine.md` (projection math, Krasovsky ellipsoid, datum parameters)
-   - `docs/grid.md` (grid interpolation, bounding box, shift mechanics)
-2. **Recent Tasks**:
-   - Check `.agents/tasks/` using `Get-ChildItem -Path .agents/tasks` or Python `pathlib` (avoid IDE/MCP tree listings which may ignore dot-prefixed directories) to find the latest task file and understand ongoing experiments or recent progress.
+### Step 2: Check Git Branch & Index Living Documentation
+1. **Git State**: Check `git branch --show-current` and `git status -s` (via `pycharm` MCP `git_status` or shell).
+2. **Task History**: Read `.agents/tasks/master_tasks.md` to see recent engineering/execution history in order.
+3. **Research & Experiment State**:
+   - `docs/research/roadmap.md` and `docs/research/narrative.md` (current scientific state & causal evolution)
+   - `experiments/README.md` (active experiment units)
+   - `literature/README.md` (when relevant to modeling or prior art)
+   - `docs/core_engine.md` and `docs/grid.md` (when relevant to projection/grid math)
 
 ### Step 3: Verify Python Environment
 Verify that the active interpreter matches the invariant:
@@ -48,7 +34,7 @@ Verify that the active interpreter matches the invariant:
 
 ### Step 4: Output 4-Bullet Readiness Briefing
 Conclude initialization with a concise 4-bullet briefing:
-- **Intent**: Clarified user objective and scope.
-- **Context Primed**: Relevant documents and recent task history indexed.
+- **Intent & Branch**: Clarified user objective, scope, and active git branch (`<branch>`).
+- **Context Primed**: Relevant docs, research state, and recent tasks indexed.
 - **Environment**: Python environment and core imports verified.
 - **Next Action**: Concrete immediate next step to begin the task.

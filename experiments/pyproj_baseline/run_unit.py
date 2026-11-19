@@ -140,7 +140,7 @@ class PyprojBaselineUnit(ResearchUnit):
 
 
 def main() -> None:
-    unit = PyprojBaselineUnit(Path("experiments/02_pyproj_baseline"))
+    unit = PyprojBaselineUnit(Path("experiments/pyproj_baseline"))
     unit.run()
 
 

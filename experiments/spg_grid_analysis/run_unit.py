@@ -166,7 +166,7 @@ class SpgGridAnalysisUnit(ResearchUnit):
 
 
 def main() -> None:
-    unit = SpgGridAnalysisUnit(Path("experiments/01_spg_grid_analysis"))
+    unit = SpgGridAnalysisUnit(Path("experiments/spg_grid_analysis"))
     unit.run()
 
 

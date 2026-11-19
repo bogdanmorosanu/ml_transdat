@@ -1,7 +1,8 @@
-# Branch 03: 2D 4-Parameter Helmert Baseline (No Grid)
+# 2D 4-Parameter Helmert Baseline (No Grid)
 
 - **Status**: `Validated`
-- **Related Unit**: [`experiments/03_helmert2d_baseline/`](../../experiments/03_helmert2d_baseline/)
+- **Spawned From**: [`spg_grid_analysis`](spg_grid_analysis.md)
+- **Linked Sources**: [`experiments/helmert2d_baseline/`](../../experiments/helmert2d_baseline/), [`src/models/helmert2d.py`](../../src/models/helmert2d.py)
 - **Core Question**: What is the best possible accuracy of a grid-free 2-step 2D conformal transformation (`StereoProj` + 4-parameter `Helmert2D`) when refitted directly to the valid nodes of `rom_grid3d_25.09.spg`?
 
 ---

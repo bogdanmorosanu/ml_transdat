@@ -17,7 +17,7 @@
     "bias_e_m": -0.01599917231679646,
     "pass_lt_10cm_pct": 8.365582544256895,
     "pass_lt_1m_pct": 98.04034582132564,
-    "throughput_pts_per_s": 2828562.8
+    "throughput_pts_per_s": 2806038.0
   },
   "st70_to_etrs89": {
     "mean_2d_m": 0.3600632319764716,
@@ -30,7 +30,7 @@
     "bias_e_m": 0.017862027524949097,
     "pass_lt_10cm_pct": 8.332647179909427,
     "pass_lt_1m_pct": 98.04034582132564,
-    "throughput_pts_per_s": 1393393.1
+    "throughput_pts_per_s": 1411618.4
   },
   "plots": {
     "etrs89_to_st70": {
@@ -46,5 +46,5 @@
       "subcell_heatmap": "pyproj_epsg3844_st70_to_etrs89_subcell_heatmap.png"
     }
   },
-  "runtime_s": 3.999
+  "runtime_s": 3.932
 }

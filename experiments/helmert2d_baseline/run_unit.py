@@ -258,7 +258,7 @@ class Helmert2DBaselineUnit(ResearchUnit):
 
 
 def main() -> None:
-    unit = Helmert2DBaselineUnit(Path("experiments/03_helmert2d_baseline"))
+    unit = Helmert2DBaselineUnit(Path("experiments/helmert2d_baseline"))
     unit.run()
 
 

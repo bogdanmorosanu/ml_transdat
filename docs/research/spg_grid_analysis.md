@@ -1,7 +1,8 @@
-# Branch 01: SPG 2D Distortion Grid Analysis
+# SPG 2D Distortion Grid Analysis
 
 - **Status**: `Validated`
-- **Related Unit**: [`experiments/01_spg_grid_analysis/`](../../experiments/01_spg_grid_analysis/)
+- **Spawned From**: Initial Baseline
+- **Linked Sources**: [`experiments/spg_grid_analysis/`](../../experiments/spg_grid_analysis/), [`docs/grid.md`](../grid.md)
 - **Core Question**: What is the physical spatial distribution, magnitude, and directional orientation of the official Romanian cartographic distortion field?
 
 ---
@@ -13,7 +14,7 @@ Before designing machine learning models to replicate the Romanian coordinate tr
 
 ## 2. Experimental Setup
 - **Evaluation Dataset**: `data/grids/ro_grid_4x4.parquet` (36,435 bidirectionally valid points, 2,297 grid cells, $2.75\,\text{km}$ sub-grid resolution).
-- **Execution Script**: `python -m experiments.01_spg_grid_analysis.run_unit`.
+- **Execution Script**: `python -m experiments.spg_grid_analysis.run_unit`.
 - **Outputs**: Component heatmaps ($dN, dE$, magnitude), vector field quiver plot, and distribution diagnostics.
 
 ---

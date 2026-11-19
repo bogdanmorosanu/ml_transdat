@@ -1,7 +1,8 @@
-# Branch 02: PyProj (EPSG:3844) Baseline Evaluation
+# PyProj (EPSG:3844) Baseline Evaluation
 
 - **Status**: `Validated`
-- **Related Unit**: [`experiments/02_pyproj_baseline/`](../../experiments/02_pyproj_baseline/)
+- **Spawned From**: [`spg_grid_analysis`](spg_grid_analysis.md)
+- **Linked Sources**: [`experiments/pyproj_baseline/`](../../experiments/pyproj_baseline/)
 - **Core Question**: What is the performance ceiling of standard open-source GIS transformation pipelines (PROJ / PyProj) that lack official Romanian distortion grid files?
 
 ---
@@ -13,7 +14,7 @@ Most geospatial applications (e.g. QGIS, GDAL, GeoPandas) perform transformation
 
 ## 2. Experimental Setup
 - **Evaluation Dataset**: `data/grids/ro_grid_4x4.parquet` (36,435 points).
-- **Execution Script**: `python -m experiments.02_pyproj_baseline.run_unit`.
+- **Execution Script**: `python -m experiments.pyproj_baseline.run_unit`.
 - **Target Systems**: `EPSG:4258` (ETRS89) $\leftrightarrow$ `EPSG:3844` (Stereo 70).
 
 ---

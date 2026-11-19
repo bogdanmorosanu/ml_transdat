@@ -64,7 +64,7 @@ This unit evaluates a **grid-free 2-step 2D coordinate transformation** (`Stereo
 
 ## Comparison vs. Experiment 01 (SPG 2D Distortion Grid)
 
-Because `pytransdat`'s full pipeline is `StereoProj` $\to$ `Embedded Helmert2D` $\to$ `Grid2D`, omitting `Grid2D` while keeping the embedded `Helmert2D` parameters reproduces the **exact negated SPG distortion field** profiled in [Unit 01](../01_spg_grid_analysis/report.md) ($\text{Mean} = 0.3716\,\text{m}$, $\text{p50} = 0.3170\,\text{m}$, $\text{p95} = 0.8784\,\text{m}$, $\text{p99} = 1.1498\,\text{m}$, $\text{Max} = 2.7570\,\text{m}$).
+Because `pytransdat`'s full pipeline is `StereoProj` $\to$ `Embedded Helmert2D` $\to$ `Grid2D`, omitting `Grid2D` while keeping the embedded `Helmert2D` parameters reproduces the **exact negated SPG distortion field** profiled in [Unit 01](../spg_grid_analysis/report.md) ($\text{Mean} = 0.3716\,\text{m}$, $\text{p50} = 0.3170\,\text{m}$, $\text{p95} = 0.8784\,\text{m}$, $\text{p99} = 1.1498\,\text{m}$, $\text{Max} = 2.7570\,\text{m}$).
 
 Refitting the 4-parameter `Helmert2D` on the 2,222 valid SPG grid nodes shifts and scales the 2D conformal frame slightly ($\Delta dm = -0.2918\,\text{ppm}$, $\Delta R_z = -0.0082''$) so that the residual field is **centered at zero mean** and **reduces the extreme border tails**:
 
@@ -81,11 +81,11 @@ Refitting the 4-parameter `Helmert2D` on the 2,222 valid SPG grid nodes shifts a
 
 | Unit 01: SPG Grid Distribution (`Grid2D`) | Unit 03: Refitted `Helmert2D` Distribution |
 |:---:|:---:|
-| ![Unit 01 Hist ECDF](../01_spg_grid_analysis/plots/spg_grid_shifts_2d_bicubic_hist_ecdf.png) | ![Unit 03 Hist ECDF](plots/fitted_helmert2d_etrs89_to_st70_hist_ecdf.png) |
+| ![Unit 01 Hist ECDF](../spg_grid_analysis/plots/spg_grid_shifts_2d_bicubic_hist_ecdf.png) | ![Unit 03 Hist ECDF](plots/fitted_helmert2d_etrs89_to_st70_hist_ecdf.png) |
 
 | Unit 01: SPG Grid Signed Scatter (`dE` vs `dN`) | Unit 03: Refitted `Helmert2D` Signed Scatter |
 |:---:|:---:|
-| ![Unit 01 Signed Scatter](../01_spg_grid_analysis/plots/spg_grid_shifts_2d_bicubic_signed_scatter.png) | ![Unit 03 Signed Scatter](plots/fitted_helmert2d_etrs89_to_st70_signed_scatter.png) |
+| ![Unit 01 Signed Scatter](../spg_grid_analysis/plots/spg_grid_shifts_2d_bicubic_signed_scatter.png) | ![Unit 03 Signed Scatter](plots/fitted_helmert2d_etrs89_to_st70_signed_scatter.png) |
 
 *Note on sign convention*: Unit 01 plots the SPG shift $\Delta = \text{GroundTruth} - \text{PreGrid}$, whereas Unit 03 plots the prediction error $\varepsilon = \text{Pred} - \text{GroundTruth} = -\Delta_{\text{residual}}$ (mirrored across the origin). Notice how the refitted 2D Helmert pulls the extreme Banat/West lobe inward from $2.757\,\text{m}$ to $2.681\,\text{m}$ while keeping the core distribution tightly centered at $(0, 0)$.
 
