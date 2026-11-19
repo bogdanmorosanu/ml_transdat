@@ -45,7 +45,7 @@ def compute_errors(
 ) -> pd.DataFrame:
     """Compute per-point metric residuals against ground-truth ``pytransdat`` columns.
 
-    :param df_ref: Reference benchmark DataFrame (e.g., ``ro_grid_3x3.parquet``).
+    :param df_ref: Reference benchmark/grid DataFrame (e.g., ``ro_grid_4x4.parquet``).
     :param pred_c1: Predicted Northing (m) for ``etrs89_to_st70``, or Latitude for ``st70_to_etrs89``.
     :param pred_c2: Predicted Easting (m) for ``etrs89_to_st70``, or Longitude for ``st70_to_etrs89``.
     :param direction: Transformation direction (``'etrs89_to_st70'`` or ``'st70_to_etrs89'``).

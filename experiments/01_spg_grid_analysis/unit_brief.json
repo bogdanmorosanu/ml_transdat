@@ -26,5 +26,5 @@
     "signed_scatter": "spg_grid_shifts_2d_bicubic_signed_scatter.png",
     "subcell_heatmap": "spg_grid_shifts_2d_bicubic_subcell_heatmap.png"
   },
-  "runtime_s": 8.423
+  "runtime_s": 6.736
 }

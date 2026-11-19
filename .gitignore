@@ -27,6 +27,8 @@ dist/
 data/*
 !data/benchmarks/
 !data/benchmarks/**
+!data/grids/
+!data/grids/**
 datasets/
 *.h5
 *.hdf5

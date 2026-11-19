@@ -1,4 +1,4 @@
-"""Data sampling engines for nationwide 3x3 grids and directional corridors."""
+"""Data sampling engines for nationwide subgrids and directional corridors."""
 
 from __future__ import annotations
 
@@ -10,15 +10,25 @@ import pandas as pd
 
 from pytransdat import TransRO
 
-DEFAULT_SUBGRID_OFFSETS: tuple[float, ...] = (0.0, 0.25, 0.50, 0.75)
+DEFAULT_SUBGRID_OFFSETS_4X4: tuple[float, ...] = (0.0, 0.25, 0.50, 0.75)
+DEFAULT_SUBGRID_OFFSETS_8X8: tuple[float, ...] = (
+    0.0,
+    0.125,
+    0.25,
+    0.375,
+    0.5,
+    0.625,
+    0.75,
+    0.875,
+)
 
 
-def build_3x3_grid_candidates(
+def build_grid_candidates(
     engine: TransRO,
-    offsets: Sequence[float] = DEFAULT_SUBGRID_OFFSETS,
+    offsets: Sequence[float],
     z_normal: float = 0.0,
 ) -> list[dict[str, Any]]:
-    """Build candidate points aligned to the SPG grid cell structure."""
+    """Build candidate points aligned to the SPG grid cell structure with given subgrid offsets."""
     grid2d = engine._t_gr2d
     candidates: list[dict[str, Any]] = []
 
@@ -41,6 +51,15 @@ def build_3x3_grid_candidates(
                         }
                     )
     return candidates
+
+
+def build_3x3_grid_candidates(
+    engine: TransRO,
+    offsets: Sequence[float] = DEFAULT_SUBGRID_OFFSETS_4X4,
+    z_normal: float = 0.0,
+) -> list[dict[str, Any]]:
+    """Backward-compatible alias for 4x4 subgrid candidates."""
+    return build_grid_candidates(engine, offsets=offsets, z_normal=z_normal)
 
 
 def sample_corridor_candidates(
@@ -79,11 +98,10 @@ def sample_corridor_candidates(
         e_coord = e0 + ds * te + w * ne
         candidates.append(
             {
-                "corridor_s_m": float(s_val),
-                "corridor_w_m": w,
-                "segment_idx": seg_idx,
-                "st70_n": n_coord,
-                "st70_e": e_coord,
+                "s_along_m": float(s_val),
+                "w_cross_m": float(w),
+                "st70_n": float(n_coord),
+                "st70_e": float(e_coord),
                 "st70_h": z_normal,
             }
         )

@@ -12,7 +12,7 @@ Before designing machine learning models to replicate the Romanian coordinate tr
 ---
 
 ## 2. Experimental Setup
-- **Evaluation Dataset**: `data/benchmarks/ro_grid_3x3.parquet` (36,435 bidirectionally valid points, 2,297 grid cells, $2.75\,\text{km}$ sub-grid resolution).
+- **Evaluation Dataset**: `data/grids/ro_grid_4x4.parquet` (36,435 bidirectionally valid points, 2,297 grid cells, $2.75\,\text{km}$ sub-grid resolution).
 - **Execution Script**: `python -m experiments.01_spg_grid_analysis.run_unit`.
 - **Outputs**: Component heatmaps ($dN, dE$, magnitude), vector field quiver plot, and distribution diagnostics.
 

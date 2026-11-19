@@ -1,7 +1,7 @@
 # Research Unit 01: SPG 2D Distortion Grid Analysis
 
 ## Executive Summary
-This unit analyzes the official Romanian 2D planimetric distortion field embedded in `rom_grid3d_25.09.spg` (Centrul Național de Cartografie). By evaluating `Grid2D.interp` across the 36,435 points of the canonical `ro_grid_3x3` benchmark, this unit profiles the spatial magnitude, component distributions, and directional vector orientations of the distortion that any candidate machine learning model must replicate.
+This unit analyzes the official Romanian 2D planimetric distortion field embedded in `rom_grid3d_25.09.spg` (Centrul Național de Cartografie). By evaluating `Grid2D.interp` across the 36,435 points of the canonical `ro_grid_4x4` grid, this unit profiles the spatial magnitude, component distributions, and directional vector orientations of the distortion that any candidate machine learning model must replicate.
 
 ---
 

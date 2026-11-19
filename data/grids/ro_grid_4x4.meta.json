@@ -1,6 +1,6 @@
 {
-  "name": "ro_grid_3x3",
-  "description": "Canonical bidirectional 3x3 interior (4x4 non-overlapping tile, 2.75 km spacing) benchmark across all valid cells of the official Romanian SPG distortion grid.",
+  "name": "ro_grid_4x4",
+  "description": "Canonical bidirectional ro_grid_4x4 subgrid (2750.0 m spacing) across all valid cells of the official Romanian SPG distortion grid.",
   "spg_grid_file": "rom_grid3d_25.09.spg",
   "subgrid_offsets": [
     0.0,
@@ -17,19 +17,9 @@
     2750.0
   ],
   "total_candidates": 59072,
-  "forward_valid_count": 36581,
-  "forward_rejected_by_error": {
-    "OutOfGrid2DErr": 4347,
-    "NoDataGridErr": 18125,
-    "OutOfGrid1DErr": 19
-  },
   "bidirectional_valid_count": 36435,
-  "inverse_rejected_by_error": {
-    "NoDataGridErr": 146
-  },
   "node_count": 2222,
   "interior_count": 34213,
-  "unique_cells_covered": 2297,
   "bounds": {
     "st70_n_min": 227384.564,
     "st70_n_max": 766384.564,
@@ -45,6 +35,6 @@
     "easting": 0.00025425676722079515,
     "height": 0.0
   },
-  "generation_time_s": 3.377,
-  "parquet_file": "data/benchmarks/ro_grid_3x3.parquet"
+  "generation_time_s": 2.495,
+  "parquet_file": "data/grids/ro_grid_4x4.parquet"
 }

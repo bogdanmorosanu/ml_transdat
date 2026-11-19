@@ -1,7 +1,7 @@
 # Research Unit 03: 2D 4-Parameter Helmert Baseline (No Grid)
 
 ## Executive Summary
-This unit evaluates a **grid-free 2-step 2D coordinate transformation** (`StereoProj` $\leftrightarrow$ `Helmert2D`) between **ETRS89** and **Stereo 70**, omitting the `Grid2D` bicubic distortion grid. We fit optimal 4-parameter 2D conformal Helmert parameters $(t_N, t_E, dm, R_z)$ via closed-form linear least squares on the **2,222 valid SPG grid nodes** (`is_node == True` in `ro_grid_3x3.parquet`) and evaluate bidirectionally across all **36,435 points** of `data/benchmarks/ro_grid_3x3.parquet`.
+This unit evaluates a **grid-free 2-step 2D coordinate transformation** (`StereoProj` $\leftrightarrow$ `Helmert2D`) between **ETRS89** and **Stereo 70**, omitting the `Grid2D` bicubic distortion grid. We fit optimal 4-parameter 2D conformal Helmert parameters $(t_N, t_E, dm, R_z)$ via closed-form linear least squares on the **2,222 valid SPG grid nodes** (`is_node == True` in `ro_grid_4x4.parquet`) and evaluate bidirectionally across all **36,435 points** of `data/grids/ro_grid_4x4.parquet`.
 
 ---
 
@@ -16,7 +16,7 @@ This unit evaluates a **grid-free 2-step 2D coordinate transformation** (`Stereo
 
 ---
 
-## Comparative Scorecard (`ro_grid_3x3.parquet`, $N = 36,435$)
+## Comparative Scorecard (`ro_grid_4x4.parquet`, $N = 36,435$)
 
 ### `ETRS89 -> Stereo 70`
 
@@ -68,7 +68,7 @@ Because `pytransdat`'s full pipeline is `StereoProj` $\to$ `Embedded Helmert2D` 
 
 Refitting the 4-parameter `Helmert2D` on the 2,222 valid SPG grid nodes shifts and scales the 2D conformal frame slightly ($\Delta dm = -0.2918\,\text{ppm}$, $\Delta R_z = -0.0082''$) so that the residual field is **centered at zero mean** and **reduces the extreme border tails**:
 
-| Metric (`ro_grid_3x3`, $N = 36,435$) | Unit 01: SPG Grid Shifts (`Grid2D`) | Unit 03: Refitted `Helmert2D` (`etrs89_to_st70`) | Delta (Refitted $-$ Grid) |
+| Metric (`ro_grid_4x4`, $N = 36,435$) | Unit 01: SPG Grid Shifts (`Grid2D`) | Unit 03: Refitted `Helmert2D` (`etrs89_to_st70`) | Delta (Refitted $-$ Grid) |
 |:---|:---:|:---:|:---:|
 | **Mean Signed Bias ($dN, dE$)** | $-0.0043, +0.0120\,\text{m}$ | **$-0.0011, -0.00005\,\text{m}$** | Centered near $(0, 0)$ |
 | **2D Mean Magnitude** | $0.3716\,\text{m}$ | $0.3743\,\text{m}$ | $+0.0027\,\text{m}$ |

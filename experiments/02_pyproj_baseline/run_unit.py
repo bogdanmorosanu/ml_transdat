@@ -15,7 +15,7 @@ from src.core.base_unit import ResearchUnit
 from src.core.metrics import compute_errors, format_scorecard_table, summarize_errors
 from src.core.viz import generate_standard_diagnostic_suite
 
-DEFAULT_BENCHMARK = Path("data/benchmarks/ro_grid_3x3.parquet")
+DEFAULT_BENCHMARK = Path("data/grids/ro_grid_4x4.parquet")
 
 
 class PyprojBaselineUnit(ResearchUnit):

@@ -12,7 +12,7 @@ Most geospatial applications (e.g. QGIS, GDAL, GeoPandas) perform transformation
 ---
 
 ## 2. Experimental Setup
-- **Evaluation Dataset**: `data/benchmarks/ro_grid_3x3.parquet` (36,435 points).
+- **Evaluation Dataset**: `data/grids/ro_grid_4x4.parquet` (36,435 points).
 - **Execution Script**: `python -m experiments.02_pyproj_baseline.run_unit`.
 - **Target Systems**: `EPSG:4258` (ETRS89) $\leftrightarrow$ `EPSG:3844` (Stereo 70).
 

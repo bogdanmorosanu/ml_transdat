@@ -14,7 +14,7 @@ In `pytransdat`, the embedded `Helmert2D` parameters (`os_st70` / `st70_os`) rem
 ## 2. Quantitative Discoveries
 
 - **Fitted vs. Embedded (`st70_to_os`)**: Scale shifts by $-0.2918\,\text{ppm}$ ($-0.1156 \to -0.4074\,\text{ppm}$) and rotation by $-0.0082''$ ($+0.2274'' \to +0.2192''$), absorbing a slight global radial/rotational trend in `25.09`.
-- **Performance on `ro_grid_3x3.parquet` (36,435 points, `etrs89_to_st70`)**:
+- **Performance on `ro_grid_4x4.parquet` (36,435 points, `etrs89_to_st70`)**:
   - **Refitted `Helmert2D`**: $\text{Mean} = 0.3743\,\text{m}$, $\text{RMSE} = 0.4429\,\text{m}$, $\text{p95} = 0.8515\,\text{m}$, $\text{Max} = 2.6811\,\text{m}$, $< 1\,\text{m} = 98.1\%$.
   - **Embedded `Helmert2D` (no grid)**: $\text{Mean} = 0.3716\,\text{m}$, $\text{RMSE} = 0.4472\,\text{m}$, $\text{Max} = 2.7570\,\text{m}$, $< 1\,\text{m} = 97.8\%$.
   - **Exact Bidirectional Round-Trip**: Max $5.24 \times 10^{-9}\,\text{m}$.

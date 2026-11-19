@@ -1,13 +1,13 @@
 # Research Unit 03 Briefing: 2D 4-Parameter Helmert Baseline
 
 ## Purpose
-Evaluates a grid-free 2-step 2D coordinate transformation (`StereoProj` $\leftrightarrow$ `Helmert2D`) with 4 conformal parameters refitted via closed-form OLS on the 2,222 valid SPG grid nodes (`is_node == True` in `ro_grid_3x3.parquet`).
+Evaluates a grid-free 2-step 2D coordinate transformation (`StereoProj` $\leftrightarrow$ `Helmert2D`) with 4 conformal parameters refitted via closed-form OLS on the 2,222 valid SPG grid nodes (`is_node == True` in `ro_grid_4x4.parquet`).
 
 ## Core Metadata
 - **Unit ID**: `03`
 - **Unit Slug**: `helmert2d_baseline`
-- **Fitting Set**: 2,222 valid SPG grid nodes (`ro_grid_3x3.parquet[is_node]`)
-- **Evaluation Set**: 36,435 points (`ro_grid_3x3.parquet`), plus 34,213 interior-only out-of-sample check
+- **Fitting Set**: 2,222 valid SPG grid nodes (`ro_grid_4x4.parquet[is_node]`)
+- **Evaluation Set**: 36,435 points (`ro_grid_4x4.parquet`), plus 34,213 interior-only out-of-sample check
 - **Fitted Parameters (`st70_to_os`)**: $t_N = -31.6399\,\text{m}$, $t_E = -119.6209\,\text{m}$, $dm = -0.4074\,\text{ppm}$, $R_z = +0.2192''$
 
 ## Quantitative Performance (`etrs89_to_st70`)

@@ -12,7 +12,7 @@ import pandas as pd
 from src.core.metrics import compute_errors, summarize_errors
 from src.core.viz import generate_standard_diagnostic_suite
 
-BENCHMARK_PATH = Path("data/benchmarks/ro_grid_3x3.parquet")
+BENCHMARK_PATH = Path("data/grids/ro_grid_4x4.parquet")
 
 
 class TestEvalSuite(unittest.TestCase):

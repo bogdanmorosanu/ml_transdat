@@ -22,7 +22,7 @@ from src.models.helmert2d import (
     fit_helmert2d,
 )
 
-DEFAULT_BENCHMARK = Path("data/benchmarks/ro_grid_3x3.parquet")
+DEFAULT_BENCHMARK = Path("data/grids/ro_grid_4x4.parquet")
 
 
 def _load_embedded_params() -> Helmert2DParams:

@@ -44,7 +44,7 @@
       "bias_e_m": -0.012044531467252836,
       "pass_lt_10cm_pct": 8.220118018388911,
       "pass_lt_1m_pct": 97.79607520241525,
-      "throughput_pts_per_s": 816033.5
+      "throughput_pts_per_s": 577487.3
     },
     "st70_to_etrs89": {
       "mean_2d_m": 0.37154860823443203,
@@ -57,7 +57,7 @@
       "bias_e_m": 0.012692358627878944,
       "pass_lt_10cm_pct": 8.220118018388911,
       "pass_lt_1m_pct": 97.79607520241525,
-      "throughput_pts_per_s": 333223.6
+      "throughput_pts_per_s": 269860.7
     }
   },
   "fitted_helmert2d": {
@@ -72,7 +72,7 @@
       "bias_e_m": -4.978019147135864e-05,
       "pass_lt_10cm_pct": 6.996020310141347,
       "pass_lt_1m_pct": 98.13091807328118,
-      "throughput_pts_per_s": 928088.7
+      "throughput_pts_per_s": 795998.5
     },
     "st70_to_etrs89": {
       "mean_2d_m": 0.37429895141661496,
@@ -85,7 +85,7 @@
       "bias_e_m": 0.0006461683114176772,
       "pass_lt_10cm_pct": 6.996020310141347,
       "pass_lt_1m_pct": 98.13091807328118,
-      "throughput_pts_per_s": 410666.2
+      "throughput_pts_per_s": 364708.1
     },
     "interior_only_etrs89_to_st70": {
       "mean_2d_m": 0.3741251982939227,
@@ -112,5 +112,5 @@
       "subcell_heatmap": "fitted_helmert2d_st70_to_etrs89_subcell_heatmap.png"
     }
   },
-  "runtime_s": 4.023
+  "runtime_s": 4.688
 }

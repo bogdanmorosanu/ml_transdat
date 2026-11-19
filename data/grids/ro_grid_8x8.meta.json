@@ -1,0 +1,44 @@
+{
+  "name": "ro_grid_8x8",
+  "description": "Canonical bidirectional ro_grid_8x8 subgrid (1375.0 m spacing) across all valid cells of the official Romanian SPG distortion grid.",
+  "spg_grid_file": "rom_grid3d_25.09.spg",
+  "subgrid_offsets": [
+    0.0,
+    0.125,
+    0.25,
+    0.375,
+    0.5,
+    0.625,
+    0.75,
+    0.875
+  ],
+  "grid_step_m": [
+    11000.0,
+    11000.0
+  ],
+  "subgrid_spacing_m": [
+    1375.0,
+    1375.0
+  ],
+  "total_candidates": 236288,
+  "bidirectional_valid_count": 146258,
+  "node_count": 2222,
+  "interior_count": 144036,
+  "bounds": {
+    "st70_n_min": 226009.564,
+    "st70_n_max": 767759.564,
+    "st70_e_min": 122158.04,
+    "st70_e_max": 878408.04,
+    "etrs89_lat_deg_min": 43.533346667716394,
+    "etrs89_lat_deg_max": 48.39568149106873,
+    "etrs89_lon_deg_min": 20.102328261015234,
+    "etrs89_lon_deg_max": 29.799994549692954
+  },
+  "roundtrip_max_err_m": {
+    "northing": 0.00047084037214517593,
+    "easting": 0.00025425676722079515,
+    "height": 0.0
+  },
+  "generation_time_s": 12.566,
+  "parquet_file": "data/grids/ro_grid_8x8.parquet"
+}

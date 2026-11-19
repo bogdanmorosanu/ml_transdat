@@ -6,7 +6,7 @@ Physical profile of the ground-truth official Romanian 2D distortion grid `rom_g
 ## Core Metadata
 - **Unit ID**: `01`
 - **Unit Slug**: `spg_grid_analysis`
-- **Benchmark Source**: `data/benchmarks/ro_grid_3x3.parquet` (36,435 points, 2,297 grid cells)
+- **Benchmark Source**: `data/grids/ro_grid_4x4.parquet` (36,435 points, 2,297 grid cells)
 - **Grid File**: `pytransdat/grids/rom_grid3d_25.09.spg`
 - **Grid Resolution**: 11 km x 11 km primary cell step, sampled at 2.75 km sub-grid resolution
 
