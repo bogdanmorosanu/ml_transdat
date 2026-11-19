@@ -30,8 +30,9 @@ def generate_spg_nodes() -> None:
     engine = TransRO()
     spg_data = np.load("pytransdat/grids/rom_grid3d_25.09.spg", allow_pickle=True)
     grid_arr = spg_data["grids"]["geodetic_shifts"]["grid"]
-    dn_arr = grid_arr[0]
-    de_arr = grid_arr[1]
+    # In rom_grid3d_25.09.spg: Band 0 is Easting shift (shift_e), Band 1 is Northing shift (shift_n)
+    de_arr = grid_arr[0]
+    dn_arr = grid_arr[1]
     grid2d = engine._t_gr2d
 
     records = []
