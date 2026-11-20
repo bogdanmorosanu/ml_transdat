@@ -1,0 +1,51 @@
+{
+  "unit_id": "05",
+  "unit_name": "decision_tree_regressor",
+  "status": "completed",
+  "scorecard": [
+    {
+      "Model": "dt_base_11km",
+      "Leaves": 2689,
+      "Depth": 22,
+      "Size (MB)": 0.41,
+      "Train RMSE (m)": 0.0,
+      "Grid 8x8 RMSE (m)": 0.08171789800045286,
+      "Corridor RMSE (m)": 0.06780941195098195,
+      "Corridor Max (m)": 0.2946222796321493,
+      "Fit Time (s)": 0.007
+    },
+    {
+      "Model": "dt_4x4_2.75km",
+      "Leaves": 36435,
+      "Depth": 30,
+      "Size (MB)": 5.56,
+      "Train RMSE (m)": 0.0,
+      "Grid 8x8 RMSE (m)": 0.024597594433329338,
+      "Corridor RMSE (m)": 0.01614852815529202,
+      "Corridor Max (m)": 0.09095704599826597,
+      "Fit Time (s)": 0.06
+    },
+    {
+      "Model": "dt_8x8_1.375km",
+      "Leaves": 146258,
+      "Depth": 36,
+      "Size (MB)": 22.32,
+      "Train RMSE (m)": 0.0,
+      "Grid 8x8 RMSE (m)": 0.0,
+      "Corridor RMSE (m)": 0.008005567737194859,
+      "Corridor Max (m)": 0.046481853067808984,
+      "Fit Time (s)": 0.342
+    },
+    {
+      "Model": "dt_8x8_pruned_1e8",
+      "Leaves": 18424,
+      "Depth": 27,
+      "Size (MB)": 2.81,
+      "Train RMSE (m)": 0.01760512536206412,
+      "Grid 8x8 RMSE (m)": 0.01760512536206412,
+      "Corridor RMSE (m)": 0.018822439226972246,
+      "Corridor Max (m)": 0.08513542581093989,
+      "Fit Time (s)": 0.209
+    }
+  ]
+}
