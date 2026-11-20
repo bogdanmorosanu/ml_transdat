@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass
-from typing import Any, Sequence
+from typing import Any
 
 import numpy as np
 
 from pytransdat.proj_stereo import StereoProj
+from src.models.base import BaseCoordinateTransformer
 
 ARCSEC_PER_RAD: float = 180.0 * 3600.0 / math.pi
 CENTER_N_M: float = 500_000.0
@@ -60,7 +62,9 @@ def fit_helmert2d(
     if sn.shape != se.shape or sn.shape != dn.shape or sn.shape != de.shape:
         raise ValueError("All input coordinate arrays must have identical 1D shapes.")
     if sn.ndim != 1 or len(sn) < 2:
-        raise ValueError("At least 2 points are required to fit a 4-parameter 2D Helmert.")
+        raise ValueError(
+            "At least 2 points are required to fit a 4-parameter 2D Helmert."
+        )
 
     n_pts = len(sn)
     zeros = np.zeros(n_pts, dtype=np.float64)
@@ -115,9 +119,7 @@ class FittedHelmert2D:
         self._tn = params.tn_m
         self._te = params.te_m
 
-    def st70_to_os(
-        self, n: np.ndarray, e: np.ndarray
-    ) -> tuple[np.ndarray, np.ndarray]:
+    def st70_to_os(self, n: np.ndarray, e: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Transform Stereo 70 ``(N, E)`` to StereoGRS80 ``(N_os, E_os)``."""
         n_arr = np.asarray(n, dtype=np.float64)
         e_arr = np.asarray(e, dtype=np.float64)
@@ -137,7 +139,7 @@ class FittedHelmert2D:
         return n_st70, e_st70
 
 
-class TwoStepHelmert2DTransformer:
+class TwoStepHelmert2DTransformer(BaseCoordinateTransformer):
     """Grid-free 2-step 2D coordinate transformer: ``StereoProj <-> FittedHelmert2D``."""
 
     def __init__(self, params: Helmert2DParams) -> None:
@@ -145,7 +147,9 @@ class TwoStepHelmert2DTransformer:
         self.helmert = FittedHelmert2D(params)
 
     def etrs89_to_st70(
-        self, lat_rad: Sequence[float] | np.ndarray, lon_rad: Sequence[float] | np.ndarray
+        self,
+        lat_rad: Sequence[float] | np.ndarray,
+        lon_rad: Sequence[float] | np.ndarray,
     ) -> tuple[np.ndarray, np.ndarray]:
         """Transform ETRS89 ``(lat_rad, lon_rad)`` to Stereo 70 ``(N, E)`` in meters."""
         n_os, e_os = self.proj.to_grid(
@@ -160,4 +164,6 @@ class TwoStepHelmert2DTransformer:
         """Transform Stereo 70 ``(N, E)`` in meters to ETRS89 ``(lat_rad, lon_rad)``."""
         n_os, e_os = self.helmert.st70_to_os(np.asarray(n), np.asarray(e))
         lat_rad, lon_rad = self.proj.to_geo(n_os.tolist(), e_os.tolist())
-        return np.asarray(lat_rad, dtype=np.float64), np.asarray(lon_rad, dtype=np.float64)
+        return np.asarray(lat_rad, dtype=np.float64), np.asarray(
+            lon_rad, dtype=np.float64
+        )

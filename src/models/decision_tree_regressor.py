@@ -4,36 +4,48 @@ Wraps scikit-learn's DecisionTreeRegressor for multi-output regression
 (Stereo70 Northing, Easting -> shift_dn_m, shift_de_m).
 """
 
-from typing import Any, Dict, Optional, Tuple, Union
+from __future__ import annotations
+
+from typing import Any
+
 import numpy as np
 from sklearn.tree import DecisionTreeRegressor
 
+from src.models.base import BaseGridShiftModel
 
-class DecisionTreeSpatialRegressor:
+
+class DecisionTreeSpatialRegressor(BaseGridShiftModel):
     """Multi-output Decision Tree regressor for 2D spatial distortion shifts.
 
-    Fits orthogonal axis-aligned partition trees on known coordinates (N, E)
-    to predict coordinate distortion shifts (dN, dE).
-
-    Attributes:
-        criterion: Impurity criterion ('squared_error', 'absolute_error', etc.).
-        max_depth: Maximum tree depth. None allows leaves to expand until pure.
-        min_samples_split: Minimum samples required to split an internal node.
-        min_samples_leaf: Minimum samples required at a leaf node.
-        min_impurity_decrease: Minimum impurity decrease required for a split.
-        random_state: Seed for reproducible tie-breaking.
-        model: Underlying fitted sklearn DecisionTreeRegressor instance.
+    Fits orthogonal axis-aligned partition trees on known coordinates ``(N, E)``
+    to predict coordinate distortion shifts ``(dN, dE)``.
     """
 
     def __init__(
         self,
         criterion: str = "squared_error",
-        max_depth: Optional[int] = None,
-        min_samples_split: Union[int, float] = 2,
-        min_samples_leaf: Union[int, float] = 1,
+        max_depth: int | None = None,
+        min_samples_split: float = 2,
+        min_samples_leaf: float = 1,
         min_impurity_decrease: float = 0.0,
         random_state: int = 42,
     ) -> None:
+        """Initialize the spatial Decision Tree regressor.
+
+        :param criterion: Impurity criterion (e.g., ``'squared_error'``, ``'absolute_error'``).
+        :type criterion: str
+        :param max_depth: Maximum tree depth (``None`` expands until pure).
+        :type max_depth: int | None
+        :param min_samples_split: Minimum samples required to split an internal node.
+        :type min_samples_split: int | float
+        :param min_samples_leaf: Minimum samples required at a leaf node.
+        :type min_samples_leaf: int | float
+        :param min_impurity_decrease: Minimum impurity decrease required for a split.
+        :type min_impurity_decrease: float
+        :param random_state: Seed for reproducible split tie-breaking.
+        :type random_state: int
+        """
+        super().__init__()
         self.criterion = criterion
         self.max_depth = max_depth
         self.min_samples_split = min_samples_split
@@ -41,35 +53,9 @@ class DecisionTreeSpatialRegressor:
         self.min_impurity_decrease = min_impurity_decrease
         self.random_state = random_state
 
-        self.model: Optional[DecisionTreeRegressor] = None
-        self._is_fitted: bool = False
+        self.model: DecisionTreeRegressor | None = None
 
-    def fit(self, coords: np.ndarray, shifts: np.ndarray) -> "DecisionTreeSpatialRegressor":
-        """Fit decision tree on reference coordinate anchors.
-
-        Args:
-            coords: Array of shape (N, 2) containing [northing, easting].
-            shifts: Array of shape (N, 2) containing [shift_dn, shift_de].
-
-        Returns:
-            Self (fitted regressor).
-
-        Raises:
-            ValueError: If coordinate or shift array dimensions are invalid.
-        """
-        coords_arr = np.asarray(coords, dtype=np.float64)
-        shifts_arr = np.asarray(shifts, dtype=np.float64)
-
-        if coords_arr.ndim != 2 or coords_arr.shape[1] != 2:
-            raise ValueError(f"coords must have shape (N, 2), got {coords_arr.shape}")
-        if shifts_arr.ndim != 2 or shifts_arr.shape[1] != 2:
-            raise ValueError(f"shifts must have shape (N, 2), got {shifts_arr.shape}")
-        if coords_arr.shape[0] != shifts_arr.shape[0]:
-            raise ValueError(
-                f"Sample count mismatch: coords has {coords_arr.shape[0]}, "
-                f"shifts has {shifts_arr.shape[0]}"
-            )
-
+    def _fit_impl(self, coords: np.ndarray, shifts: np.ndarray) -> None:
         self.model = DecisionTreeRegressor(
             criterion=self.criterion,
             max_depth=self.max_depth,
@@ -78,31 +64,15 @@ class DecisionTreeSpatialRegressor:
             min_impurity_decrease=self.min_impurity_decrease,
             random_state=self.random_state,
         )
-        self.model.fit(coords_arr, shifts_arr)
-        self._is_fitted = True
-        return self
+        self.model.fit(coords, shifts)
 
-    def predict(self, coords: np.ndarray) -> np.ndarray:
-        """Predict 2D shifts for query coordinates.
-
-        Args:
-            coords: Array of shape (M, 2) containing [northing, easting].
-
-        Returns:
-            Array of shape (M, 2) containing predicted [shift_dn, shift_de].
-
-        Raises:
-            RuntimeError: If model is called before fitting.
-            ValueError: If query coords array dimensions are invalid.
-        """
-        if not self._is_fitted or self.model is None:
+    def _predict_impl(self, coords: np.ndarray) -> np.ndarray:
+        if self.model is None:
             raise RuntimeError("Model is not fitted. Call fit() before predict().")
+        return np.asarray(self.model.predict(coords), dtype=np.float64)
 
-        coords_arr = np.asarray(coords, dtype=np.float64)
-        if coords_arr.ndim != 2 or coords_arr.shape[1] != 2:
-            raise ValueError(f"Query coords must have shape (M, 2), got {coords_arr.shape}")
-
-        return self.model.predict(coords_arr)
+    def _runtime_dependencies(self) -> tuple[str, ...]:
+        return ("scikit-learn",)
 
     @property
     def n_leaves(self) -> int:
@@ -118,9 +88,9 @@ class DecisionTreeSpatialRegressor:
             raise RuntimeError("Model is not fitted.")
         return int(self.model.get_depth())
 
-    def get_params(self) -> Dict[str, Any]:
+    def get_params(self) -> dict[str, Any]:
         """Return dictionary of hyperparameters and tree diagnostics."""
-        params: Dict[str, Any] = {
+        params: dict[str, Any] = {
             "criterion": self.criterion,
             "max_depth": self.max_depth,
             "min_samples_split": self.min_samples_split,

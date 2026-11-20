@@ -1,7 +1,9 @@
 """Unit tests for DecisionTreeSpatialRegressor."""
 
 import unittest
+
 import numpy as np
+
 from src.models.decision_tree_regressor import DecisionTreeSpatialRegressor
 
 
@@ -12,32 +14,38 @@ class TestDecisionTreeSpatialRegressor(unittest.TestCase):
         """Create synthetic 2D spatial coordinate test data."""
         np.random.seed(42)
         # 10 distinct coordinates on a regular 2D grid
-        self.coords = np.array([
-            [100.0, 200.0],
-            [100.0, 300.0],
-            [200.0, 200.0],
-            [200.0, 300.0],
-            [300.0, 200.0],
-            [300.0, 300.0],
-            [400.0, 200.0],
-            [400.0, 300.0],
-            [500.0, 200.0],
-            [500.0, 300.0],
-        ], dtype=np.float64)
+        self.coords = np.array(
+            [
+                [100.0, 200.0],
+                [100.0, 300.0],
+                [200.0, 200.0],
+                [200.0, 300.0],
+                [300.0, 200.0],
+                [300.0, 300.0],
+                [400.0, 200.0],
+                [400.0, 300.0],
+                [500.0, 200.0],
+                [500.0, 300.0],
+            ],
+            dtype=np.float64,
+        )
 
         # Distinct 2D shift values for each point
-        self.shifts = np.array([
-            [0.10, -0.20],
-            [0.15, -0.25],
-            [0.20, -0.10],
-            [0.25, -0.15],
-            [0.30,  0.00],
-            [0.35,  0.05],
-            [0.40,  0.10],
-            [0.45,  0.15],
-            [0.50,  0.20],
-            [0.55,  0.25],
-        ], dtype=np.float64)
+        self.shifts = np.array(
+            [
+                [0.10, -0.20],
+                [0.15, -0.25],
+                [0.20, -0.10],
+                [0.25, -0.15],
+                [0.30, 0.00],
+                [0.35, 0.05],
+                [0.40, 0.10],
+                [0.45, 0.15],
+                [0.50, 0.20],
+                [0.55, 0.25],
+            ],
+            dtype=np.float64,
+        )
 
     def test_unconstrained_exact_memorization(self) -> None:
         """Unconstrained tree must achieve exact zero error on distinct training nodes."""

@@ -66,23 +66,27 @@ def build_component_quadtree(
         valid = [c for c in (c00, c01, c10, c11, cc) if c is not None]
         if not valid:
             if d < min_depth:
-                stack.extend([
-                    (n0, nm, e0, em, d + 1),
-                    (n0, nm, em, e1, d + 1),
-                    (nm, n1, e0, em, d + 1),
-                    (nm, n1, em, e1, d + 1),
-                ])
+                stack.extend(
+                    [
+                        (n0, nm, e0, em, d + 1),
+                        (n0, nm, em, e1, d + 1),
+                        (nm, n1, e0, em, d + 1),
+                        (nm, n1, em, e1, d + 1),
+                    ]
+                )
             continue
 
         all_valid = len(valid) == 5
         if not all_valid:
             if d < max_depth:
-                stack.extend([
-                    (n0, nm, e0, em, d + 1),
-                    (n0, nm, em, e1, d + 1),
-                    (nm, n1, e0, em, d + 1),
-                    (nm, n1, em, e1, d + 1),
-                ])
+                stack.extend(
+                    [
+                        (n0, nm, e0, em, d + 1),
+                        (n0, nm, em, e1, d + 1),
+                        (nm, n1, e0, em, d + 1),
+                        (nm, n1, em, e1, d + 1),
+                    ]
+                )
             continue
 
         v00 = c00[comp_idx]
@@ -97,8 +101,14 @@ def build_component_quadtree(
 
         # Secondary check: 4 sub-quadrant centers (u, v in {0.25, 0.75})
         if err <= tol and d >= min_depth:
-            for u, n_sub in ((0.25, n0 + 0.25 * (n1 - n0)), (0.75, n0 + 0.75 * (n1 - n0))):
-                for v, e_sub in ((0.25, e0 + 0.25 * (e1 - e0)), (0.75, e0 + 0.75 * (e1 - e0))):
+            for u, n_sub in (
+                (0.25, n0 + 0.25 * (n1 - n0)),
+                (0.75, n0 + 0.75 * (n1 - n0)),
+            ):
+                for v, e_sub in (
+                    (0.25, e0 + 0.25 * (e1 - e0)),
+                    (0.75, e0 + 0.75 * (e1 - e0)),
+                ):
                     cs = get_shift(n_sub, e_sub)
                     if cs is None:
                         err = float("inf")
@@ -114,25 +124,29 @@ def build_component_quadtree(
                     break
 
         if (d < min_depth or err > tol) and d < max_depth:
-            stack.extend([
-                (n0, nm, e0, em, d + 1),
-                (n0, nm, em, e1, d + 1),
-                (nm, n1, e0, em, d + 1),
-                (nm, n1, em, e1, d + 1),
-            ])
+            stack.extend(
+                [
+                    (n0, nm, e0, em, d + 1),
+                    (n0, nm, em, e1, d + 1),
+                    (nm, n1, e0, em, d + 1),
+                    (nm, n1, em, e1, d + 1),
+                ]
+            )
         else:
-            leaves.append({
-                "n_min": n0,
-                "n_max": n1,
-                "e_min": e0,
-                "e_max": e1,
-                "v00": v00,
-                "v01": v01,
-                "v10": v10,
-                "v11": v11,
-                "depth": d,
-                "center_err": err,
-            })
+            leaves.append(
+                {
+                    "n_min": n0,
+                    "n_max": n1,
+                    "e_min": e0,
+                    "e_max": e1,
+                    "v00": v00,
+                    "v01": v01,
+                    "v10": v10,
+                    "v11": v11,
+                    "depth": d,
+                    "center_err": err,
+                }
+            )
 
     return pd.DataFrame(leaves)
 
@@ -141,10 +155,14 @@ def generate_for_tolerance(
     get_shift, tol: float, tag: str, out_dir: Path, max_depth: int = 15
 ) -> None:
     """Generate and save both dN and dE grids for a given tolerance."""
-    print(f"\n--- Generating Adaptive Grids for {tag} (tol={tol:.4f} m, max_depth={max_depth}) ---")
+    print(
+        f"\n--- Generating Adaptive Grids for {tag} (tol={tol:.4f} m, max_depth={max_depth}) ---"
+    )
     for name, idx in [("dn", 0), ("de", 1)]:
         t0 = time.perf_counter()
-        df = build_component_quadtree(get_shift, comp_idx=idx, tol=tol, max_depth=max_depth)
+        df = build_component_quadtree(
+            get_shift, comp_idx=idx, tol=tol, max_depth=max_depth
+        )
         dt = time.perf_counter() - t0
         out_path = out_dir / f"adaptive_{tag}_{name}.parquet"
         df.to_parquet(out_path, index=False)
@@ -183,7 +201,9 @@ def main() -> None:
     get_shift = make_shift_fn()
     for tag in args.tolerances:
         tol_val, max_d = tol_map[tag]
-        generate_for_tolerance(get_shift, tol=tol_val, tag=tag, out_dir=out_dir, max_depth=max_d)
+        generate_for_tolerance(
+            get_shift, tol=tol_val, tag=tag, out_dir=out_dir, max_depth=max_d
+        )
 
 
 if __name__ == "__main__":

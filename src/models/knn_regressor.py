@@ -2,20 +2,16 @@
 
 from __future__ import annotations
 
-from typing import Literal, Sequence
+from typing import Literal
 
 import numpy as np
 from sklearn.neighbors import KNeighborsRegressor
 
+from src.models.base import BaseGridShiftModel
 
-class KNNSpatialRegressor:
-    """K-Nearest Neighbors regressor for 2D planar coordinate distortion shifts.
 
-    Maps planar coordinates :math:`(N, E) \\mapsto (\\delta N, \\delta E)`
-    using Euclidean distance queries over known spatial anchor nodes.
-
-    Supports both uniform neighborhood averaging and inverse distance weighting (IDW).
-    """
+class KNNSpatialRegressor(BaseGridShiftModel):
+    """K-Nearest Neighbors regressor for 2D planar coordinate distortion shifts."""
 
     def __init__(
         self,
@@ -24,13 +20,7 @@ class KNNSpatialRegressor:
         algorithm: str = "kd_tree",
         leaf_size: int = 30,
     ) -> None:
-        """Initialize the spatial KNN regressor.
-
-        :param n_neighbors: Number of nearest spatial neighbors ($K$).
-        :param weights: Weighting scheme: ``'uniform'`` or ``'distance'`` (IDW).
-        :param algorithm: Nearest-neighbor search algorithm (default ``'kd_tree'``).
-        :param leaf_size: Leaf size passed to the KDTree.
-        """
+        super().__init__()
         self.n_neighbors = int(n_neighbors)
         self.weights = weights
         self.algorithm = algorithm
@@ -43,97 +33,51 @@ class KNNSpatialRegressor:
             leaf_size=self.leaf_size,
             metric="euclidean",
         )
-        self._is_fitted = False
 
-    @property
-    def is_fitted(self) -> bool:
-        """Return True if the estimator has been fitted."""
-        return self._is_fitted
-
-    def fit(
-        self,
-        st70_n: Sequence[float] | np.ndarray,
-        st70_e: Sequence[float] | np.ndarray,
-        dn: Sequence[float] | np.ndarray,
-        de: Sequence[float] | np.ndarray,
-    ) -> KNNSpatialRegressor:
-        """Fit the KNN regressor on known spatial anchor points.
-
-        :param st70_n: Stereo 70 Northing coordinates (meters), shape ``(N,)``.
-        :param st70_e: Stereo 70 Easting coordinates (meters), shape ``(N,)``.
-        :param dn: Planimetric Northing shift :math:`\\delta N` (meters), shape ``(N,)``.
-        :param de: Planimetric Easting shift :math:`\\delta E` (meters), shape ``(N,)``.
-        :return: Fitted self instance.
-        """
-        coords = np.column_stack([
-            np.asarray(st70_n, dtype=np.float64).ravel(),
-            np.asarray(st70_e, dtype=np.float64).ravel(),
-        ])
-        targets = np.column_stack([
-            np.asarray(dn, dtype=np.float64).ravel(),
-            np.asarray(de, dtype=np.float64).ravel(),
-        ])
-
-        if coords.shape[0] != targets.shape[0]:
-            raise ValueError(
-                f"Mismatch in sample counts: coords={coords.shape[0]}, targets={targets.shape[0]}"
-            )
+    def _fit_impl(self, coords: np.ndarray, shifts: np.ndarray) -> None:
         if coords.shape[0] < self.n_neighbors:
             raise ValueError(
                 f"Sample count {coords.shape[0]} is less than n_neighbors {self.n_neighbors}"
             )
+        self._model.fit(coords, shifts)
 
-        self._model.fit(coords, targets)
-        self._is_fitted = True
-        return self
-
-    def predict(
-        self,
-        st70_n: Sequence[float] | np.ndarray,
-        st70_e: Sequence[float] | np.ndarray,
-    ) -> tuple[np.ndarray, np.ndarray]:
-        """Predict planimetric shifts :math:`(\\delta N, \\delta E)` at query coordinates.
-
-        :param st70_n: Query Northing coordinates (meters), shape ``(M,)``.
-        :param st70_e: Query Easting coordinates (meters), shape ``(M,)``.
-        :return: Tuple of ``(pred_dn, pred_de)`` arrays of shape ``(M,)``.
-        """
-        if not self._is_fitted:
-            raise RuntimeError("Estimator must be fitted before calling predict().")
-
-        coords = np.column_stack([
-            np.asarray(st70_n, dtype=np.float64).ravel(),
-            np.asarray(st70_e, dtype=np.float64).ravel(),
-        ])
-        preds = self._model.predict(coords)
-        pred_dn = preds[:, 0]
-        pred_de = preds[:, 1]
-        return pred_dn, pred_de
+    def _predict_impl(self, coords: np.ndarray) -> np.ndarray:
+        return np.asarray(self._model.predict(coords), dtype=np.float64)
 
     def kneighbors(
         self,
-        st70_n: Sequence[float] | np.ndarray,
-        st70_e: Sequence[float] | np.ndarray,
+        coords: np.ndarray,
         n_neighbors: int | None = None,
         return_distance: bool = True,
     ) -> tuple[np.ndarray, np.ndarray] | np.ndarray:
-        """Find the K-neighbors of a point.
+        """Find the K-neighbors of query coordinates.
 
-        :param st70_n: Query Northing coordinates (meters).
-        :param st70_e: Query Easting coordinates (meters).
-        :param n_neighbors: Number of neighbors required (defaults to model's ``n_neighbors``).
-        :param return_distance: Whether to return distances.
-        :return: Distances and indices of the nearest neighbors.
+        :param coords: Query coordinates ``[st70_n, st70_e]`` in meters, shape ``(M, 2)``.
+        :type coords: np.ndarray
+        :param n_neighbors: Optional number of neighbors (defaults to ``self.n_neighbors``).
+        :type n_neighbors: int | None
+        :param return_distance: Whether to return distances alongside neighbor indices.
+        :type return_distance: bool
+        :return: Distances and indices (or indices only if ``return_distance=False``).
+        :rtype: tuple[np.ndarray, np.ndarray] | np.ndarray
+        :raises RuntimeError: If called before fitting.
         """
         if not self._is_fitted:
             raise RuntimeError("Estimator must be fitted before calling kneighbors().")
-
-        coords = np.column_stack([
-            np.asarray(st70_n, dtype=np.float64).ravel(),
-            np.asarray(st70_e, dtype=np.float64).ravel(),
-        ])
+        coords_arr = self._validate_coords(coords, "coords")
         return self._model.kneighbors(
-            coords,
+            coords_arr,
             n_neighbors=n_neighbors,
             return_distance=return_distance,
         )
+
+    def _runtime_dependencies(self) -> tuple[str, ...]:
+        return ("scikit-learn",)
+
+    def _grid_lookup_bytes(self) -> int:
+        if self._is_fitted and hasattr(self._model, "_fit_X"):
+            return int(
+                self._model._fit_X.nbytes
+                + getattr(self._model, "_y", np.empty(0)).nbytes
+            )
+        return 0

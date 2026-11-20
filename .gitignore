@@ -16,6 +16,7 @@ venv/
 ENV/
 .ruff_cache/
 .pytest_cache/
+.cache/
 
 # Distribution / packaging
 build/

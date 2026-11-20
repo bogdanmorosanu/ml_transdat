@@ -1,17 +1,15 @@
-"""Core reusable framework for coordinate transformation metrics, sampling, and visualization."""
+"""Core experiment orchestration and lifecycle base classes."""
 
-from src.core.base_unit import ResearchUnit
-from src.core.metrics import (
-    compute_errors,
-    format_scorecard_table,
-    grs80_radii,
-    summarize_errors,
+from src.core.base_unit import (
+    ExperimentModelSpec,
+    GridShiftExperimentUnit,
+    ResearchUnit,
+    TransformationExperimentUnit,
 )
 
 __all__ = [
-    "compute_errors",
-    "format_scorecard_table",
-    "grs80_radii",
-    "summarize_errors",
+    "ExperimentModelSpec",
+    "GridShiftExperimentUnit",
     "ResearchUnit",
+    "TransformationExperimentUnit",
 ]

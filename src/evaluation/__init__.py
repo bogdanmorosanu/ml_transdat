@@ -1,0 +1,43 @@
+"""Unified evaluation, metrics, and scorecard generation."""
+
+from src.evaluation.evaluator import EvaluationResult, ModelEvaluator, extract_metric
+from src.evaluation.metrics import (
+    METRIC_LABELS,
+    METRIC_META,
+    TOLERANCE_THRESHOLDS_M,
+    MetricGroup,
+    MetricMeta,
+    MetricSpec,
+    MetricType,
+    compute_coordinate_errors,
+    compute_errors,
+    compute_shift_errors,
+    dataframe_to_markdown,
+    format_metric_label,
+    format_scorecard_table,
+    grs80_radii,
+    resolve_metric_types,
+    summarize_errors,
+)
+
+__all__ = [
+    "METRIC_LABELS",
+    "METRIC_META",
+    "TOLERANCE_THRESHOLDS_M",
+    "EvaluationResult",
+    "MetricGroup",
+    "MetricMeta",
+    "MetricSpec",
+    "MetricType",
+    "ModelEvaluator",
+    "compute_coordinate_errors",
+    "compute_errors",
+    "compute_shift_errors",
+    "dataframe_to_markdown",
+    "extract_metric",
+    "format_metric_label",
+    "format_scorecard_table",
+    "grs80_radii",
+    "resolve_metric_types",
+    "summarize_errors",
+]

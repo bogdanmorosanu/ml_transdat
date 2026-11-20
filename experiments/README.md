@@ -55,4 +55,7 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.knn_spatial_regressor.ru
 
 # Run Decision Tree 2D Spatial Regressor
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.decision_tree_regressor.run_unit
+
+# Run Adaptive Quadtree Grid
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.adaptive_quadtree_grid.run_unit
 ```

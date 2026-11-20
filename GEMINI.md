@@ -43,6 +43,7 @@ To keep context lean while providing deep domain expertise, select and read only
 ---
 
 ## Workspace Layout & Living Documentation
+- [`docs/architecture.md`](docs/architecture.md): Canonical code architecture, `src/` module layering, model/data/eval/viz contracts, and extension checklist.
 - [`docs/core_engine.md`](docs/core_engine.md): Mathematical formulations, `TransRO` API usage, projection equations, and precision standards.
 - [`docs/grid.md`](docs/grid.md): `.spg` binary grid specification, interpolation mechanics, and distortion coverage.
 - [`docs/research/GEMINI.md`](docs/research/GEMINI.md), [`docs/research/roadmap.md`](docs/research/roadmap.md), [`docs/research/narrative.md`](docs/research/narrative.md): Decoupled, reference-first research units, knowledge graph, and causal scientific evolution.

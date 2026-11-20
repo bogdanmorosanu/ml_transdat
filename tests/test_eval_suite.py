@@ -9,17 +9,16 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from src.core.metrics import compute_errors, summarize_errors
-from src.core.viz import generate_standard_diagnostic_suite
-
-BENCHMARK_PATH = Path("data/grids/ro_grid_4x4.parquet")
+from src.data import GridId, get_default_grid_manager
+from src.evaluation import EvaluationResult, compute_errors, summarize_errors
+from src.viz import PlotDispatcher, PlotGroup, PlotType
 
 
 class TestEvalSuite(unittest.TestCase):
-    """Verify metric calculations and diagnostic outputs in src.core."""
+    """Verify metric calculations and diagnostic outputs in src.evaluation and src.viz."""
 
     def _sample_ref(self, n: int = 32) -> pd.DataFrame:
-        df = pd.read_parquet(BENCHMARK_PATH)
+        df = get_default_grid_manager().get(GridId.RO_GRID_4X4).df
         return df.iloc[:n].copy()
 
     def test_etrs89_to_st70_known_offset(self) -> None:
@@ -68,15 +67,27 @@ class TestEvalSuite(unittest.TestCase):
         summary = summarize_errors(err_df)
 
         with tempfile.TemporaryDirectory() as tmp:
-            outputs = generate_standard_diagnostic_suite(
+            res = EvaluationResult(
+                model_name="unit_test_dummy",
+                dataset_id="ro_grid_4x4",
+                direction="etrs89_to_st70",
                 err_df=err_df,
                 summary=summary,
+                eval_time_sec=0.01,
+                throughput_pts_per_sec=6400.0,
+            )
+            outputs = PlotDispatcher().render(
+                eval_result=res,
                 out_dir=Path(tmp),
-                model_name="unit_test_dummy",
-                direction="etrs89_to_st70",
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 dpi=72,
             )
-            for key in ("spatial_error", "hist_ecdf", "signed_scatter", "subcell_heatmap"):
+            for key in (
+                PlotType.SPATIAL_ERROR,
+                PlotType.HIST_ECDF,
+                PlotType.SIGNED_SCATTER,
+                PlotType.SUBCELL_HEATMAP,
+            ):
                 self.assertIn(key, outputs)
                 self.assertTrue(outputs[key].is_file(), f"Missing output {key}")
 

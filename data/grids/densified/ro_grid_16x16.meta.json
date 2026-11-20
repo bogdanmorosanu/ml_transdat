@@ -1,7 +1,0 @@
-{
-  "name": "ro_grid_16x16",
-  "description": "16x16 subgrid (687.5 m spacing) across valid Romania SPG cells.",
-  "point_count": 586063,
-  "subgrid_spacing_m": 687.5,
-  "parquet_file": "data\\grids\\ro_grid_16x16.parquet"
-}

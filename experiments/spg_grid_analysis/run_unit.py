@@ -9,17 +9,15 @@ from typing import Any
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 from pytransdat.trans_grid import Grid2D
-from src.core.base_unit import ResearchUnit
-from src.core.metrics import summarize_errors
-from src.core.viz import generate_standard_diagnostic_suite, plot_vector_quiver
+from src.core.base_unit import TransformationExperimentUnit
+from src.data import GridId
+from src.evaluation import EvaluationResult, summarize_errors
+from src.viz import PlotGroup, plot_vector_quiver
 
-BENCHMARK_PATH = Path("data/grids/ro_grid_4x4.parquet")
 
-
-class SpgGridAnalysisUnit(ResearchUnit):
+class SpgGridAnalysisUnit(TransformationExperimentUnit):
     """Research Unit 01: SPG 2D distortion grid profiling."""
 
     @property
@@ -32,16 +30,13 @@ class SpgGridAnalysisUnit(ResearchUnit):
 
     def run(self) -> dict[str, Any]:
         t0 = time.perf_counter()
-        df = pd.read_parquet(BENCHMARK_PATH)
+        dataset = self.load_grid(GridId.RO_GRID_4X4)
+        df = dataset.df
         grid2d = Grid2D()
 
-        # Extract 2D bicubic shifts on benchmark grid
-        dn_list, de_list = grid2d.interp(
-            df["st70_n"].tolist(),
-            df["st70_e"].tolist(),
-        )
-        dn = np.asarray(dn_list, dtype=np.float64)
-        de = np.asarray(de_list, dtype=np.float64)
+        shifts = dataset.true_shifts
+        dn = shifts[:, 0]
+        de = shifts[:, 1]
         mag = np.hypot(dn, de)
 
         e_km = df["st70_e"].to_numpy(dtype=np.float64) * 1e-3
@@ -53,7 +48,9 @@ class SpgGridAnalysisUnit(ResearchUnit):
                 "spg_shift_dn",
                 dn,
                 "RdBu_r",
-                mcolors.TwoSlopeNorm(vmin=float(dn.min()), vcenter=0.0, vmax=float(dn.max())),
+                mcolors.TwoSlopeNorm(
+                    vmin=float(dn.min()), vcenter=0.0, vmax=float(dn.max())
+                ),
                 "Northing Shift dN (m)",
                 f"SPG Bicubic Grid Shift — Northing dN ({grid2d.file_name})",
             ),
@@ -61,7 +58,9 @@ class SpgGridAnalysisUnit(ResearchUnit):
                 "spg_shift_de",
                 de,
                 "RdBu_r",
-                mcolors.TwoSlopeNorm(vmin=float(de.min()), vcenter=0.0, vmax=float(de.max())),
+                mcolors.TwoSlopeNorm(
+                    vmin=float(de.min()), vcenter=0.0, vmax=float(de.max())
+                ),
                 "Easting Shift dE (m)",
                 f"SPG Bicubic Grid Shift — Easting dE ({grid2d.file_name})",
             ),
@@ -125,16 +124,20 @@ class SpgGridAnalysisUnit(ResearchUnit):
         shift_df["err_2d_m"] = mag
         summary = summarize_errors(shift_df)
 
-        diag_paths = generate_standard_diagnostic_suite(
+        diag_res = EvaluationResult(
+            model_name="spg_grid_shifts",
+            dataset_id=dataset.grid_id.value,
+            direction="2d_bicubic",
             err_df=shift_df,
             summary=summary,
-            out_dir=self.plots_dir,
-            model_name="spg_grid_shifts",
-            direction="2d_bicubic",
-            dpi=200,
+            eval_time_sec=0.0,
+            throughput_pts_per_sec=0.0,
+        )
+        diag_paths = self.render_plots(
+            diag_res, plots=PlotGroup.STANDARD_DIAGNOSTIC, dpi=200
         )
         for k, v in diag_paths.items():
-            plot_files[k] = v.name
+            plot_files[k.value] = v.name
 
         # Save brief
         elapsed = time.perf_counter() - t0
@@ -161,7 +164,9 @@ class SpgGridAnalysisUnit(ResearchUnit):
         }
         self.save_brief(brief)
         print(f"=== Research Unit 01 [{self.unit_name}] Complete ===")
-        print(f"Shift Magnitude: Mean={brief['statistics']['mag_mean_m']:.4f} m | Max={brief['statistics']['mag_max_m']:.4f} m")
+        print(
+            f"Shift Magnitude: Mean={brief['statistics']['mag_mean_m']:.4f} m | Max={brief['statistics']['mag_max_m']:.4f} m"
+        )
         return brief
 
 
