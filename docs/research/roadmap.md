@@ -14,6 +14,7 @@ flowchart TD
     PROJ["pyproj_baseline<br><b>Status: Validated</b><br>Evaluates EPSG:3844 (RMSE=0.43m, max=2.82m)"]
     H2D["helmert2d_baseline<br><b>Status: Validated</b><br>Refitted 2D conformal floor (RMSE=0.44m, max=2.68m)"]
     KNN["knn_spatial_regressor<br><b>Status: Validated</b><br>1st ML baseline: 3.5cm RMSE via K=4 IDW (92% reduction)"]
+    DT["decision_tree_regressor<br><b>Status: Validated</b><br>Step-lookup scaling: 8.2cm (11km) -> 0.4cm (16x16, 89MB)"]
     ML["Next: Continuous & Neural Surface Models<br><b>Status: Exploring</b><br>Goal: Sub-centimeter precision (<0.01m) via RBF / MLP"]
 
     SPG -->|"motivates"| PROJ
@@ -21,6 +22,8 @@ flowchart TD
     PROJ -->|"establishes floor for"| ML
     H2D -->|"provides analytical base for"| KNN
     KNN -->|"establishes local baseline for"| ML
+    KNN -->|"contrasted with"| DT
+    DT -->|"motivates smooth interpolation"| ML
 ```
 
 ---
@@ -35,6 +38,8 @@ flowchart TD
 | `helmert2d_baseline` | `Residual ML Models` | `provides base` | Proves `StereoProj + Helmert2D` is analytically invertible ($5.24 \times 10^{-9}\,\text{m}$ round-trip) and leaves clean, zero-bias 2D residuals for ML learning. |
 | `helmert2d_baseline` | `knn_spatial_regressor` | `provides base` | Residuals from `StereoProj + Helmert2D` define the target 2D distortion field for spatial learning. |
 | `knn_spatial_regressor` | `Continuous ML Models` | `establishes local baseline` | Sets the first spatial ML baseline ($0.0353\,\text{m}$ RMSE) and reveals official grid $C^0/C^1$ boundary slope kinks. |
+| `knn_spatial_regressor` | `decision_tree_regressor` | `contrasted with` | Contrasts smooth local distance-weighted blending ($3.5\,\text{cm}$) against orthogonal axis-aligned step plateaus ($8.2\,\text{cm}$ on base nodes). |
+| `decision_tree_regressor` | `Continuous ML Models` | `motivates smooth interpolation` | Proves step-lookup models require massive densification ($586\text{k}$ pts / $89\,\text{MB}$) to reach $4\,\text{mm}$, motivating smooth interpolators. |
 
 ---
 
@@ -46,3 +51,4 @@ flowchart TD
 | [`pyproj_baseline`](pyproj_baseline.md) | `Validated` | Standard `EPSG:3844` vs. ground truth ($\text{RMSE}=0.4348\,\text{m}$, $\text{Max}=2.82\,\text{m}$); proves standard GIS lacks local distortion modeling. | [`experiments/pyproj_baseline/`](../../experiments/pyproj_baseline/README_AI.md) |
 | [`helmert2d_baseline`](helmert2d_baseline.md) | `Validated` | Refitted 4-param 2D conformal Helmert on 2,222 valid nodes ($\text{RMSE}=0.4429\,\text{m}$, $\text{Max}=2.6811\,\text{m}$); optimal linear/conformal floor. | [`experiments/helmert2d_baseline/`](../../experiments/helmert2d_baseline/README_AI.md) |
 | [`knn_spatial_regressor`](knn_spatial_regressor.md) | `Validated` | First non-linear ML baseline ($K=4$ IDW achieves $\text{RMSE}=0.0353\,\text{m}$, $92.1\%$ reduction over floor); discovers piecewise $C^0/C^1$ grid kinks. | [`experiments/knn_spatial_regressor/`](../../experiments/knn_spatial_regressor/README_AI.md) |
+| [`decision_tree_regressor`](decision_tree_regressor.md) | `Validated` | Orthogonal step-plateau scaling ($8.17\,\text{cm}$ on 11 km nodes $\to$ $0.40\,\text{cm}$ on `16x16` at $89.4\,\text{MB}$); impurity pruning compresses $87\%$ ($2.8\,\text{MB}$ at $1.88\,\text{cm}$). | [`experiments/decision_tree_regressor/`](../../experiments/decision_tree_regressor/report.md) | [`experiments/knn_spatial_regressor/`](../../experiments/knn_spatial_regressor/README_AI.md) |
