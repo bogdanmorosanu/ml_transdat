@@ -17,10 +17,14 @@ from src.data.samplers import (
     DEFAULT_SUBGRID_OFFSETS_4X4,
     DEFAULT_SUBGRID_OFFSETS_8X8,
     DEFAULT_SUBGRID_OFFSETS_16X16,
+    generate_adaptive_midpoints_df,
     generate_densified_grid_df,
     generate_single_cell_workload_df,
     generate_spg_nodes_df,
+    generate_stratified_continuous_df,
+    iter_adaptive_midpoint_chunks,
     iter_densified_grid_chunks,
+    iter_stratified_continuous_chunks,
 )
 
 
@@ -41,6 +45,11 @@ class GridId(str, Enum):
     ADAPTIVE_1MM_DE = "adaptive_1mm_de"
     CORRIDOR_SNW = "ro_corridor_snw"
     SINGLE_CELL_10K = "single_cell_10k"
+    RO_TEST_UNIFORM_4X4 = "ro_test_uniform_4x4"
+    RO_TEST_UNIFORM_8X8 = "ro_test_uniform_8x8"
+    RO_TEST_UNIFORM_16X16 = "ro_test_uniform_16x16"
+    RO_TEST_ADAPTIVE_3MM_MID = "ro_test_adaptive_3mm_mid"
+    RO_TEST_ADAPTIVE_1MM_MID = "ro_test_adaptive_1mm_mid"
     CUSTOM = "custom"
 
 
@@ -52,6 +61,9 @@ class _GridSpec:
     meta_path: Path | None = None
     generator: Callable[[], pd.DataFrame] | None = None
     lazy_offsets: tuple[float, ...] | None = None
+    lazy_chunk_generator: (
+        Callable[[int], Iterator[tuple[np.ndarray, np.ndarray]]] | None
+    ) = None
 
 
 _GRID_REGISTRY: dict[GridId, _GridSpec] = {
@@ -108,6 +120,38 @@ _GRID_REGISTRY: dict[GridId, _GridSpec] = {
     ),
     GridId.SINGLE_CELL_10K: _GridSpec(
         generator=generate_single_cell_workload_df,
+    ),
+    GridId.RO_TEST_UNIFORM_4X4: _GridSpec(
+        generator=lambda: generate_stratified_continuous_df(strata_per_axis=4, seed=42),
+        lazy_chunk_generator=lambda b: iter_stratified_continuous_chunks(
+            strata_per_axis=4, seed=42, batch_size=b
+        ),
+    ),
+    GridId.RO_TEST_UNIFORM_8X8: _GridSpec(
+        generator=lambda: generate_stratified_continuous_df(strata_per_axis=8, seed=42),
+        lazy_chunk_generator=lambda b: iter_stratified_continuous_chunks(
+            strata_per_axis=8, seed=42, batch_size=b
+        ),
+    ),
+    GridId.RO_TEST_UNIFORM_16X16: _GridSpec(
+        generator=lambda: generate_stratified_continuous_df(
+            strata_per_axis=16, seed=42
+        ),
+        lazy_chunk_generator=lambda b: iter_stratified_continuous_chunks(
+            strata_per_axis=16, seed=42, batch_size=b
+        ),
+    ),
+    GridId.RO_TEST_ADAPTIVE_3MM_MID: _GridSpec(
+        generator=lambda: generate_adaptive_midpoints_df(tier="3mm"),
+        lazy_chunk_generator=lambda b: iter_adaptive_midpoint_chunks(
+            tier="3mm", batch_size=b
+        ),
+    ),
+    GridId.RO_TEST_ADAPTIVE_1MM_MID: _GridSpec(
+        generator=lambda: generate_adaptive_midpoints_df(tier="1mm"),
+        lazy_chunk_generator=lambda b: iter_adaptive_midpoint_chunks(
+            tier="1mm", batch_size=b
+        ),
     ),
 }
 
@@ -306,8 +350,13 @@ class GridManager:
             or (spec.parquet_path is not None and spec.parquet_path.is_file())
             or (disk_cache_file is not None and disk_cache_file.is_file())
         )
-        if not is_materialized and spec.lazy_offsets is not None:
-            return iter_densified_grid_chunks(spec.lazy_offsets, batch_size=batch_size)
+        if not is_materialized:
+            if spec.lazy_chunk_generator is not None:
+                return spec.lazy_chunk_generator(batch_size)
+            if spec.lazy_offsets is not None:
+                return iter_densified_grid_chunks(
+                    spec.lazy_offsets, batch_size=batch_size
+                )
         return self.get(gid).iter_chunks(batch_size=batch_size)
 
     def get_adaptive_pair(self, tier: str) -> tuple[GridDataset, GridDataset]:

@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 from collections.abc import Iterator, Sequence
 from itertools import pairwise
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -368,3 +369,294 @@ def generate_single_cell_workload_df(
             "shift_de_m": np.asarray(de_list, dtype=np.float64),
         }
     )
+
+
+_CACHED_VALID_SPG_CELLS: list[tuple[int, int]] | None = None
+
+
+def get_valid_spg_cells(engine: TransRO | None = None) -> list[tuple[int, int]]:
+    """Return cached (row_idx, col_idx) pairs for all valid interior SPG cells in Romania.
+
+    An SPG cell (r, c) is considered valid if pytransdat successfully interpolates at
+    its cell midpoint (r + 0.5, c + 0.5).
+
+    :param engine: Optional initialized ``TransRO`` instance.
+    :type engine: TransRO | None
+    :return: List of valid ``(row_idx, col_idx)`` tuples.
+    :rtype: list[tuple[int, int]]
+    """
+    global _CACHED_VALID_SPG_CELLS
+    if _CACHED_VALID_SPG_CELLS is not None:
+        return _CACHED_VALID_SPG_CELLS
+
+    active_engine = engine if engine is not None else TransRO()
+    grid2d = active_engine._t_gr2d
+
+    valid: list[tuple[int, int]] = []
+    for r in range(grid2d.r_count - 1):
+        for c in range(grid2d.c_count - 1):
+            n_mid = grid2d.n_min + (r + 0.5) * grid2d.n_step
+            e_mid = grid2d.e_min + (c + 0.5) * grid2d.e_step
+            try:
+                grid2d.interp([n_mid], [e_mid])
+                valid.append((r, c))
+            except PyTransDatError:
+                pass
+
+    _CACHED_VALID_SPG_CELLS = valid
+    return _CACHED_VALID_SPG_CELLS
+
+
+def generate_stratified_continuous_df(
+    strata_per_axis: int = 4,
+    seed: int = 42,
+    engine: TransRO | None = None,
+) -> pd.DataFrame:
+    """Generate a stratified continuous test benchmark with jittered points inside subcells.
+
+    Divides each valid SPG 11 km cell into ``(strata_per_axis x strata_per_axis)`` subcells
+    and places exactly one uniformly distributed pseudo-random continuous point inside each
+    subcell. Uses deterministic per-cell seeding to guarantee bit-for-bit reproducibility.
+
+    :param strata_per_axis: Number of strata along each coordinate axis (e.g. 4 for 4x4, 8 for 8x8, 16 for 16x16).
+    :type strata_per_axis: int
+    :param seed: Master random seed.
+    :type seed: int
+    :param engine: Optional initialized ``TransRO`` instance.
+    :type engine: TransRO | None
+    :return: DataFrame containing ``point_id``, ``row_idx``, ``col_idx``, ``u``, ``v``,
+             ``st70_n``, ``st70_e``, ``st70_h``, ``shift_dn_m``, ``shift_de_m``.
+    :rtype: pd.DataFrame
+    :raises ValueError: If ``strata_per_axis`` is less than 1.
+    """
+    if strata_per_axis < 1:
+        raise ValueError(f"strata_per_axis must be >= 1, got {strata_per_axis}")
+
+    active_engine = engine if engine is not None else TransRO()
+    grid2d = active_engine._t_gr2d
+    valid_cells = get_valid_spg_cells(active_engine)
+
+    records: list[dict[str, Any]] = []
+    n_coords: list[float] = []
+    e_coords: list[float] = []
+
+    inv_m = 1.0 / strata_per_axis
+    pid = 0
+    for r, c in valid_cells:
+        cell_seed = (seed * 1_000_003 + r * 1009 + c * 9176) & 0xFFFFFFFF
+        rng = np.random.default_rng(cell_seed)
+        u_jitter = rng.uniform(0.0, 1.0, size=(strata_per_axis, strata_per_axis))
+        v_jitter = rng.uniform(0.0, 1.0, size=(strata_per_axis, strata_per_axis))
+
+        for i in range(strata_per_axis):
+            for j in range(strata_per_axis):
+                u = float((i + u_jitter[i, j]) * inv_m)
+                v = float((j + v_jitter[i, j]) * inv_m)
+                n_val = float(grid2d.n_min + (r + u) * grid2d.n_step)
+                e_val = float(grid2d.e_min + (c + v) * grid2d.e_step)
+                n_coords.append(n_val)
+                e_coords.append(e_val)
+                records.append(
+                    {
+                        "point_id": pid,
+                        "row_idx": r,
+                        "col_idx": c,
+                        "u": u,
+                        "v": v,
+                        "st70_n": n_val,
+                        "st70_e": e_val,
+                        "st70_h": 0.0,
+                    }
+                )
+                pid += 1
+
+    dn_list, de_list = grid2d.interp(n_coords, e_coords)
+    df = pd.DataFrame(records)
+    df["shift_dn_m"] = np.asarray(dn_list, dtype=np.float64)
+    df["shift_de_m"] = np.asarray(de_list, dtype=np.float64)
+    return df
+
+
+def iter_stratified_continuous_chunks(
+    strata_per_axis: int = 4,
+    seed: int = 42,
+    batch_size: int = 8192,
+    engine: TransRO | None = None,
+) -> Iterator[tuple[np.ndarray, np.ndarray]]:
+    """Lazily stream (coords_chunk, shifts_chunk) batches for the stratified continuous benchmark.
+
+    :param strata_per_axis: Number of strata along each coordinate axis.
+    :type strata_per_axis: int
+    :param seed: Master random seed.
+    :type seed: int
+    :param batch_size: Number of points per yielded batch.
+    :type batch_size: int
+    :param engine: Optional initialized ``TransRO`` instance.
+    :type engine: TransRO | None
+    :yield: Pairs of (coords, shifts) float64 arrays of shape (B, 2).
+    :rtype: Iterator[tuple[np.ndarray, np.ndarray]]
+    :raises ValueError: If ``batch_size`` is not positive or ``strata_per_axis`` < 1.
+    """
+    if batch_size <= 0:
+        raise ValueError(f"batch_size must be positive, got {batch_size}")
+    if strata_per_axis < 1:
+        raise ValueError(f"strata_per_axis must be >= 1, got {strata_per_axis}")
+
+    active_engine = engine if engine is not None else TransRO()
+    grid2d = active_engine._t_gr2d
+    valid_cells = get_valid_spg_cells(active_engine)
+
+    coords_buf: list[tuple[float, float]] = []
+    inv_m = 1.0 / strata_per_axis
+
+    for r, c in valid_cells:
+        cell_seed = (seed * 1_000_003 + r * 1009 + c * 9176) & 0xFFFFFFFF
+        rng = np.random.default_rng(cell_seed)
+        u_jitter = rng.uniform(0.0, 1.0, size=(strata_per_axis, strata_per_axis))
+        v_jitter = rng.uniform(0.0, 1.0, size=(strata_per_axis, strata_per_axis))
+
+        for i in range(strata_per_axis):
+            for j in range(strata_per_axis):
+                u = (i + u_jitter[i, j]) * inv_m
+                v = (j + v_jitter[i, j]) * inv_m
+                n_val = float(grid2d.n_min + (r + u) * grid2d.n_step)
+                e_val = float(grid2d.e_min + (c + v) * grid2d.e_step)
+                coords_buf.append((n_val, e_val))
+
+                if len(coords_buf) >= batch_size:
+                    n_c, e_c = zip(*coords_buf, strict=True)
+                    dn_l, de_l = grid2d.interp(list(n_c), list(e_c))
+                    yield (
+                        np.asarray(coords_buf, dtype=np.float64),
+                        np.column_stack(
+                            [
+                                np.asarray(dn_l, dtype=np.float64),
+                                np.asarray(de_l, dtype=np.float64),
+                            ]
+                        ),
+                    )
+                    coords_buf.clear()
+
+    if coords_buf:
+        n_c, e_c = zip(*coords_buf, strict=True)
+        dn_l, de_l = grid2d.interp(list(n_c), list(e_c))
+        yield (
+            np.asarray(coords_buf, dtype=np.float64),
+            np.column_stack(
+                [
+                    np.asarray(dn_l, dtype=np.float64),
+                    np.asarray(de_l, dtype=np.float64),
+                ]
+            ),
+        )
+
+
+def generate_adaptive_midpoints_df(
+    tier: str = "3mm",
+    parquet_path: Path | str | None = None,
+    engine: TransRO | None = None,
+) -> pd.DataFrame:
+    """Generate a curvature-weighted test benchmark using midpoints of adaptive quadtree leaf cells.
+
+    Extracts the exact geometric center (n_mid, e_mid) of each leaf cell. Midpoints represent
+    the locations where bilinear interpolation incurs its maximum deviation from the true
+    bicubic surface, providing a targeted stress test for non-linear distortion.
+
+    :param tier: Adaptive tier name ("3mm", "1mm", "2cm", or "1cm").
+    :type tier: str
+    :param parquet_path: Optional explicit path to the adaptive quadtree Parquet file.
+    :type parquet_path: Path | str | None
+    :param engine: Optional initialized ``TransRO`` instance.
+    :type engine: TransRO | None
+    :return: DataFrame containing ``point_id``, ``st70_n``, ``st70_e``, ``st70_h``,
+             ``shift_dn_m``, ``shift_de_m``, ``depth``.
+    :rtype: pd.DataFrame
+    :raises FileNotFoundError: If the adaptive quadtree file cannot be found.
+    """
+    if parquet_path is not None:
+        path = Path(parquet_path)
+    else:
+        path = Path(f"data/grids/adaptive/adaptive_{tier.lower()}_dn.parquet")
+
+    if not path.is_file():
+        raise FileNotFoundError(f"Adaptive quadtree file not found: {path}")
+
+    df_leaf = pd.read_parquet(path)
+    mid_n = ((df_leaf["n_min"] + df_leaf["n_max"]) * 0.5).to_numpy(dtype=np.float64)
+    mid_e = ((df_leaf["e_min"] + df_leaf["e_max"]) * 0.5).to_numpy(dtype=np.float64)
+
+    active_engine = engine if engine is not None else TransRO()
+    grid2d = active_engine._t_gr2d
+    dn_list, de_list = grid2d.interp(mid_n.tolist(), mid_e.tolist())
+
+    return pd.DataFrame(
+        {
+            "point_id": np.arange(len(mid_n), dtype=np.int64),
+            "st70_n": mid_n,
+            "st70_e": mid_e,
+            "st70_h": np.zeros(len(mid_n), dtype=np.float64),
+            "shift_dn_m": np.asarray(dn_list, dtype=np.float64),
+            "shift_de_m": np.asarray(de_list, dtype=np.float64),
+            "depth": (
+                df_leaf["depth"].to_numpy()
+                if "depth" in df_leaf.columns
+                else np.zeros(len(mid_n), dtype=np.int32)
+            ),
+        }
+    )
+
+
+def iter_adaptive_midpoint_chunks(
+    tier: str = "3mm",
+    parquet_path: Path | str | None = None,
+    batch_size: int = 8192,
+    engine: TransRO | None = None,
+) -> Iterator[tuple[np.ndarray, np.ndarray]]:
+    """Lazily stream (coords_chunk, shifts_chunk) batches for adaptive cell midpoints.
+
+    :param tier: Adaptive tier name ("3mm", "1mm", "2cm", or "1cm").
+    :type tier: str
+    :param parquet_path: Optional explicit path to the adaptive quadtree Parquet file.
+    :type parquet_path: Path | str | None
+    :param batch_size: Number of points per yielded batch.
+    :type batch_size: int
+    :param engine: Optional initialized ``TransRO`` instance.
+    :type engine: TransRO | None
+    :yield: Pairs of (coords, shifts) float64 arrays of shape (B, 2).
+    :rtype: Iterator[tuple[np.ndarray, np.ndarray]]
+    :raises ValueError: If ``batch_size`` is not positive.
+    :raises FileNotFoundError: If the adaptive quadtree file cannot be found.
+    """
+    if batch_size <= 0:
+        raise ValueError(f"batch_size must be positive, got {batch_size}")
+
+    if parquet_path is not None:
+        path = Path(parquet_path)
+    else:
+        path = Path(f"data/grids/adaptive/adaptive_{tier.lower()}_dn.parquet")
+
+    if not path.is_file():
+        raise FileNotFoundError(f"Adaptive quadtree file not found: {path}")
+
+    df_leaf = pd.read_parquet(path)
+    mid_n = ((df_leaf["n_min"] + df_leaf["n_max"]) * 0.5).to_numpy(dtype=np.float64)
+    mid_e = ((df_leaf["e_min"] + df_leaf["e_max"]) * 0.5).to_numpy(dtype=np.float64)
+
+    active_engine = engine if engine is not None else TransRO()
+    grid2d = active_engine._t_gr2d
+    total = len(mid_n)
+
+    for start in range(0, total, batch_size):
+        end = min(start + batch_size, total)
+        n_batch = mid_n[start:end]
+        e_batch = mid_e[start:end]
+        dn_l, de_l = grid2d.interp(n_batch.tolist(), e_batch.tolist())
+        yield (
+            np.column_stack([n_batch, e_batch]),
+            np.column_stack(
+                [
+                    np.asarray(dn_l, dtype=np.float64),
+                    np.asarray(de_l, dtype=np.float64),
+                ]
+            ),
+        )
