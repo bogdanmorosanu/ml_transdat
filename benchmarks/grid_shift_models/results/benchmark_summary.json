@@ -35,9 +35,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.05714779999834718,
-          "fit_time_sec": 0.0012682999986282084,
-          "throughput_pts_per_sec": 637557.3513075528,
+          "eval_time_sec": 0.03701510000246344,
+          "fit_time_sec": 0.001330000002781162,
+          "throughput_pts_per_sec": 984328.0174192468,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -76,9 +76,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.10060209999937797,
-          "fit_time_sec": 0.0010412000010546762,
-          "throughput_pts_per_sec": 362169.3781762536,
+          "eval_time_sec": 0.07604670000000624,
+          "fit_time_sec": 0.001028400001814589,
+          "throughput_pts_per_sec": 479113.49210415455,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -117,9 +117,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.002238599998236168,
-          "fit_time_sec": 0.003681199999846285,
-          "throughput_pts_per_sec": 16275797.386182332,
+          "eval_time_sec": 0.001790500002243789,
+          "fit_time_sec": 0.003940800001146272,
+          "throughput_pts_per_sec": 20349064.481620215,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -158,9 +158,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.002630800001497846,
-          "fit_time_sec": 0.21023309999873163,
-          "throughput_pts_per_sec": 13849399.414343823,
+          "eval_time_sec": 0.0027126999993924983,
+          "fit_time_sec": 0.2074425999999221,
+          "throughput_pts_per_sec": 13431267.743635315,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -199,9 +199,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.01797409999926458,
-          "fit_time_sec": 0.26614150000023074,
-          "throughput_pts_per_sec": 2027083.4145515356,
+          "eval_time_sec": 0.014256300000852207,
+          "fit_time_sec": 0.2676599000005808,
+          "throughput_pts_per_sec": 2555712.2112905877,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -240,9 +240,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.02689969999846653,
-          "fit_time_sec": 1.047326099997008,
-          "throughput_pts_per_sec": 1354476.0723010683,
+          "eval_time_sec": 0.02046350000091479,
+          "fit_time_sec": 1.2500863000022946,
+          "throughput_pts_per_sec": 1780487.208853384,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -281,9 +281,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.09414620000097784,
-          "fit_time_sec": 3.5109415000006265,
-          "throughput_pts_per_sec": 387004.46751564665,
+          "eval_time_sec": 0.06436870000106865,
+          "fit_time_sec": 3.326121999998577,
+          "throughput_pts_per_sec": 566035.9771037027,
           "memory_breakdown": {
             "code_bytes": 6332,
             "dependencies_bytes": 73428937,
@@ -291,6 +291,88 @@
             "grid_lookup_bytes": 0,
             "total_bytes": 74254975,
             "total_mb": 70.81506252288818
+          }
+        },
+        {
+          "name": "Thin Plate Spline (11km)",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.006737505297016321,
+            "std_2d_m": 0.004411175181804026,
+            "rmse_2d_m": 0.008053101521270346,
+            "min_2d_m": 4.888044409429298e-05,
+            "p50_2d_m": 0.005827341032657538,
+            "p90_2d_m": 0.012473624287468864,
+            "p95_2d_m": 0.015358206585767246,
+            "p99_2d_m": 0.021533215428221824,
+            "p99_9_2d_m": 0.029321373082223316,
+            "max_2d_m": 0.03374616386665234,
+            "bias_n_m": 8.90789225126738e-05,
+            "bias_e_m": -0.00013660367240047558,
+            "rmse_n_m": 0.005910881562088084,
+            "rmse_e_m": 0.0054693622362076075,
+            "pass_rates_pct": {
+              "lt_1mm": 2.198435570193495,
+              "lt_1cm": 81.44641141759298,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 1.4544623999972828,
+          "fit_time_sec": 1.3730255999980727,
+          "throughput_pts_per_sec": 25050.492883190425,
+          "memory_breakdown": {
+            "code_bytes": 5962,
+            "dependencies_bytes": 123489234,
+            "model_instance_bytes": 151515,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 123646711,
+            "total_mb": 117.91869258880615
+          }
+        },
+        {
+          "name": "Thin Plate Spline (4x4, 2.7km)",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.0034851248683562693,
+            "std_2d_m": 0.002459410846806311,
+            "rmse_2d_m": 0.004265535964146105,
+            "min_2d_m": 1.3090207177918144e-05,
+            "p50_2d_m": 0.0028835166936844988,
+            "p90_2d_m": 0.006738117702952156,
+            "p95_2d_m": 0.008346156897517021,
+            "p99_2d_m": 0.011810930367223745,
+            "p99_9_2d_m": 0.015908135384796497,
+            "max_2d_m": 0.02175970321169956,
+            "bias_n_m": 4.4844902087112514e-05,
+            "bias_e_m": 9.015996889124365e-05,
+            "rmse_n_m": 0.0031065655152228786,
+            "rmse_e_m": 0.0029230203148544573,
+            "pass_rates_pct": {
+              "lt_1mm": 10.006861534239055,
+              "lt_1cm": 97.53533690133114,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 2.277347399998689,
+          "fit_time_sec": 0.006786800000554649,
+          "throughput_pts_per_sec": 15998.876587744573,
+          "memory_breakdown": {
+            "code_bytes": 5962,
+            "dependencies_bytes": 123489234,
+            "model_instance_bytes": 3032257,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 126527453,
+            "total_mb": 120.66598224639893
           }
         }
       ]
@@ -384,9 +466,9 @@
               }
             }
           },
-          "eval_time_sec": 0.05319700000109151,
-          "fit_time_sec": 0.0012682999986282084,
-          "throughput_pts_per_sec": 684907.0436162268,
+          "eval_time_sec": 0.03734690000055707,
+          "fit_time_sec": 0.001330000002781162,
+          "throughput_pts_per_sec": 975582.9800989247,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -481,9 +563,9 @@
               }
             }
           },
-          "eval_time_sec": 0.10838430000148946,
-          "fit_time_sec": 0.0010412000010546762,
-          "throughput_pts_per_sec": 336164.92425101507,
+          "eval_time_sec": 0.08010019999710494,
+          "fit_time_sec": 0.001028400001814589,
+          "throughput_pts_per_sec": 454867.77812436013,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -578,9 +660,9 @@
               }
             }
           },
-          "eval_time_sec": 0.0029897000022174325,
-          "fit_time_sec": 0.003681199999846285,
-          "throughput_pts_per_sec": 12186841.480073754,
+          "eval_time_sec": 0.0025022999980137683,
+          "fit_time_sec": 0.003940800001146272,
+          "throughput_pts_per_sec": 14560604.255653093,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -675,9 +757,9 @@
               }
             }
           },
-          "eval_time_sec": 0.0037415000006149057,
-          "fit_time_sec": 0.21023309999873163,
-          "throughput_pts_per_sec": 9738072.963787787,
+          "eval_time_sec": 0.0036427999984880444,
+          "fit_time_sec": 0.2074425999999221,
+          "throughput_pts_per_sec": 10001921.602921506,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -772,9 +854,9 @@
               }
             }
           },
-          "eval_time_sec": 0.022676299999147886,
-          "fit_time_sec": 0.26614150000023074,
-          "throughput_pts_per_sec": 1606743.604616676,
+          "eval_time_sec": 0.017951800000446383,
+          "fit_time_sec": 0.2676599000005808,
+          "throughput_pts_per_sec": 2029601.4883796622,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -869,9 +951,9 @@
               }
             }
           },
-          "eval_time_sec": 0.023675700002058875,
-          "fit_time_sec": 1.047326099997008,
-          "throughput_pts_per_sec": 1538919.6516610514,
+          "eval_time_sec": 0.02105219999793917,
+          "fit_time_sec": 1.2500863000022946,
+          "throughput_pts_per_sec": 1730697.9794779965,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -966,9 +1048,9 @@
               }
             }
           },
-          "eval_time_sec": 0.07672109999839449,
-          "fit_time_sec": 3.5109415000006265,
-          "throughput_pts_per_sec": 474901.950060185,
+          "eval_time_sec": 0.0694664999973611,
+          "fit_time_sec": 3.326121999998577,
+          "throughput_pts_per_sec": 524497.4196394535,
           "memory_breakdown": {
             "code_bytes": 6332,
             "dependencies_bytes": 73428937,
@@ -976,6 +1058,200 @@
             "grid_lookup_bytes": 0,
             "total_bytes": 74254975,
             "total_mb": 70.81506252288818
+          }
+        },
+        {
+          "name": "Thin Plate Spline (11km)",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.008367821542353748,
+            "std_2d_m": 0.006810393664543176,
+            "rmse_2d_m": 0.010788971184998561,
+            "min_2d_m": 9.627169442415407e-06,
+            "p50_2d_m": 0.006737369469377871,
+            "p90_2d_m": 0.01646840106461943,
+            "p95_2d_m": 0.02070785241032007,
+            "p99_2d_m": 0.03060355348971215,
+            "p99_9_2d_m": 0.047457325269417434,
+            "max_2d_m": 0.2786867846079424,
+            "bias_n_m": 1.54955559921225e-05,
+            "bias_e_m": 2.2242399393322608e-05,
+            "rmse_n_m": 0.008200348488149581,
+            "rmse_e_m": 0.0070111471175287815,
+            "pass_rates_pct": {
+              "lt_1mm": 2.3137093454096336,
+              "lt_1cm": 70.43502127075614,
+              "lt_5cm": 99.9149169754357,
+              "lt_10cm": 99.98902154521751,
+              "lt_1m": 100.0
+            },
+            "by_point_type": {
+              "nodes": {
+                "count": 2222,
+                "total_count": 2222,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.01068689005470632,
+                "std_2d_m": 0.007188121339839628,
+                "rmse_2d_m": 0.012879390802271618,
+                "min_2d_m": 0.00030150803678365845,
+                "p50_2d_m": 0.009144042787964067,
+                "p90_2d_m": 0.020556309899575735,
+                "p95_2d_m": 0.02414081644728662,
+                "p99_2d_m": 0.0342240348739911,
+                "p99_9_2d_m": 0.04455360332278728,
+                "max_2d_m": 0.056141901269848526,
+                "bias_n_m": 1.9983860719168808e-05,
+                "bias_e_m": 4.306320256999851e-05,
+                "rmse_n_m": 0.009537962080610756,
+                "rmse_e_m": 0.008654824480396473,
+                "pass_rates_pct": {
+                  "lt_1mm": 0.8550855085508551,
+                  "lt_1cm": 55.535553555355534,
+                  "lt_5cm": 99.95499549954997,
+                  "lt_10cm": 100.0,
+                  "lt_1m": 100.0
+                }
+              },
+              "interior": {
+                "count": 34213,
+                "total_count": 34213,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.008217207149156793,
+                "std_2d_m": 0.0067576683474794815,
+                "rmse_2d_m": 0.010639011929059933,
+                "min_2d_m": 9.627169442415407e-06,
+                "p50_2d_m": 0.006627781336491115,
+                "p90_2d_m": 0.01617327938081738,
+                "p95_2d_m": 0.02030787583797088,
+                "p99_2d_m": 0.030340688461171664,
+                "p99_9_2d_m": 0.04767236551501926,
+                "max_2d_m": 0.2786867846079424,
+                "bias_n_m": 1.5204058225089588e-05,
+                "bias_e_m": 2.0890169987582866e-05,
+                "rmse_n_m": 0.008105846007923034,
+                "rmse_e_m": 0.0068908515672968735,
+                "pass_rates_pct": {
+                  "lt_1mm": 2.408441235787566,
+                  "lt_1cm": 71.40268319060007,
+                  "lt_5cm": 99.91231403267764,
+                  "lt_10cm": 99.98830853769036,
+                  "lt_1m": 100.0
+                }
+              }
+            }
+          },
+          "eval_time_sec": 1.4500011000018276,
+          "fit_time_sec": 1.3730255999980727,
+          "throughput_pts_per_sec": 25127.567144572564,
+          "memory_breakdown": {
+            "code_bytes": 5962,
+            "dependencies_bytes": 123489234,
+            "model_instance_bytes": 151515,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 123646711,
+            "total_mb": 117.91869258880615
+          }
+        },
+        {
+          "name": "Thin Plate Spline (4x4, 2.7km)",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.0044783741146428085,
+            "std_2d_m": 0.003757662454054849,
+            "rmse_2d_m": 0.005846012472559075,
+            "min_2d_m": 1.515134547058269e-05,
+            "p50_2d_m": 0.0036239317739172323,
+            "p90_2d_m": 0.008948634783483136,
+            "p95_2d_m": 0.011179890755502691,
+            "p99_2d_m": 0.01646879456576878,
+            "p99_9_2d_m": 0.02748853439465955,
+            "max_2d_m": 0.16296205234611477,
+            "bias_n_m": -1.652167856893437e-06,
+            "bias_e_m": 2.588923973568052e-07,
+            "rmse_n_m": 0.004433771659527373,
+            "rmse_e_m": 0.0038101877513435157,
+            "pass_rates_pct": {
+              "lt_1mm": 10.742418004665844,
+              "lt_1cm": 92.85851516399067,
+              "lt_5cm": 99.97255386304377,
+              "lt_10cm": 99.99451077260876,
+              "lt_1m": 100.0
+            },
+            "by_point_type": {
+              "nodes": {
+                "count": 2222,
+                "total_count": 2222,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.007559784030464912,
+                "std_2d_m": 0.004980744236067686,
+                "rmse_2d_m": 0.009053073938303706,
+                "min_2d_m": 0.0002128123526028075,
+                "p50_2d_m": 0.006421659798798664,
+                "p90_2d_m": 0.014506065664358548,
+                "p95_2d_m": 0.017231779730636665,
+                "p99_2d_m": 0.023959265525248387,
+                "p99_9_2d_m": 0.031226758453256922,
+                "max_2d_m": 0.03288120066851044,
+                "bias_n_m": 4.219161011552632e-05,
+                "bias_e_m": 3.271858780774708e-05,
+                "rmse_n_m": 0.006676886580707565,
+                "rmse_e_m": 0.006113700460503524,
+                "pass_rates_pct": {
+                  "lt_1mm": 1.8901890189018902,
+                  "lt_1cm": 74.84248424842484,
+                  "lt_5cm": 100.0,
+                  "lt_10cm": 100.0,
+                  "lt_1m": 100.0
+                }
+              },
+              "interior": {
+                "count": 34213,
+                "total_count": 34213,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.004278248640906021,
+                "std_2d_m": 0.0035733987408792757,
+                "rmse_2d_m": 0.005574279325144355,
+                "min_2d_m": 1.515134547058269e-05,
+                "p50_2d_m": 0.0034894335581490206,
+                "p90_2d_m": 0.008530315398103526,
+                "p95_2d_m": 0.010501733799584745,
+                "p99_2d_m": 0.015332888403284905,
+                "p99_9_2d_m": 0.025155225580973165,
+                "max_2d_m": 0.16296205234611477,
+                "bias_n_m": -4.499649067389943e-06,
+                "bias_e_m": -1.8492373545470696e-06,
+                "rmse_n_m": 0.004247318413653427,
+                "rmse_e_m": 0.003610107517480932,
+                "pass_rates_pct": {
+                  "lt_1mm": 11.31733551573963,
+                  "lt_1cm": 94.02858562534709,
+                  "lt_5cm": 99.97077134422588,
+                  "lt_10cm": 99.99415426884518,
+                  "lt_1m": 100.0
+                }
+              }
+            }
+          },
+          "eval_time_sec": 2.585377100000187,
+          "fit_time_sec": 0.006786800000554649,
+          "throughput_pts_per_sec": 14092.721715527443,
+          "memory_breakdown": {
+            "code_bytes": 5962,
+            "dependencies_bytes": 123489234,
+            "model_instance_bytes": 3032257,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 126527453,
+            "total_mb": 120.66598224639893
           }
         }
       ]
@@ -1013,9 +1289,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.02581580000332906,
-          "fit_time_sec": 0.0012682999986282084,
-          "throughput_pts_per_sec": 387359.6789063464,
+          "eval_time_sec": 0.0198517000026186,
+          "fit_time_sec": 0.001330000002781162,
+          "throughput_pts_per_sec": 503735.19641546666,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -1054,9 +1330,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.04343760000119801,
-          "fit_time_sec": 0.0010412000010546762,
-          "throughput_pts_per_sec": 230215.2973397287,
+          "eval_time_sec": 0.03195580000101472,
+          "fit_time_sec": 0.001028400001814589,
+          "throughput_pts_per_sec": 312932.23764332174,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -1095,9 +1371,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0008052000011957716,
-          "fit_time_sec": 0.003681199999846285,
-          "throughput_pts_per_sec": 12419274.695913292,
+          "eval_time_sec": 0.0006730000022798777,
+          "fit_time_sec": 0.003940800001146272,
+          "throughput_pts_per_sec": 14858840.960064875,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -1136,9 +1412,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0007598999982292298,
-          "fit_time_sec": 0.21023309999873163,
-          "throughput_pts_per_sec": 13159626.297279475,
+          "eval_time_sec": 0.0006702000027871691,
+          "fit_time_sec": 0.2074425999999221,
+          "throughput_pts_per_sec": 14920919.066566512,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -1177,9 +1453,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.005798700000013923,
-          "fit_time_sec": 0.26614150000023074,
-          "throughput_pts_per_sec": 1724524.462375358,
+          "eval_time_sec": 0.004484900000534253,
+          "fit_time_sec": 0.2676599000005808,
+          "throughput_pts_per_sec": 2229704.1179978983,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -1218,9 +1494,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.005448899999464629,
-          "fit_time_sec": 1.047326099997008,
-          "throughput_pts_per_sec": 1835232.7994609058,
+          "eval_time_sec": 0.005196300000534393,
+          "fit_time_sec": 1.2500863000022946,
+          "throughput_pts_per_sec": 1924446.240396357,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -1259,9 +1535,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.020873599998594727,
-          "fit_time_sec": 3.5109415000006265,
-          "throughput_pts_per_sec": 479074.0457167537,
+          "eval_time_sec": 0.015161200000875397,
+          "fit_time_sec": 3.326121999998577,
+          "throughput_pts_per_sec": 659578.3974502418,
           "memory_breakdown": {
             "code_bytes": 6332,
             "dependencies_bytes": 73428937,
@@ -1269,6 +1545,88 @@
             "grid_lookup_bytes": 0,
             "total_bytes": 74254975,
             "total_mb": 70.81506252288818
+          }
+        },
+        {
+          "name": "Thin Plate Spline (11km)",
+          "summary": {
+            "count": 10000,
+            "total_count": 10000,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.005422310296898239,
+            "std_2d_m": 0.0027500974229236973,
+            "rmse_2d_m": 0.006079842497254367,
+            "min_2d_m": 0.00011384728796025741,
+            "p50_2d_m": 0.005031423161012452,
+            "p90_2d_m": 0.009047778543348858,
+            "p95_2d_m": 0.010083784157794883,
+            "p99_2d_m": 0.01322025503208633,
+            "p99_9_2d_m": 0.015729768888728797,
+            "max_2d_m": 0.01608576328391978,
+            "bias_n_m": 0.0012020888507748493,
+            "bias_e_m": -0.0022550689232730663,
+            "rmse_n_m": 0.0034700194244637675,
+            "rmse_e_m": 0.004992339129632959,
+            "pass_rates_pct": {
+              "lt_1mm": 1.82,
+              "lt_1cm": 94.73,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 0.3907011000010243,
+          "fit_time_sec": 1.3730255999980727,
+          "throughput_pts_per_sec": 25595.01368174746,
+          "memory_breakdown": {
+            "code_bytes": 5962,
+            "dependencies_bytes": 123489234,
+            "model_instance_bytes": 151515,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 123646711,
+            "total_mb": 117.91869258880615
+          }
+        },
+        {
+          "name": "Thin Plate Spline (4x4, 2.7km)",
+          "summary": {
+            "count": 10000,
+            "total_count": 10000,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.0027019991267316365,
+            "std_2d_m": 0.0014511779233128278,
+            "rmse_2d_m": 0.0030670371119321423,
+            "min_2d_m": 1.1724321709601744e-05,
+            "p50_2d_m": 0.0025630975621371063,
+            "p90_2d_m": 0.0047583725636138755,
+            "p95_2d_m": 0.005219622096465468,
+            "p99_2d_m": 0.006436396332551777,
+            "p99_9_2d_m": 0.007963380916423173,
+            "max_2d_m": 0.008385327590855793,
+            "bias_n_m": -5.957785480242179e-07,
+            "bias_e_m": -1.0508819619502976e-05,
+            "rmse_n_m": 0.00147216543098131,
+            "rmse_e_m": 0.0026906217849769726,
+            "pass_rates_pct": {
+              "lt_1mm": 13.11,
+              "lt_1cm": 100.0,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 0.21905300000071293,
+          "fit_time_sec": 0.006786800000554649,
+          "throughput_pts_per_sec": 45651.052484866465,
+          "memory_breakdown": {
+            "code_bytes": 5962,
+            "dependencies_bytes": 123489234,
+            "model_instance_bytes": 3032257,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 126527453,
+            "total_mb": 120.66598224639893
           }
         }
       ]

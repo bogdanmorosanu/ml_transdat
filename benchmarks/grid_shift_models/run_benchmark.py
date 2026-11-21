@@ -4,6 +4,8 @@ Evaluates representative champions across:
 1. Non-parametric Spatial Blending: KNN (K=4 IDW, K=16 IDW)
 2. Axis-aligned Partitions: Decision Tree (11 km base nodes, 8x8 pruned 1e-8)
 3. Hierarchical Geometric Lookup: Adaptive Quadtree (3 mm, 1 mm tiers)
+4. Continuous Neural Fields: Fourier MLP (4x4, 2.7km)
+5. Localized Continuous Surfaces: Thin Plate Splines (11 km base nodes, 4x4 subgrid)
 
 Produces three distinct views from a single evaluation pass per workload:
 - View 1: Comprehensive Precision Scorecard (mm) on ``ro_corridor_snw``
@@ -29,6 +31,7 @@ from src.models import (
     DecisionTreeSpatialRegressor,
     KNNSpatialRegressor,
     MLPGridShiftModel,
+    RBFSurfaceRegressor,
 )
 from src.viz import (
     plot_memory_breakdown_stacked,
@@ -87,6 +90,19 @@ def main() -> None:
         alpha=1e-5,
     ).fit(train_4x4.coords, train_4x4.true_shifts)
 
+    tps_base = RBFSurfaceRegressor(
+        kernel="thin_plate_spline",
+        degree=1,
+        smoothing=2e-4,
+    ).fit(train_nodes.coords, train_nodes.true_shifts)
+
+    tps_4x4 = RBFSurfaceRegressor(
+        kernel="thin_plate_spline",
+        degree=1,
+        smoothing=1e-4,
+        neighbors=60,
+    ).fit(train_4x4.coords, train_4x4.true_shifts)
+
     models: list[tuple[str, Any]] = [
         ("KNN (K=4 IDW, 11km)", knn_k4),
         ("KNN (K=16 IDW, 11km)", knn_k16),
@@ -95,6 +111,8 @@ def main() -> None:
         ("Adaptive Quadtree (3mm tier)", quadtree_3mm),
         ("Adaptive Quadtree (1mm tier)", quadtree_1mm),
         ("Fourier MLP (4x4, 2.7km)", mlp_fourier_4x4),
+        ("Thin Plate Spline (11km)", tps_base),
+        ("Thin Plate Spline (4x4, 2.7km)", tps_4x4),
     ]
 
     evaluator = ModelEvaluator()

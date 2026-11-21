@@ -13,6 +13,8 @@ Precision evaluated on canonical corridor benchmark (`ro_corridor_snw`, 36,435 p
 | Adaptive Quadtree (3mm tier) | 1.43 | 1.05 | 1.77 | 0.00 | 1.25 | 2.64 | 3.08 | 4.49 | 26.32 | -0.02 | -0.03 | 39.17 | 99.91 | 100.00 | 100.00 | 100.00 |
 | Adaptive Quadtree (1mm tier) | 0.50 | 0.34 | 0.60 | 0.00 | 0.44 | 0.90 | 1.05 | 1.59 | 5.77 | -0.00 | -0.01 | 93.76 | 100.00 | 100.00 | 100.00 | 100.00 |
 | Fourier MLP (4x4, 2.7km) | 19.63 | 10.17 | 22.11 | 0.10 | 18.51 | 33.47 | 38.12 | 46.87 | 63.25 | 3.56 | 8.05 | 0.23 | 18.35 | 99.53 | 100.00 | 100.00 |
+| Thin Plate Spline (11km) | 6.74 | 4.41 | 8.05 | 0.05 | 5.83 | 12.47 | 15.36 | 21.53 | 33.75 | 0.09 | -0.14 | 2.20 | 81.45 | 100.00 | 100.00 | 100.00 |
+| Thin Plate Spline (4x4, 2.7km) | 3.49 | 2.46 | 4.27 | 0.01 | 2.88 | 6.74 | 8.35 | 11.81 | 21.76 | 0.04 | 0.09 | 10.01 | 97.54 | 100.00 | 100.00 | 100.00 |
 
 ## 2. Performance Speed & Throughput Across Named Workloads
 
@@ -20,37 +22,43 @@ Precision evaluated on canonical corridor benchmark (`ro_corridor_snw`, 36,435 p
 
 | Model | Evaluation Time (s) | Throughput (pts/s) | Latency (µs/pt) | Fit Time (s) |
 | :--- | :---: | :---: | :---: | :---: |
-| KNN (K=4 IDW, 11km) | 0.0571 | 637,557.4 | 1.5685 | 0.0013 |
-| KNN (K=16 IDW, 11km) | 0.1006 | 362,169.4 | 2.7611 | 0.0010 |
-| Decision Tree (11km) | 0.0022 | 16,275,797.4 | 0.0614 | 0.0037 |
-| Decision Tree (8x8, pruned 1e-8) | 0.0026 | 13,849,399.4 | 0.0722 | 0.2102 |
-| Adaptive Quadtree (3mm tier) | 0.0180 | 2,027,083.4 | 0.4933 | 0.2661 |
-| Adaptive Quadtree (1mm tier) | 0.0269 | 1,354,476.1 | 0.7383 | 1.0473 |
-| Fourier MLP (4x4, 2.7km) | 0.0941 | 387,004.5 | 2.5839 | 3.5109 |
+| KNN (K=4 IDW, 11km) | 0.0370 | 984,328.0 | 1.0159 | 0.0013 |
+| KNN (K=16 IDW, 11km) | 0.0760 | 479,113.5 | 2.0872 | 0.0010 |
+| Decision Tree (11km) | 0.0018 | 20,349,064.5 | 0.0491 | 0.0039 |
+| Decision Tree (8x8, pruned 1e-8) | 0.0027 | 13,431,267.7 | 0.0745 | 0.2074 |
+| Adaptive Quadtree (3mm tier) | 0.0143 | 2,555,712.2 | 0.3913 | 0.2677 |
+| Adaptive Quadtree (1mm tier) | 0.0205 | 1,780,487.2 | 0.5616 | 1.2501 |
+| Fourier MLP (4x4, 2.7km) | 0.0644 | 566,036.0 | 1.7667 | 3.3261 |
+| Thin Plate Spline (11km) | 1.4545 | 25,050.5 | 39.9194 | 1.3730 |
+| Thin Plate Spline (4x4, 2.7km) | 2.2773 | 15,998.9 | 62.5044 | 0.0068 |
 
 ### Workload: `uniform_4x4` (`ro_grid_4x4`, 36,435 pts)
 
 | Model | Evaluation Time (s) | Throughput (pts/s) | Latency (µs/pt) | Fit Time (s) |
 | :--- | :---: | :---: | :---: | :---: |
-| KNN (K=4 IDW, 11km) | 0.0532 | 684,907.0 | 1.4601 | 0.0013 |
-| KNN (K=16 IDW, 11km) | 0.1084 | 336,164.9 | 2.9747 | 0.0010 |
-| Decision Tree (11km) | 0.0030 | 12,186,841.5 | 0.0821 | 0.0037 |
-| Decision Tree (8x8, pruned 1e-8) | 0.0037 | 9,738,073.0 | 0.1027 | 0.2102 |
-| Adaptive Quadtree (3mm tier) | 0.0227 | 1,606,743.6 | 0.6257 | 0.2661 |
-| Adaptive Quadtree (1mm tier) | 0.0237 | 1,538,919.7 | 0.6532 | 1.0473 |
-| Fourier MLP (4x4, 2.7km) | 0.0767 | 474,902.0 | 2.1057 | 3.5109 |
+| KNN (K=4 IDW, 11km) | 0.0373 | 975,583.0 | 1.0250 | 0.0013 |
+| KNN (K=16 IDW, 11km) | 0.0801 | 454,867.8 | 2.1984 | 0.0010 |
+| Decision Tree (11km) | 0.0025 | 14,560,604.3 | 0.0687 | 0.0039 |
+| Decision Tree (8x8, pruned 1e-8) | 0.0036 | 10,001,921.6 | 0.1000 | 0.2074 |
+| Adaptive Quadtree (3mm tier) | 0.0180 | 2,029,601.5 | 0.4953 | 0.2677 |
+| Adaptive Quadtree (1mm tier) | 0.0211 | 1,730,698.0 | 0.5809 | 1.2501 |
+| Fourier MLP (4x4, 2.7km) | 0.0695 | 524,497.4 | 1.9066 | 3.3261 |
+| Thin Plate Spline (11km) | 1.4500 | 25,127.6 | 39.7969 | 1.3730 |
+| Thin Plate Spline (4x4, 2.7km) | 2.5854 | 14,092.7 | 70.9586 | 0.0068 |
 
 ### Workload: `single_cell_10k` (`single_cell_10k`, 10,000 pts)
 
 | Model | Evaluation Time (s) | Throughput (pts/s) | Latency (µs/pt) | Fit Time (s) |
 | :--- | :---: | :---: | :---: | :---: |
-| KNN (K=4 IDW, 11km) | 0.0258 | 387,359.7 | 2.5816 | 0.0013 |
-| KNN (K=16 IDW, 11km) | 0.0434 | 230,215.3 | 4.3438 | 0.0010 |
-| Decision Tree (11km) | 0.0008 | 12,419,274.7 | 0.0805 | 0.0037 |
-| Decision Tree (8x8, pruned 1e-8) | 0.0008 | 13,159,626.3 | 0.0760 | 0.2102 |
-| Adaptive Quadtree (3mm tier) | 0.0058 | 1,724,524.5 | 0.5799 | 0.2661 |
-| Adaptive Quadtree (1mm tier) | 0.0054 | 1,835,232.8 | 0.5449 | 1.0473 |
-| Fourier MLP (4x4, 2.7km) | 0.0209 | 479,074.0 | 2.0874 | 3.5109 |
+| KNN (K=4 IDW, 11km) | 0.0199 | 503,735.2 | 1.9852 | 0.0013 |
+| KNN (K=16 IDW, 11km) | 0.0320 | 312,932.2 | 3.1956 | 0.0010 |
+| Decision Tree (11km) | 0.0007 | 14,858,841.0 | 0.0673 | 0.0039 |
+| Decision Tree (8x8, pruned 1e-8) | 0.0007 | 14,920,919.1 | 0.0670 | 0.2074 |
+| Adaptive Quadtree (3mm tier) | 0.0045 | 2,229,704.1 | 0.4485 | 0.2677 |
+| Adaptive Quadtree (1mm tier) | 0.0052 | 1,924,446.2 | 0.5196 | 1.2501 |
+| Fourier MLP (4x4, 2.7km) | 0.0152 | 659,578.4 | 1.5161 | 3.3261 |
+| Thin Plate Spline (11km) | 0.3907 | 25,595.0 | 39.0701 | 1.3730 |
+| Thin Plate Spline (4x4, 2.7km) | 0.2191 | 45,651.1 | 21.9053 | 0.0068 |
 
 ## 3. Storage & Memory Breakdown (4 Components)
 
@@ -69,3 +77,5 @@ Components:
 | Adaptive Quadtree (3mm tier) | 12,444 | 0 | 9,040 | 24,148,512 | 23.0503 |
 | Adaptive Quadtree (1mm tier) | 12,444 | 0 | 9,814 | 78,529,320 | 74.9126 |
 | Fourier MLP (4x4, 2.7km) | 6,332 | 73,428,937 | 819,706 | 0 | 70.8151 |
+| Thin Plate Spline (11km) | 5,962 | 123,489,234 | 151,515 | 0 | 117.9187 |
+| Thin Plate Spline (4x4, 2.7km) | 5,962 | 123,489,234 | 3,032,257 | 0 | 120.6660 |

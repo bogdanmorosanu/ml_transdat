@@ -71,3 +71,12 @@ An ordered, causal record of how our understanding, hypotheses, and modeling dec
      - Pushing to Degree 12 achieves **$19.2\,\text{cm}$ uniform RMSE** and cuts maximum nationwide error below 1 meter (**$89.3\,\text{cm}$**).
      - However, global polynomials hit an asymptotic ceiling near $\sim 17\text{--}18\,\text{cm}$; at higher degrees ($D \ge 16$), border ripple oscillations (Runge's phenomenon) begin to emerge.
    - *Impact*: Validates historical geodetic practice (stopping at degrees 3 to 5) and establishes the curved macroscopic foundation, providing the direct mathematical motivation for Level 3: Radial Basis Functions (RBF) and Thin Plate Splines (TPS).
+
+
+7. **Localized Continuous Surface Deformation via Thin Plate Splines (`rbf_surface_regressor`)**:
+   - *Question*: Can an elastic continuous sheet model (Thin Plate Spline $r^2 \ln r$) overcome polynomial boundary oscillations and achieve sub-centimeter accuracy when trained on 2,222 base grid anchors?
+   - *Finding*:
+     - **Sub-Centimeter Accuracy**: Combining Thin Plate Spline with gentle nugget smoothing ($\lambda = 10^{-4}$) achieves **$9.3\,\text{mm}$ nationwide RMSE** on `RO_TEST_UNIFORM_4X4` ($77.4\% < 1\,\text{cm}$, $99.9\% < 5\,\text{cm}$), a **$20.6\times$ error reduction** over Level 2 polynomials.
+     - **Grid Kink Filtering**: Relaxing exact interpolation improves nationwide accuracy by $30\%$ ($13.2\,\text{mm} \to 9.3\,\text{mm}$) and cuts maximum nationwide error by $12.4\,\text{cm}$ ($34.3\,\text{cm} \to 21.9\,\text{cm}$) by smoothing over the legacy $C^0/C^1$ boundary slope breaks of Romania's official `.spg` grid.
+     - **Foundation Invariance**: Testing Affine (Deg 1) vs. Quadratic (Deg 2) vs. Cubic (Deg 3) underlying polynomial trends yielded virtually identical performance ($13.25\,\text{mm}$ exact / $9.30\,\text{mm}$ smooth), proving that localized radial bending completely absorbs macroscopic curvature.
+   - *Impact*: Delivers our first continuous, closed-form mathematical model achieving **sub-centimeter nationwide accuracy** with zero lookup tables ($0\,\text{MB}$ grid data).
