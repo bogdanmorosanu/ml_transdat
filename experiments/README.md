@@ -17,6 +17,7 @@ This directory contains modular, self-contained scientific experiments evaluatin
 | [`decision_tree_regressor/`](decision_tree_regressor/) | **Decision Tree 2D Spatial Regressor**: Evaluates orthogonal step-plateau trees across 11 km, `4x4`, `8x8`, and `16x16` grids plus impurity pruning (`1e-8`). | `Validated` | $\text{RMSE}=0.0817\,\text{m}$ (11 km on `8x8`) $\to$ $0.0040\,\text{m}$ (`16x16` on corridor, $89.4\,\text{MB}$); `1e-8` pruning compresses to $2.81\,\text{MB}$ at $0.0188\,\text{m}$. |
 | [`adaptive_quadtree_grid/`](adaptive_quadtree_grid/) | **Adaptive Quadtree Grid**: Curvature-driven 2D space partitioning using pure `pytransdat` grid shifts across 4 tolerance tiers (`2cm`, `1cm`, `3mm`, `1mm`). | `Validated` | $\text{Mean 2D}=0.143\,\text{cm}$ ($3\,\text{mm}$ tier, 176k cells) and $\text{Mean 2D}=0.050\,\text{cm}$ ($1\,\text{mm}$ tier, 564k cells, $\text{P95}=1.0\,\text{mm}$). $>97\%$ point reduction over uniform grids. |
 | [`mlp_spatial_regressor/`](mlp_spatial_regressor/) | **Multilayer Perceptron (MLP) Spatial Regressor**: Evaluates continuous neural networks on valid SPG nodes tested against new uniform (`4x4`) and adaptive (`3mm`) national benchmarks. Identifies spectral bias and resolves it via Random Fourier Features. | `Validated` | Raw MLP $\text{RMSE}=182\,\text{mm}$; Fourier MLP ($\sigma=3.0$) achieves $\text{RMSE}=49.5\,\text{mm}$ (Uniform 4x4) and $\text{RMSE}=46.0\,\text{mm}$ (Adaptive 3mm) with $C^\infty$ smoothness and 0 grid lookup. |
+| [`polynomial_surface_regressor/`](polynomial_surface_regressor/) | **2D Polynomial Surface Regressor**: Evaluates bivariate polynomial surfaces ($D=1\dots 12$) on normalized coordinates, upgrading the flat Helmert plane to a curved mathematical surface. | `Validated` | $\text{RMSE}=42.8\,\text{cm}$ ($D=1$, 3 terms) $\to$ $27.0\,\text{cm}$ ($D=5$, 21 terms) $\to$ $19.2\,\text{cm}$ ($D=12$, 91 terms); cuts max error from $2.60\,\text{m} \to 0.89\,\text{m}$. |
 
 ---
 
@@ -59,4 +60,10 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.decision_tree_regressor.
 
 # Run Adaptive Quadtree Grid
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.adaptive_quadtree_grid.run_unit
+
+# Run Fourier MLP Spatial Regressor
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.mlp_spatial_regressor.run_unit
+
+# Run 2D Polynomial Surface Regressor
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.polynomial_surface_regressor.run_unit
 ```
