@@ -56,3 +56,13 @@ This unit evaluates the **K-Nearest Neighbors (KNN)** family for learning the 2D
 ### Spatial Error Heatmaps (K=4 Distance vs. K=1 Voronoi)
 ![K=4 Distance Error Map](plots/error_map_k4_distance.png)
 ![K=1 Voronoi Error Map](plots/error_map_k1_uniform.png)
+
+---
+
+## 5. Benchmark Candidates
+Promoted to `benchmarks/grid_shift_models/` via `specs_from_unit(KnnSpatialRegressorUnit, suite="grid_shift_models")`:
+
+| Variant | Benchmark Label | Train Grid | Exact Hyperparameters |
+| :--- | :--- | :--- | :--- |
+| `k4_distance` | `KNN (K=4 IDW, 11km)` | `spg_nodes_valid` | `n_neighbors=4, weights="distance"` |
+| `k16_distance` | `KNN (K=16 IDW, 11km)` | `spg_nodes_valid` | `n_neighbors=16, weights="distance"` |

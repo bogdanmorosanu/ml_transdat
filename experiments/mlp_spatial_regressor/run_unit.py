@@ -15,14 +15,10 @@ from src.viz import PlotGroup, plot_transect_66km
 
 
 class MLPSpatialRegressorUnit(GridShiftExperimentUnit):
-    """Research Unit 06: Multilayer Perceptron neural network 2D spatial distortion learning."""
+    """Grid Shift Unit: Multilayer Perceptron neural network 2D spatial distortion learning."""
 
     @property
-    def unit_id(self) -> str:
-        return "06"
-
-    @property
-    def unit_name(self) -> str:
+    def slug(self) -> str:
         return "mlp_spatial_regressor"
 
     def get_model_specs(self) -> list[ExperimentModelSpec]:
@@ -88,6 +84,9 @@ class MLPSpatialRegressorUnit(GridShiftExperimentUnit):
                 ],
                 plots=None,
                 keep_in_memory=True,
+                benchmark_candidate=True,
+                benchmark_suite="grid_shift_models",
+                benchmark_label="Fourier MLP (4x4, 2.7km)",
             ),
             # 4. Fourier Feature MLP trained on 8x8 Densified Subgrid (~146.2k pts, 1.4 km)
             ExperimentModelSpec(

@@ -1,4 +1,5 @@
 {
+  "suite_name": "global_analytical_models",
   "precision_dataset_id": "ro_corridor_snw",
   "precision_unit": "mm",
   "workloads": {
@@ -8,6 +9,7 @@
       "models": [
         {
           "name": "Helmert 2D Conformal (4P)",
+          "source_experiment": "helmert2d_baseline",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -35,9 +37,9 @@
               "lt_1m": 99.80513242761081
             }
           },
-          "eval_time_sec": 0.0005017000003135763,
-          "fit_time_sec": 0.03138359999866225,
-          "throughput_pts_per_sec": 72623081.47743098,
+          "eval_time_sec": 0.0003139000000373926,
+          "fit_time_sec": 0.03611040000032517,
+          "throughput_pts_per_sec": 116071997.43759084,
           "memory_breakdown": {
             "code_bytes": 8997,
             "dependencies_bytes": 32399353,
@@ -49,6 +51,7 @@
         },
         {
           "name": "Linear Affine Plane (Deg 1, 6T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -76,20 +79,21 @@
               "lt_1m": 99.62947715109098
             }
           },
-          "eval_time_sec": 0.0011808999988716096,
-          "fit_time_sec": 0.0020816000032937154,
-          "throughput_pts_per_sec": 30853586.27725878,
+          "eval_time_sec": 0.001220499998453306,
+          "fit_time_sec": 0.00200349999795435,
+          "throughput_pts_per_sec": 29852519.497068997,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 972,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437780,
-            "total_mb": 70.03572463989258
+            "total_bytes": 73437978,
+            "total_mb": 70.03591346740723
           }
         },
         {
           "name": "Quadratic Bowl (Deg 2, 12T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -117,20 +121,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0022635999994236045,
-          "fit_time_sec": 0.001406199997290969,
-          "throughput_pts_per_sec": 16096041.707579823,
+          "eval_time_sec": 0.0030067999978200532,
+          "fit_time_sec": 0.0012892999984615017,
+          "throughput_pts_per_sec": 12117533.599313416,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1038,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437846,
-            "total_mb": 70.03578758239746
+            "total_bytes": 73438044,
+            "total_mb": 70.03597640991211
           }
         },
         {
           "name": "Cubic Surface (Deg 3, 20T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -158,20 +163,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0033218999997188803,
-          "fit_time_sec": 0.0016259000003628898,
-          "throughput_pts_per_sec": 10968120.65477087,
+          "eval_time_sec": 0.004493399999773828,
+          "fit_time_sec": 0.0012671999975282233,
+          "throughput_pts_per_sec": 8108559.22059775,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1130,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437938,
-            "total_mb": 70.03587532043457
+            "total_bytes": 73438136,
+            "total_mb": 70.03606414794922
           }
         },
         {
           "name": "Quintic Surface (Deg 5, 42T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -199,20 +205,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.006832800001575379,
-          "fit_time_sec": 0.002118000000336906,
-          "throughput_pts_per_sec": 5332367.403055775,
+          "eval_time_sec": 0.006759100000635954,
+          "fit_time_sec": 0.0028019999990647193,
+          "throughput_pts_per_sec": 5390510.570426815,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1395,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438203,
-            "total_mb": 70.03612804412842
+            "total_bytes": 73438401,
+            "total_mb": 70.03631687164307
           }
         },
         {
           "name": "Multi-Harmonic (Deg 8, 90T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -240,20 +247,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.015652400001272326,
-          "fit_time_sec": 0.0031257999980880413,
-          "throughput_pts_per_sec": 2327758.0433057123,
+          "eval_time_sec": 0.016996099999232683,
+          "fit_time_sec": 0.003431199998885859,
+          "throughput_pts_per_sec": 2143727.09042927,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1983,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438791,
-            "total_mb": 70.03668880462646
+            "total_bytes": 73438989,
+            "total_mb": 70.03687763214111
           }
         },
         {
           "name": "High-Order Limit (Deg 12, 182T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -281,20 +289,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.024620000000140863,
-          "fit_time_sec": 0.0045682000018132385,
-          "throughput_pts_per_sec": 1479894.3947925076,
+          "eval_time_sec": 0.033922399998118635,
+          "fit_time_sec": 0.004907399998046458,
+          "throughput_pts_per_sec": 1074069.0517776075,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 3143,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73439951,
-            "total_mb": 70.0377950668335
+            "total_bytes": 73440149,
+            "total_mb": 70.03798389434814
           }
         },
         {
           "name": "Sparse Lasso (Deg 5, 24T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -322,16 +331,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0064171999983955175,
-          "fit_time_sec": 0.004506299999775365,
-          "throughput_pts_per_sec": 5677709.906050893,
+          "eval_time_sec": 0.008059799998591188,
+          "fit_time_sec": 0.005315899998095119,
+          "throughput_pts_per_sec": 4520583.638101274,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1519,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438327,
-            "total_mb": 70.03624629974365
+            "total_bytes": 73438525,
+            "total_mb": 70.0364351272583
           }
         }
       ]
@@ -342,6 +351,7 @@
       "models": [
         {
           "name": "Helmert 2D Conformal (4P)",
+          "source_experiment": "helmert2d_baseline",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -425,9 +435,9 @@
               }
             }
           },
-          "eval_time_sec": 0.00031229999876813963,
-          "fit_time_sec": 0.03138359999866225,
-          "throughput_pts_per_sec": 116666667.12685573,
+          "eval_time_sec": 0.00042070000199601054,
+          "fit_time_sec": 0.03611040000032517,
+          "throughput_pts_per_sec": 86605656.82703635,
           "memory_breakdown": {
             "code_bytes": 8997,
             "dependencies_bytes": 32399353,
@@ -439,6 +449,7 @@
         },
         {
           "name": "Linear Affine Plane (Deg 1, 6T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -522,20 +533,21 @@
               }
             }
           },
-          "eval_time_sec": 0.0011631999987002928,
-          "fit_time_sec": 0.0020816000032937154,
-          "throughput_pts_per_sec": 31323074.312853187,
+          "eval_time_sec": 0.0015554999990854412,
+          "fit_time_sec": 0.00200349999795435,
+          "throughput_pts_per_sec": 23423336.561505638,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 972,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437780,
-            "total_mb": 70.03572463989258
+            "total_bytes": 73437978,
+            "total_mb": 70.03591346740723
           }
         },
         {
           "name": "Quadratic Bowl (Deg 2, 12T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -619,20 +631,21 @@
               }
             }
           },
-          "eval_time_sec": 0.0017838999992818572,
-          "fit_time_sec": 0.001406199997290969,
-          "throughput_pts_per_sec": 20424351.14898122,
+          "eval_time_sec": 0.0026782999993884005,
+          "fit_time_sec": 0.0012892999984615017,
+          "throughput_pts_per_sec": 13603778.51932945,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1038,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437846,
-            "total_mb": 70.03578758239746
+            "total_bytes": 73438044,
+            "total_mb": 70.03597640991211
           }
         },
         {
           "name": "Cubic Surface (Deg 3, 20T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -716,20 +729,21 @@
               }
             }
           },
-          "eval_time_sec": 0.00364120000085677,
-          "fit_time_sec": 0.0016259000003628898,
-          "throughput_pts_per_sec": 10006316.596568957,
+          "eval_time_sec": 0.003698100001201965,
+          "fit_time_sec": 0.0012671999975282233,
+          "throughput_pts_per_sec": 9852356.612357106,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1130,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437938,
-            "total_mb": 70.03587532043457
+            "total_bytes": 73438136,
+            "total_mb": 70.03606414794922
           }
         },
         {
           "name": "Quintic Surface (Deg 5, 42T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -813,20 +827,21 @@
               }
             }
           },
-          "eval_time_sec": 0.006907300001330441,
-          "fit_time_sec": 0.002118000000336906,
-          "throughput_pts_per_sec": 5274854.138807076,
+          "eval_time_sec": 0.006344800000078976,
+          "fit_time_sec": 0.0028019999990647193,
+          "throughput_pts_per_sec": 5742497.793397188,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1395,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438203,
-            "total_mb": 70.03612804412842
+            "total_bytes": 73438401,
+            "total_mb": 70.03631687164307
           }
         },
         {
           "name": "Multi-Harmonic (Deg 8, 90T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -910,20 +925,21 @@
               }
             }
           },
-          "eval_time_sec": 0.012783800000761403,
-          "fit_time_sec": 0.0031257999980880413,
-          "throughput_pts_per_sec": 2850091.5219128844,
+          "eval_time_sec": 0.015440499999385793,
+          "fit_time_sec": 0.003431199998885859,
+          "throughput_pts_per_sec": 2359703.3775751656,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1983,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438791,
-            "total_mb": 70.03668880462646
+            "total_bytes": 73438989,
+            "total_mb": 70.03687763214111
           }
         },
         {
           "name": "High-Order Limit (Deg 12, 182T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -1007,20 +1023,21 @@
               }
             }
           },
-          "eval_time_sec": 0.030427700003201608,
-          "fit_time_sec": 0.0045682000018132385,
-          "throughput_pts_per_sec": 1197428.6586290223,
+          "eval_time_sec": 0.025367899997945642,
+          "fit_time_sec": 0.004907399998046458,
+          "throughput_pts_per_sec": 1436263.9399773178,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 3143,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73439951,
-            "total_mb": 70.0377950668335
+            "total_bytes": 73440149,
+            "total_mb": 70.03798389434814
           }
         },
         {
           "name": "Sparse Lasso (Deg 5, 24T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -1104,16 +1121,16 @@
               }
             }
           },
-          "eval_time_sec": 0.007232500000100117,
-          "fit_time_sec": 0.004506299999775365,
-          "throughput_pts_per_sec": 5037677.151675858,
+          "eval_time_sec": 0.006824399999459274,
+          "fit_time_sec": 0.005315899998095119,
+          "throughput_pts_per_sec": 5338930.895446764,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1519,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438327,
-            "total_mb": 70.03624629974365
+            "total_bytes": 73438525,
+            "total_mb": 70.0364351272583
           }
         }
       ]
@@ -1124,6 +1141,7 @@
       "models": [
         {
           "name": "Helmert 2D Conformal (4P)",
+          "source_experiment": "helmert2d_baseline",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1151,9 +1169,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.00011029999950551428,
-          "fit_time_sec": 0.03138359999866225,
-          "throughput_pts_per_sec": 90661831.77543955,
+          "eval_time_sec": 0.00012559999959194101,
+          "fit_time_sec": 0.03611040000032517,
+          "throughput_pts_per_sec": 79617834.65357304,
           "memory_breakdown": {
             "code_bytes": 8997,
             "dependencies_bytes": 32399353,
@@ -1165,6 +1183,7 @@
         },
         {
           "name": "Linear Affine Plane (Deg 1, 6T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1192,20 +1211,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0005388999998103827,
-          "fit_time_sec": 0.0020816000032937154,
-          "throughput_pts_per_sec": 18556318.43295342,
+          "eval_time_sec": 0.0005547000000660773,
+          "fit_time_sec": 0.00200349999795435,
+          "throughput_pts_per_sec": 18027762.752494633,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 972,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437780,
-            "total_mb": 70.03572463989258
+            "total_bytes": 73437978,
+            "total_mb": 70.03591346740723
           }
         },
         {
           "name": "Quadratic Bowl (Deg 2, 12T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1233,20 +1253,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0007919999989098869,
-          "fit_time_sec": 0.001406199997290969,
-          "throughput_pts_per_sec": 12626262.643641483,
+          "eval_time_sec": 0.0009218999985023402,
+          "fit_time_sec": 0.0012892999984615017,
+          "throughput_pts_per_sec": 10847163.484375052,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1038,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437846,
-            "total_mb": 70.03578758239746
+            "total_bytes": 73438044,
+            "total_mb": 70.03597640991211
           }
         },
         {
           "name": "Cubic Surface (Deg 3, 20T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1274,20 +1295,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0014497000011033379,
-          "fit_time_sec": 0.0016259000003628898,
-          "throughput_pts_per_sec": 6897978.886934675,
+          "eval_time_sec": 0.0010129000002052635,
+          "fit_time_sec": 0.0012671999975282233,
+          "throughput_pts_per_sec": 9872642.904505387,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1130,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437938,
-            "total_mb": 70.03587532043457
+            "total_bytes": 73438136,
+            "total_mb": 70.03606414794922
           }
         },
         {
           "name": "Quintic Surface (Deg 5, 42T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1315,20 +1337,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0027234000008320436,
-          "fit_time_sec": 0.002118000000336906,
-          "throughput_pts_per_sec": 3671880.736191832,
+          "eval_time_sec": 0.0020324999968579505,
+          "fit_time_sec": 0.0028019999990647193,
+          "throughput_pts_per_sec": 4920049.208097928,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1395,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438203,
-            "total_mb": 70.03612804412842
+            "total_bytes": 73438401,
+            "total_mb": 70.03631687164307
           }
         },
         {
           "name": "Multi-Harmonic (Deg 8, 90T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1356,20 +1379,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.004510099999606609,
-          "fit_time_sec": 0.0031257999980880413,
-          "throughput_pts_per_sec": 2217245.7375384676,
+          "eval_time_sec": 0.00363380000271718,
+          "fit_time_sec": 0.003431199998885859,
+          "throughput_pts_per_sec": 2751940.115725269,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1983,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438791,
-            "total_mb": 70.03668880462646
+            "total_bytes": 73438989,
+            "total_mb": 70.03687763214111
           }
         },
         {
           "name": "High-Order Limit (Deg 12, 182T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1397,20 +1421,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.007301100002223393,
-          "fit_time_sec": 0.0045682000018132385,
-          "throughput_pts_per_sec": 1369656.6266664907,
+          "eval_time_sec": 0.007854600000428036,
+          "fit_time_sec": 0.004907399998046458,
+          "throughput_pts_per_sec": 1273139.3068335818,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 3143,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73439951,
-            "total_mb": 70.0377950668335
+            "total_bytes": 73440149,
+            "total_mb": 70.03798389434814
           }
         },
         {
           "name": "Sparse Lasso (Deg 5, 24T)",
+          "source_experiment": "polynomial_surface_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1438,16 +1463,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0025231999970856123,
-          "fit_time_sec": 0.004506299999775365,
-          "throughput_pts_per_sec": 3963221.3108554073,
+          "eval_time_sec": 0.0029589000005216803,
+          "fit_time_sec": 0.005315899998095119,
+          "throughput_pts_per_sec": 3379634.3229703307,
           "memory_breakdown": {
-            "code_bytes": 7871,
+            "code_bytes": 8069,
             "dependencies_bytes": 73428937,
             "model_instance_bytes": 1519,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438327,
-            "total_mb": 70.03624629974365
+            "total_bytes": 73438525,
+            "total_mb": 70.0364351272583
           }
         }
       ]

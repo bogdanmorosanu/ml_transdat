@@ -68,3 +68,13 @@ Evaluated on canonical nationwide test sets:
 * **2D Plan-View Contours** ([`plots/rbf_2d_heatmaps_comparison.png`](plots/rbf_2d_heatmaps_comparison.png)): 6-panel plan-view map showing smooth continuous deformation contours across Romania.
 * **66 km Multi-Cell Transect** ([`plots/cell_transect_66km_rbf.png`](plots/cell_transect_66km_rbf.png)): 1D cross-section across 6 cells through the Banat dome comparing RBF and TPS models against bicubic ground truth.
 * **Foundation & Kernel Comparison** ([`plots/rbf_foundation_and_smoothing.png`](plots/rbf_foundation_and_smoothing.png)): Quantitative bar chart comparing all 8 evaluated model configurations against the Level 2 Polynomial floor ($191.8\,\text{mm}$).
+
+---
+
+## 4. Benchmark Candidates
+Promoted to `benchmarks/grid_shift_models/` via `specs_from_unit(RBFSurfaceRegressorUnit, suite="grid_shift_models")`:
+
+| Variant | Benchmark Label | Train Grid | Exact Hyperparameters |
+| :--- | :--- | :--- | :--- |
+| `tps_base_optimal_2e-4` | `Thin Plate Spline (11km)` | `spg_nodes_valid` | `kernel="thin_plate_spline", degree=1, smoothing=2e-4` |
+| `tps_densified_4x4` | `Thin Plate Spline (4x4, 2.7km)` | `ro_grid_4x4` | `kernel="thin_plate_spline", degree=1, smoothing=1e-4, neighbors=60` |

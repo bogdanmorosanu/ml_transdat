@@ -12,9 +12,10 @@
    - Whenever `src/` structure or base interfaces change, keep [`docs/architecture.md`](../../docs/architecture.md) in sync.
 2. **Strict `src/` vs. `experiments/` Isolation**:
    - Reusable models, losses, feature encoders, samplers, metrics, and visualizers **must** live in [`src/`](../../src/).
-   - `experiments/<slug>/` contains only orchestration (`run_unit.py`), generated reports (`report.md`, `README_AI.md`, `unit_brief.json`), and outputs (`results/`, `plots/`).
+   - Shared generated datasets **must** live in [`data/`](../../data/) (e.g. `data/features/`), never inside `experiments/`.
+   - `experiments/<slug>/` contains only orchestration (`run_unit.py`), generated reports (`report.md`, `unit_brief.json`), and outputs (`results/`, `plots/`).
 3. **Unified Interfaces & Profiling**:
-   - Favor inheritance/protocols (`BaseGridShiftModel`, `BaseCoordinateTransformer`, `GridShiftExperimentUnit`) so models plug cleanly into the transformation pipeline and are evaluated uniformly on **accuracy**, **latency/throughput**, and **4-component memory breakdown**.
+   - Favor inheritance/protocols (`BaseGridShiftModel`, `BaseCoordinateTransformer`, `GridShiftExperimentUnit`, `TransformationExperimentUnit`, `AnalysisExperimentUnit`, `BenchmarkSuite`) so models and experiments plug cleanly into the transformation and benchmarking pipelines with drift-free `specs_from_unit(...)` promotion.
 4. **Code Quality & Style**:
    - Strictly follow [`.agents/rules/python-style.md`](../rules/python-style.md): full type annotations, reST docstrings with array/tensor shapes, workspace-relative paths only, and explicit exception handling (no bare `except:`).
 5. **DRY Refactoring Trigger**:

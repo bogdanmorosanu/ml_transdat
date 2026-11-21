@@ -1,0 +1,42 @@
+{
+  "schema_version": "2.0",
+  "slug": "cell_planar_features",
+  "experiment_type": "analysis",
+  "status": "completed",
+  "runtime_s": 9.755,
+  "key_metrics": {
+    "valid_cells": 2556,
+    "interior_cells": 2297,
+    "twist_lt_5mm_pct": 0.2,
+    "twist_lt_10mm_pct": 0.78,
+    "shape_5mm_dome_pct": 53.16,
+    "shape_5mm_s_shape_pct": 46.84,
+    "shape_10mm_dome_pct": 92.47,
+    "axis_concordance_5mm_pct": 68.74
+  },
+  "artifacts": {
+    "report": "report.md",
+    "shared_features": [
+      "data/features/cell_planes.parquet",
+      "data/features/cell_shape_metrics.parquet"
+    ],
+    "results": [
+      "results/cell_planes.csv",
+      "results/cell_shape_metrics.csv"
+    ],
+    "plots": [
+      "national_cell_slopes_map.png",
+      "national_cell_twist_map.png",
+      "national_cell_aspect_distribution.png",
+      "national_shape_map_5mm.png",
+      "national_shape_map_10mm.png"
+    ]
+  },
+  "benchmark_candidates": [],
+  "extra": {
+    "bucharest_sample": {
+      "is_valid": true,
+      "cat_2d_5mm": "Dome/Bowl"
+    }
+  }
+}

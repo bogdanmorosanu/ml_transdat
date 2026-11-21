@@ -14,14 +14,10 @@ from src.viz import PlotGroup, plot_transect_66km
 
 
 class KnnSpatialRegressorUnit(GridShiftExperimentUnit):
-    """Research Unit 04: K-Nearest Neighbors 2D spatial distortion learning."""
+    """Grid Shift Unit: K-Nearest Neighbors 2D spatial distortion learning."""
 
     @property
-    def unit_id(self) -> str:
-        return "04"
-
-    @property
-    def unit_name(self) -> str:
+    def slug(self) -> str:
         return "knn_spatial_regressor"
 
     def get_model_specs(self) -> list[ExperimentModelSpec]:
@@ -34,6 +30,10 @@ class KnnSpatialRegressorUnit(GridShiftExperimentUnit):
             ("k16_uniform", 16, "uniform"),
             ("k16_distance", 16, "distance"),
         ]
+        benchmark_labels = {
+            "k4_distance": "KNN (K=4 IDW, 11km)",
+            "k16_distance": "KNN (K=16 IDW, 11km)",
+        }
         specs: list[ExperimentModelSpec] = []
         for label, k, weights in configs:
             is_best = label == "k4_distance"
@@ -54,6 +54,9 @@ class KnnSpatialRegressorUnit(GridShiftExperimentUnit):
                     plots=plots,
                     keep_in_memory=label
                     in {"k1_uniform", "k4_uniform", "k4_distance", "k16_distance"},
+                    benchmark_candidate=label in benchmark_labels,
+                    benchmark_suite="grid_shift_models" if label in benchmark_labels else None,
+                    benchmark_label=benchmark_labels.get(label),
                 )
             )
         return specs

@@ -51,3 +51,7 @@ Combined magnitude $\sqrt{dN^2 + dE^2}$ showing the peak distortion zones:
 ## Scientific Takeaways for Modeling
 1. **Locality is Essential**: Over 50% of Romania has distortion $< 0.26\,\text{m}$, but border regions reach up to $2.76\,\text{m}$. Global linear approximations will leave multi-meter residual errors.
 2. **Vector Coherence**: The smooth directional continuity evident in `spg_shift_quiver.png` confirms that coordinate-conditioned spatial features (e.g. spatial embeddings or RBF networks) have strong regional signals to exploit.
+3. **High-Risk Geographic Hotspots** ($11\times 11\,\text{km}$ base grid, sampled at $2.75\,\text{km}$):
+   - **West / Banat / Timiș**: Peak horizontal displacement up to $2.76\,\text{m}$ oriented southwest.
+   - **North / Maramureș**: Strong positive northing shifts ($> +1.0\,\text{m}$).
+   - **South-West / Danube**: Pronounced localized northing dip.

@@ -11,9 +11,9 @@ import numpy as np
 
 from pytransdat.proj_stereo import StereoProj
 from pytransdat.spg_reader import SpgReader
-from src.core.base_unit import TransformationExperimentUnit
+from src.core.base_unit import TransformationExperimentUnit, summarize_eval_results
 from src.data import GridId
-from src.evaluation import EvaluationResult, summarize_errors
+from src.evaluation import summarize_errors
 from src.models.helmert2d import (
     ARCSEC_PER_RAD,
     Helmert2DParams,
@@ -35,32 +35,11 @@ def _load_embedded_params() -> Helmert2DParams:
     )
 
 
-def _compact_metrics(res: EvaluationResult) -> dict[str, Any]:
-    s = res.summary
-    return {
-        "mean_2d_m": s["mean_2d_m"],
-        "rmse_2d_m": s["rmse_2d_m"],
-        "p50_2d_m": s["p50_2d_m"],
-        "p95_2d_m": s["p95_2d_m"],
-        "p99_2d_m": s["p99_2d_m"],
-        "max_2d_m": s["max_2d_m"],
-        "bias_n_m": s["bias_n_m"],
-        "bias_e_m": s["bias_e_m"],
-        "pass_lt_10cm_pct": s["pass_rates_pct"]["lt_10cm"],
-        "pass_lt_1m_pct": s["pass_rates_pct"]["lt_1m"],
-        "throughput_pts_per_s": round(res.throughput_pts_per_sec, 1),
-    }
-
-
 class Helmert2DBaselineUnit(TransformationExperimentUnit):
-    """Research Unit 03: Refitted 4-parameter 2D Helmert baseline (no SPG grid)."""
+    """Transformation Unit: Refitted 4-parameter 2D Helmert baseline (no SPG grid)."""
 
     @property
-    def unit_id(self) -> str:
-        return "03"
-
-    @property
-    def unit_name(self) -> str:
+    def slug(self) -> str:
         return "helmert2d_baseline"
 
     def run(self) -> dict[str, Any]:
@@ -161,24 +140,28 @@ class Helmert2DBaselineUnit(TransformationExperimentUnit):
         )
 
         elapsed = time.perf_counter() - t0
-        brief: dict[str, Any] = {
-            "unit_id": self.unit_id,
-            "unit_name": self.unit_name,
-            "fit_node_count": len(df_nodes),
-            "sample_count": len(df),
-            "interior_count": int(interior_mask.sum()),
-            "parameters": param_payload,
-            "roundtrip": {
-                "st70_to_etrs89_to_st70_max_m": rt_st70_max_m,
-                "etrs89_to_st70_to_etrs89_max_rad": rt_geo_max_rad,
+        plot_list = list(fit_inv_res.extra.get("plots", {}).values()) + list(
+            fit_fwd_res.extra.get("plots", {}).values()
+        )
+        brief = self.build_brief(
+            runtime_s=elapsed,
+            key_metrics=summarize_eval_results([*emb_results, *fit_results]),
+            artifacts={
+                "scorecard_csv": "results/scorecard.csv",
+                "scorecard_json": "results/scorecard_summary.json",
+                "scorecard_md": "results/summary_table.md",
+                "params_json": "results/helmert2d_params.json",
+                "plots": plot_list,
             },
-            "embedded_helmert2d": {
-                "etrs89_to_st70": _compact_metrics(emb_inv_res),
-                "st70_to_etrs89": _compact_metrics(emb_fwd_res),
-            },
-            "fitted_helmert2d": {
-                "etrs89_to_st70": _compact_metrics(fit_inv_res),
-                "st70_to_etrs89": _compact_metrics(fit_fwd_res),
+            extra={
+                "fit_node_count": len(df_nodes),
+                "sample_count": len(df),
+                "interior_count": int(interior_mask.sum()),
+                "parameters": param_payload,
+                "roundtrip": {
+                    "st70_to_etrs89_to_st70_max_m": rt_st70_max_m,
+                    "etrs89_to_st70_to_etrs89_max_rad": rt_geo_max_rad,
+                },
                 "interior_only_etrs89_to_st70": {
                     "mean_2d_m": fit_inv_int_sum["mean_2d_m"],
                     "rmse_2d_m": fit_inv_int_sum["rmse_2d_m"],
@@ -190,14 +173,9 @@ class Helmert2DBaselineUnit(TransformationExperimentUnit):
                     "max_2d_m": fit_fwd_int_sum["max_2d_m"],
                 },
             },
-            "plots": {
-                "etrs89_to_st70": fit_inv_res.extra.get("plots", {}),
-                "st70_to_etrs89": fit_fwd_res.extra.get("plots", {}),
-            },
-            "runtime_s": round(elapsed, 3),
-        }
+        )
         self.save_brief(brief)
-        print(f"=== Research Unit 03 [{self.unit_name}] Complete ===")
+        print(f"=== Experiment '{self.slug}' Complete in {elapsed:.2f}s ===")
         return brief
 
 

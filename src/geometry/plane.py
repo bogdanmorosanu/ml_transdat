@@ -8,12 +8,12 @@ cell into:
 """
 
 import math
-import os
-import pickle
 from dataclasses import dataclass
 from typing import Any
 
 import numpy as np
+
+from pytransdat.spg_reader import SpgReader
 
 
 @dataclass(frozen=True)
@@ -286,33 +286,19 @@ def extract_grid_cell_planes(
 ) -> list[CellPlane2D]:
     """Scans all cells in the official SPG grid and fits 2D cell planes for valid cells.
 
-    :param spg_path: Optional path to .spg grid file. If None, auto-discovers from pytransdat/grids/
+    :param spg_path: Optional path to .spg grid file. If None, uses default :class:`SpgReader`.
     :param nodata_threshold: Magnitude threshold to filter out NoData values (default: 100.0 m)
     :return: List of fitted CellPlane2D objects for all valid cells
     """
-    if spg_path is None:
-        spg_dir = os.path.join(
-            os.path.dirname(__file__), "..", "..", "pytransdat", "grids"
-        )
-        spg_candidates = [f for f in os.listdir(spg_dir) if f.endswith(".spg")]
-        if not spg_candidates:
-            raise FileNotFoundError(f"No .spg grid found in {spg_dir}")
-        spg_path = os.path.join(spg_dir, spg_candidates[0])
+    reader = SpgReader(spg_path) if spg_path is not None else SpgReader()
+    min_e, max_e, min_n, max_n, step_e, step_n = (
+        float(v) for v in reader.shift_bounds
+    )
+    ncols = round((max_e - min_e) / step_e) + 1
+    nrows = round((max_n - min_n) / step_n) + 1
 
-    with open(spg_path, "rb") as f:
-        spg = pickle.load(f)
-
-    shifts_dict = spg["grids"]["geodetic_shifts"]
-    meta = shifts_dict["metadata"]
-    s_grid = shifts_dict["grid"]  # tuple of (de_array, dn_array)
-    de_arr = s_grid[0]
-    dn_arr = s_grid[1]
-
-    step_n = float(meta["stepn"])
-    step_e = float(meta["stepe"])
-    min_n = float(meta["minn"])
-    min_e = float(meta["mine"])
-    nrows, ncols = dn_arr.shape
+    de_arr = np.asarray(reader.shift_e_flat, dtype=np.float64).reshape((nrows, ncols))
+    dn_arr = np.asarray(reader.shift_n_flat, dtype=np.float64).reshape((nrows, ncols))
 
     valid_cells: list[CellPlane2D] = []
 

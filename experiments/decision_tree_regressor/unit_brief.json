@@ -1,51 +1,167 @@
 {
-  "unit_id": "05",
-  "unit_name": "decision_tree_regressor",
+  "schema_version": "2.0",
+  "slug": "decision_tree_regressor",
+  "experiment_type": "grid_shift",
   "status": "completed",
-  "scorecard": [
+  "runtime_s": 79.305,
+  "key_metrics": [
     {
-      "Model": "dt_base_11km",
-      "Leaves": 2689,
-      "Depth": 22,
-      "Size (MB)": 0.41,
-      "Train RMSE (m)": 0.0,
-      "Grid 8x8 RMSE (m)": 0.08171789800045286,
-      "Corridor RMSE (m)": 0.06780941195098195,
-      "Corridor Max (m)": 0.2946222796321493,
-      "Fit Time (s)": 0.007
+      "model": "dt_base_11km",
+      "dataset": "ro_grid_8x8",
+      "direction": "grid_shift_2d",
+      "count": 146258,
+      "mean_2d_mm": 62.4435,
+      "rmse_2d_mm": 81.7179,
+      "p95_2d_mm": 157.5519,
+      "max_2d_mm": 1037.0099,
+      "pass_lt_1cm_pct": 5.62,
+      "total_size_mb": 39.5442,
+      "fit_time_s": 0.0076,
+      "eval_time_s": 0.0084,
+      "throughput_pts_per_s": 17380423.3
     },
     {
-      "Model": "dt_4x4_2.75km",
-      "Leaves": 36435,
-      "Depth": 30,
-      "Size (MB)": 5.56,
-      "Train RMSE (m)": 0.0,
-      "Grid 8x8 RMSE (m)": 0.024597594433329338,
-      "Corridor RMSE (m)": 0.01614852815529202,
-      "Corridor Max (m)": 0.09095704599826597,
-      "Fit Time (s)": 0.06
+      "model": "dt_base_11km",
+      "dataset": "ro_corridor_snw",
+      "direction": "grid_shift_2d",
+      "count": 36435,
+      "mean_2d_mm": 56.0067,
+      "rmse_2d_mm": 67.8094,
+      "p95_2d_mm": 128.9313,
+      "max_2d_mm": 294.6223,
+      "pass_lt_1cm_pct": 4.98,
+      "total_size_mb": 39.5442,
+      "fit_time_s": 0.0076,
+      "eval_time_s": 0.0021,
+      "throughput_pts_per_s": 17189564.1
     },
     {
-      "Model": "dt_8x8_1.375km",
-      "Leaves": 146258,
-      "Depth": 36,
-      "Size (MB)": 22.32,
-      "Train RMSE (m)": 0.0,
-      "Grid 8x8 RMSE (m)": 0.0,
-      "Corridor RMSE (m)": 0.008005567737194859,
-      "Corridor Max (m)": 0.046481853067808984,
-      "Fit Time (s)": 0.342
+      "model": "dt_4x4_2750m",
+      "dataset": "ro_grid_8x8",
+      "direction": "grid_shift_2d",
+      "count": 146258,
+      "mean_2d_mm": 16.239,
+      "rmse_2d_mm": 24.5976,
+      "p95_2d_mm": 48.0962,
+      "max_2d_mm": 554.8507,
+      "pass_lt_1cm_pct": 42.71,
+      "total_size_mb": 44.6935,
+      "fit_time_s": 0.1172,
+      "eval_time_s": 0.0175,
+      "throughput_pts_per_s": 8352206.9
     },
     {
-      "Model": "dt_8x8_pruned_1e8",
-      "Leaves": 18424,
-      "Depth": 27,
-      "Size (MB)": 2.81,
-      "Train RMSE (m)": 0.01760512536206412,
-      "Grid 8x8 RMSE (m)": 0.01760512536206412,
-      "Corridor RMSE (m)": 0.018822439226972246,
-      "Corridor Max (m)": 0.08513542581093989,
-      "Fit Time (s)": 0.209
+      "model": "dt_4x4_2750m",
+      "dataset": "ro_corridor_snw",
+      "direction": "grid_shift_2d",
+      "count": 36435,
+      "mean_2d_mm": 12.9583,
+      "rmse_2d_mm": 16.1485,
+      "p95_2d_mm": 31.3612,
+      "max_2d_mm": 90.957,
+      "pass_lt_1cm_pct": 46.46,
+      "total_size_mb": 44.6935,
+      "fit_time_s": 0.1172,
+      "eval_time_s": 0.0049,
+      "throughput_pts_per_s": 7456409.6
+    },
+    {
+      "model": "dt_8x8_1375m",
+      "dataset": "ro_corridor_snw",
+      "direction": "grid_shift_2d",
+      "count": 36435,
+      "mean_2d_mm": 6.4306,
+      "rmse_2d_mm": 8.0056,
+      "p95_2d_mm": 15.5547,
+      "max_2d_mm": 46.4819,
+      "pass_lt_1cm_pct": 80.92,
+      "total_size_mb": 61.4511,
+      "fit_time_s": 0.5873,
+      "eval_time_s": 0.0062,
+      "throughput_pts_per_s": 5914004.7
+    },
+    {
+      "model": "dt_8x8_pruned_1e-8",
+      "dataset": "ro_corridor_snw",
+      "direction": "grid_shift_2d",
+      "count": 36435,
+      "mean_2d_mm": 16.1163,
+      "rmse_2d_mm": 18.8224,
+      "p95_2d_mm": 34.5642,
+      "max_2d_mm": 85.1354,
+      "pass_lt_1cm_pct": 30.32,
+      "total_size_mb": 41.9452,
+      "fit_time_s": 0.4846,
+      "eval_time_s": 0.0324,
+      "throughput_pts_per_s": 1125958.4
+    },
+    {
+      "model": "dt_16x16_688m",
+      "dataset": "ro_corridor_snw",
+      "direction": "grid_shift_2d",
+      "count": 36435,
+      "mean_2d_mm": 3.2255,
+      "rmse_2d_mm": 4.0128,
+      "p95_2d_mm": 7.78,
+      "max_2d_mm": 22.4378,
+      "pass_lt_1cm_pct": 98.24,
+      "total_size_mb": 128.56,
+      "fit_time_s": 1.2426,
+      "eval_time_s": 0.0053,
+      "throughput_pts_per_s": 6920622.3
     }
-  ]
+  ],
+  "artifacts": {
+    "report": "report.md",
+    "scorecard_csv": "results/scorecard.csv",
+    "scorecard_json": "results/scorecard_summary.json",
+    "scorecard_md": "results/summary_table.md",
+    "plots": [
+      "dt_base_11km_ro_grid_8x8_grid_shift_2d_spatial_error.png",
+      "dt_base_11km_ro_grid_8x8_grid_shift_2d_hist_ecdf.png",
+      "dt_base_11km_ro_grid_8x8_grid_shift_2d_signed_scatter.png",
+      "dt_base_11km_ro_grid_8x8_grid_shift_2d_subcell_heatmap.png",
+      "dt_base_11km_ro_corridor_snw_grid_shift_2d_spatial_error.png",
+      "dt_base_11km_ro_corridor_snw_grid_shift_2d_hist_ecdf.png",
+      "dt_base_11km_ro_corridor_snw_grid_shift_2d_signed_scatter.png",
+      "transect_66km_decision_tree.png"
+    ]
+  },
+  "benchmark_candidates": [
+    {
+      "name": "dt_base_11km",
+      "label": "Decision Tree (11km)",
+      "suite": "grid_shift_models",
+      "train_grid": "spg_nodes_valid",
+      "model_class": "src.models.decision_tree_regressor.DecisionTreeSpatialRegressor",
+      "params": {
+        "criterion": "squared_error",
+        "max_depth": null,
+        "min_samples_split": 2,
+        "min_samples_leaf": 1,
+        "min_impurity_decrease": 0.0,
+        "random_state": 42
+      },
+      "extra": {}
+    },
+    {
+      "name": "dt_8x8_pruned_1e-8",
+      "label": "Decision Tree (8x8, pruned 1e-8)",
+      "suite": "grid_shift_models",
+      "train_grid": "ro_grid_8x8",
+      "model_class": "src.models.decision_tree_regressor.DecisionTreeSpatialRegressor",
+      "params": {
+        "criterion": "squared_error",
+        "max_depth": null,
+        "min_samples_split": 2,
+        "min_samples_leaf": 1,
+        "min_impurity_decrease": 1e-08,
+        "random_state": 42
+      },
+      "extra": {}
+    }
+  ],
+  "extra": {
+    "transect_plot": "transect_66km_decision_tree.png"
+  }
 }

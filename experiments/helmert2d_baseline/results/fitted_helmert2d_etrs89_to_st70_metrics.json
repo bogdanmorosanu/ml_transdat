@@ -1,5 +1,8 @@
 {
   "count": 36435,
+  "total_count": 36435,
+  "unmatched_count": 0,
+  "coverage_pct": 100.0,
   "mean_2d_m": 0.3743363181606732,
   "std_2d_m": 0.23677683520785725,
   "rmse_2d_m": 0.44293447459543894,
@@ -24,6 +27,9 @@
   "by_point_type": {
     "nodes": {
       "count": 2222,
+      "total_count": 2222,
+      "unmatched_count": 0,
+      "coverage_pct": 100.0,
       "mean_2d_m": 0.37758701303067105,
       "std_2d_m": 0.24061340432047712,
       "rmse_2d_m": 0.4477351479927766,
@@ -48,6 +54,9 @@
     },
     "interior": {
       "count": 34213,
+      "total_count": 34213,
+      "unmatched_count": 0,
+      "coverage_pct": 100.0,
       "mean_2d_m": 0.3741251982939227,
       "std_2d_m": 0.23652396804624354,
       "rmse_2d_m": 0.4426208890899834,

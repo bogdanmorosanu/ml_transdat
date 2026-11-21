@@ -309,6 +309,47 @@ class TestUnifiedArchitecture(unittest.TestCase):
         self.assertIsNotNone(res.memory_breakdown)
         self.assertGreater(res.memory_breakdown.dependencies_bytes, 0)  # type: ignore[union-attr]
 
+    def test_analysis_unit_and_v2_brief_schema(self) -> None:
+        from src.core import AnalysisExperimentUnit, ExperimentType
+
+        class _DummyAnalysisUnit(AnalysisExperimentUnit):
+            @property
+            def slug(self) -> str:
+                return "dummy_analysis"
+
+            def run_analysis(self) -> dict[str, object]:
+                return {
+                    "key_metrics": {"count": 42},
+                    "artifacts": {"plots": ["demo.png"]},
+                    "extra": {"note": "ok"},
+                }
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            unit = _DummyAnalysisUnit(Path(tmpdir))
+            brief = unit.run()
+            self.assertEqual(brief["schema_version"], "2.0")
+            self.assertEqual(brief["slug"], "dummy_analysis")
+            self.assertEqual(brief["experiment_type"], ExperimentType.ANALYSIS.value)
+            self.assertEqual(brief["key_metrics"], {"count": 42})
+            self.assertEqual(brief["benchmark_candidates"], [])
+            self.assertTrue((Path(tmpdir) / "unit_brief.json").is_file())
+
+    def test_specs_from_unit_and_geometry_spg_reader(self) -> None:
+        from experiments.knn_spatial_regressor.run_unit import KnnSpatialRegressorUnit
+        from src.core import specs_from_unit
+        from src.geometry.plane import extract_grid_cell_planes
+
+        specs = specs_from_unit(
+            KnnSpatialRegressorUnit,
+            suite="grid_shift_models",
+            unit_dir=Path("experiments/knn_spatial_regressor"),
+        )
+        self.assertEqual(len(specs), 2)
+        self.assertEqual(specs[0].source_experiment, "knn_spatial_regressor")
+
+        cells = extract_grid_cell_planes()
+        self.assertGreater(len(cells), 2000)
+
 
 if __name__ == "__main__":
     unittest.main()

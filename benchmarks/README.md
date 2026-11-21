@@ -53,6 +53,13 @@ All benchmark suites are runnable from the workspace root using the project cond
 # 1. Run Global Analytical Models Benchmark (Helmert / Polynomials / Sparse Lasso)
 D:\anaconda3\envs\ml_transdat\python.exe -m benchmarks.global_analytical_models.run_benchmark
 
-# 2. Run High-Precision Grid Shift Models Benchmark (Quadtrees / Trees / KNN / Fourier MLP)
+# 2. Run High-Precision Grid Shift Models Benchmark (Quadtrees / Trees / KNN / Fourier MLP / TPS)
 D:\anaconda3\envs\ml_transdat\python.exe -m benchmarks.grid_shift_models.run_benchmark
 ```
+
+---
+
+## 5. Drift-Free Experiment Promotion (`BenchmarkSuite` + `benchmark-sync`)
+All benchmark suites subclass `src.core.BenchmarkSuite` and pull promoted model variants directly from source experiments via `specs_from_unit(<UnitClass>, suite="<suite>")`. This guarantees that benchmarked models always use the exact validated hyperparameters and training grids documented in `experiments/<slug>/report.md` and `unit_brief.json`.
+
+Use the **`benchmark-sync`** skill (`.agents/skills/benchmark-sync/SKILL.md`) to promote or refresh validated models from any `grid_shift` or `transformation` experiment.

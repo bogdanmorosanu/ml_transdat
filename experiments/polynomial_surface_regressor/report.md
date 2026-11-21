@@ -121,3 +121,18 @@ The 3D perspective surface visualizes the actual 3D elevation of 2D distortion m
 ### 4. 2D Plan-View Heatmaps Comparison (2x3 Grid)
 ![2D Heatmaps Comparison](plots/polynomial_2d_heatmaps_comparison.png)
 The 2D plan-view contour map shows the geographic contours and contours of distortion across Romania with consistent color scale and contour lines ($0.25\,\text{m}$ to $2.50\,\text{m}$).
+
+---
+
+## 6. Benchmark Candidates
+Promoted to `benchmarks/global_analytical_models/` via `specs_from_unit(PolynomialSurfaceRegressorUnit, suite="global_analytical_models")`:
+
+| Variant | Benchmark Label | Train Grid | Exact Hyperparameters |
+| :--- | :--- | :--- | :--- |
+| `poly_deg1_11km` | `Linear Affine Plane (Deg 1, 6T)` | `spg_nodes_valid` | `degree=1, alpha=1e-8` |
+| `poly_deg2_11km` | `Quadratic Bowl (Deg 2, 12T)` | `spg_nodes_valid` | `degree=2, alpha=1e-8` |
+| `poly_deg3_11km` | `Cubic Surface (Deg 3, 20T)` | `spg_nodes_valid` | `degree=3, alpha=1e-8` |
+| `poly_deg5_11km` | `Quintic Surface (Deg 5, 42T)` | `spg_nodes_valid` | `degree=5, alpha=1e-8` |
+| `poly_deg8_11km` | `Multi-Harmonic (Deg 8, 90T)` | `spg_nodes_valid` | `degree=8, alpha=1e-8` |
+| `poly_deg12_11km` | `High-Order Limit (Deg 12, 182T)` | `spg_nodes_valid` | `degree=12, alpha=1e-8` |
+| `poly_deg5_sparse_lasso` | `Sparse Lasso (Deg 5, 24T)` | `spg_nodes_valid` | `degree=5, alpha=5e-4, regressor="lasso"` |

@@ -10,6 +10,7 @@ from src.viz.plots import (
     plot_spatial_error,
     plot_speed_workloads,
     plot_subcell_heatmap,
+    plot_surface_comparison_grids,
     plot_transect_66km,
     plot_vector_quiver,
 )
@@ -28,6 +29,7 @@ __all__ = [
     "plot_spatial_error",
     "plot_speed_workloads",
     "plot_subcell_heatmap",
+    "plot_surface_comparison_grids",
     "plot_transect_66km",
     "plot_vector_quiver",
     "resolve_plot_types",

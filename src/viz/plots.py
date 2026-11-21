@@ -905,3 +905,169 @@ def plot_speed_workloads(
     fig.savefig(out_path, dpi=dpi)
     plt.close(fig)
     return out_path
+
+
+def plot_surface_comparison_grids(
+    models_info: Sequence[tuple[str, BaseGridShiftModel | None, str]],
+    ref_dataset: Any,
+    out_3d_path: Path,
+    out_2d_path: Path,
+    title_3d: str,
+    title_2d: str,
+    vmax: float = 2.8,
+    dpi: int = 200,
+) -> tuple[Path, Path]:
+    """Render 2x3 3D perspective surface and 2D contour comparison grids.
+
+    :param models_info: Sequence of ``(panel_title, model_or_none_for_ground_truth, description)``.
+    :type models_info: Sequence[tuple[str, BaseGridShiftModel | None, str]]
+    :param ref_dataset: Reference :class:`GridDataset` used for ground truth & domain bounds.
+    :type ref_dataset: Any
+    :param out_3d_path: Output PNG path for the 3D surface grid.
+    :type out_3d_path: Path
+    :param out_2d_path: Output PNG path for the 2D contour grid.
+    :type out_2d_path: Path
+    :param title_3d: Suptitle for the 3D surface figure.
+    :type title_3d: str
+    :param title_2d: Suptitle for the 2D contour figure.
+    :type title_2d: str
+    :param vmax: Upper color/z-axis limit in meters.
+    :type vmax: float
+    :param dpi: Output figure DPI.
+    :type dpi: int
+    :return: Tuple ``(out_3d_path, out_2d_path)``.
+    :rtype: tuple[Path, Path]
+    """
+    from matplotlib.colors import Normalize
+    from scipy.interpolate import griddata
+
+    coords = ref_dataset.coords
+    mag = np.hypot(ref_dataset.true_shifts[:, 0], ref_dataset.true_shifts[:, 1])
+
+    n_min, n_max = coords[:, 0].min(), coords[:, 0].max()
+    e_min, e_max = coords[:, 1].min(), coords[:, 1].max()
+
+    n_vec = np.linspace(n_min, n_max, 80)
+    e_vec = np.linspace(e_min, e_max, 100)
+    grid_n, grid_e = np.meshgrid(n_vec, e_vec, indexing="ij")
+
+    gt_mag = griddata(coords, mag, (grid_n, grid_e), method="linear")
+    mask = ~np.isnan(gt_mag)
+
+    x_km = (grid_e - e_min) / 1000.0
+    y_km = (grid_n - n_min) / 1000.0
+    query_coords = np.column_stack([grid_n.ravel(), grid_e.ravel()])
+
+    surfaces: list[tuple[str, np.ndarray, str]] = []
+    for title, model_obj, desc in models_info:
+        if model_obj is None:
+            surfaces.append((title, gt_mag, desc))
+        else:
+            pred = model_obj.predict(query_coords)
+            pred_mag = np.hypot(pred[:, 0], pred[:, 1]).reshape(grid_n.shape)
+            pred_mag[~mask] = np.nan
+            surfaces.append((title, pred_mag, desc))
+
+    norm = Normalize(vmin=0.0, vmax=vmax)
+    cmap = plt.cm.turbo
+
+    # 3D Perspective Grid
+    fig_3d = plt.figure(figsize=(19, 11.5))
+    for idx, (title, z_grid, desc) in enumerate(surfaces):
+        ax = fig_3d.add_subplot(2, 3, idx + 1, projection="3d")
+        ax.plot_surface(
+            x_km,
+            y_km,
+            z_grid,
+            cmap=cmap,
+            norm=norm,
+            linewidth=0,
+            antialiased=True,
+            rstride=1,
+            cstride=1,
+            alpha=0.92,
+        )
+        ax.contour(
+            x_km,
+            y_km,
+            z_grid,
+            zdir="z",
+            offset=0.0,
+            cmap=cmap,
+            norm=norm,
+            levels=12,
+            alpha=0.35,
+            linewidths=0.7,
+        )
+        ax.set_title(f"{title}\n{desc}", fontsize=10.5, fontweight="bold", pad=12)
+        ax.set_xlabel("Easting (km)", fontsize=9, labelpad=6)
+        ax.set_ylabel("Northing (km)", fontsize=9, labelpad=6)
+        ax.set_zlabel("2D Shift (m)", fontsize=9, labelpad=6)
+        ax.set_zlim(0.0, vmax)
+        ax.view_init(elev=28, azim=-55)
+        ax.grid(True, linestyle=":", alpha=0.4)
+
+    fig_3d.subplots_adjust(
+        right=0.91, hspace=0.25, wspace=0.18, top=0.90, bottom=0.06
+    )
+    cbar_ax_3d = fig_3d.add_axes([0.93, 0.15, 0.015, 0.70])
+    cbar_3d = fig_3d.colorbar(
+        matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cbar_ax_3d
+    )
+    cbar_3d.set_label(
+        "2D Distortion Shift Magnitude (meters)", fontsize=11, fontweight="bold"
+    )
+    fig_3d.suptitle(title_3d, fontsize=14.5, fontweight="bold", y=0.97)
+    out_3d_path.parent.mkdir(parents=True, exist_ok=True)
+    fig_3d.savefig(out_3d_path, dpi=dpi)
+    plt.close(fig_3d)
+
+    # 2D Contour Grid
+    fig_2d, axes_2d = plt.subplots(2, 3, figsize=(18, 10.5))
+    axes_flat = axes_2d.flatten()
+    contour_levels = np.linspace(0.0, vmax, 29)
+    major_levels = [0.25, 0.50, 1.00, 1.50, 2.00, 2.50]
+
+    for idx, (title, z_grid, desc) in enumerate(surfaces):
+        ax = axes_flat[idx]
+        ax.contourf(
+            x_km,
+            y_km,
+            z_grid,
+            levels=contour_levels,
+            cmap=cmap,
+            norm=norm,
+            extend="both",
+        )
+        cs = ax.contour(
+            x_km,
+            y_km,
+            z_grid,
+            levels=major_levels,
+            colors="#1e293b",
+            linewidths=0.6,
+            alpha=0.7,
+        )
+        ax.clabel(cs, inline=True, fontsize=7.5, fmt="%.2fm")
+        ax.set_title(f"{title}\n{desc}", fontsize=10.5, fontweight="bold")
+        ax.set_xlabel("Easting (km)", fontsize=9)
+        ax.set_ylabel("Northing (km)", fontsize=9)
+        ax.set_aspect("equal")
+        ax.grid(True, linestyle="--", alpha=0.3)
+
+    fig_2d.subplots_adjust(
+        right=0.90, hspace=0.28, wspace=0.20, top=0.90, bottom=0.06
+    )
+    cbar_ax_2d = fig_2d.add_axes([0.92, 0.15, 0.015, 0.70])
+    cbar_2d = fig_2d.colorbar(
+        matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cbar_ax_2d
+    )
+    cbar_2d.set_label(
+        "2D Distortion Shift Magnitude (meters)", fontsize=11, fontweight="bold"
+    )
+    fig_2d.suptitle(title_2d, fontsize=14.5, fontweight="bold", y=0.97)
+    out_2d_path.parent.mkdir(parents=True, exist_ok=True)
+    fig_2d.savefig(out_2d_path, dpi=dpi)
+    plt.close(fig_2d)
+
+    return out_3d_path, out_2d_path

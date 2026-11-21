@@ -1,15 +1,8 @@
-"""Unit 08: 2D Radial Basis Function & Thin Plate Spline Surface Regressor on SPG Grid Shifts."""
+"""Grid Shift Unit: 2D Radial Basis Function & Thin Plate Spline Surface Regressor on SPG Grid Shifts."""
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
-
-# Ensure repo root is on sys.path
-REPO_ROOT = Path(__file__).resolve().parents[2]
-if str(REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(REPO_ROOT))
-
 from typing import Any
 
 import matplotlib
@@ -24,18 +17,14 @@ from src.evaluation import EvaluationResult
 from src.models.base import BaseGridShiftModel
 from src.models.polynomial_surface import PolynomialSurfaceRegressor
 from src.models.rbf_surface import RBFSurfaceRegressor
-from src.viz import PlotGroup, plot_transect_66km
+from src.viz import PlotGroup, plot_surface_comparison_grids, plot_transect_66km
 
 
 class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
-    """Research Unit 08: 2D RBF & Thin Plate Spline Localized Continuous Surface Regressors."""
+    """Grid Shift Unit: 2D RBF & Thin Plate Spline Localized Continuous Surface Regressors."""
 
     @property
-    def unit_id(self) -> str:
-        return "08"
-
-    @property
-    def unit_name(self) -> str:
+    def slug(self) -> str:
         return "rbf_surface_regressor"
 
     def get_model_specs(self) -> list[ExperimentModelSpec]:
@@ -75,6 +64,9 @@ class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
                 ],
                 plots=None,
                 keep_in_memory=True,
+                benchmark_candidate=True,
+                benchmark_suite="grid_shift_models",
+                benchmark_label="Thin Plate Spline (11km)",
             ),
             # 4. TPS on Densified 4x4 Subgrid (36,435 anchors, neighbors=60)
             ExperimentModelSpec(
@@ -87,6 +79,9 @@ class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
                 ],
                 plots=None,
                 keep_in_memory=True,
+                benchmark_candidate=True,
+                benchmark_suite="grid_shift_models",
+                benchmark_label="Thin Plate Spline (4x4, 2.7km)",
             ),
             # 5. Tuned Multiquadric RBF (epsilon = 10.0, lambda = 1e-4)
             ExperimentModelSpec(
@@ -191,125 +186,23 @@ class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
         poly_deg12: BaseGridShiftModel,
     ) -> None:
         """Render 2x3 3D perspective surface and 2D contour comparison grids."""
-        from matplotlib.colors import Normalize
-        from scipy.interpolate import griddata
-
         ds_4x4 = self.load_grid(GridId.RO_GRID_4X4)
-        coords_4x4 = ds_4x4.coords
-        mag_4x4 = np.hypot(ds_4x4.true_shifts[:, 0], ds_4x4.true_shifts[:, 1])
-
-        n_min, n_max = coords_4x4[:, 0].min(), coords_4x4[:, 0].max()
-        e_min, e_max = coords_4x4[:, 1].min(), coords_4x4[:, 1].max()
-
-        n_vec = np.linspace(n_min, n_max, 80)
-        e_vec = np.linspace(e_min, e_max, 100)
-        grid_n, grid_e = np.meshgrid(n_vec, e_vec, indexing="ij")
-
-        gt_mag = griddata(coords_4x4, mag_4x4, (grid_n, grid_e), method="linear")
-        mask = ~np.isnan(gt_mag)
-
-        x_km = (grid_e - e_min) / 1000.0
-        y_km = (grid_n - n_min) / 1000.0
-        query_coords = np.column_stack([grid_n.ravel(), grid_e.ravel()])
-
-        models_info = [
-            ("1. Ground Truth (Bicubic SPG)", None, gt_mag, "Real physical distortion field (Banat dome 2.76m)"),
-            ("2. Level 1: Flat Tilted Plane", poly_deg1, None, "Rigid flat plane (Helmert equivalent, RMSE 42.8cm)"),
-            ("3. Level 2: Polynomial Deg 12", poly_deg12, None, "Macroscopic curved fit (RMSE 19.2cm, edge ripples)"),
-            ("4. Level 3: TPS Base Smooth (11km)", fitted_models["tps_base_optimal_2e-4"], None, "Thin Plate Spline on 2,222 base anchors (RMSE 8.6mm)"),
-            ("5. Level 3: TPS Densified (4x4)", fitted_models["tps_densified_4x4"], None, "Thin Plate Spline on 36,435 anchors (Mean 3.8mm)"),
-            ("6. Level 3: Tuned MQ (eps=10)", fitted_models["mq_tuned_eps10"], None, "Tuned Hardy Multiquadric RBF (RMSE 14.0mm)"),
+        models_info: list[tuple[str, BaseGridShiftModel | None, str]] = [
+            ("1. Ground Truth (Bicubic SPG)", None, "Real physical distortion field (Banat dome 2.76m)"),
+            ("2. Level 1: Flat Tilted Plane", poly_deg1, "Rigid flat plane (Helmert equivalent, RMSE 42.8cm)"),
+            ("3. Level 2: Polynomial Deg 12", poly_deg12, "Macroscopic curved fit (RMSE 19.2cm, edge ripples)"),
+            ("4. Level 3: TPS Base Smooth (11km)", fitted_models["tps_base_optimal_2e-4"], "Thin Plate Spline on 2,222 base anchors (RMSE 8.6mm)"),
+            ("5. Level 3: TPS Densified (4x4)", fitted_models["tps_densified_4x4"], "Thin Plate Spline on 36,435 anchors (Mean 3.8mm)"),
+            ("6. Level 3: Tuned MQ (eps=10)", fitted_models["mq_tuned_eps10"], "Tuned Hardy Multiquadric RBF (RMSE 14.0mm)"),
         ]
-
-        surfaces = []
-        for title, model_obj, direct_mag, desc in models_info:
-            if direct_mag is not None:
-                surfaces.append((title, direct_mag, desc))
-            else:
-                pred = model_obj.predict(query_coords)
-                pred_mag = np.hypot(pred[:, 0], pred[:, 1]).reshape(grid_n.shape)
-                pred_mag[~mask] = np.nan
-                surfaces.append((title, pred_mag, desc))
-
-        norm = Normalize(vmin=0.0, vmax=2.8)
-        cmap = plt.cm.turbo
-
-        # 3D Grid
-        fig_3d = plt.figure(figsize=(19, 11.5))
-        for idx, (title, Z, desc) in enumerate(surfaces):
-            ax = fig_3d.add_subplot(2, 3, idx + 1, projection="3d")
-            ax.plot_surface(
-                x_km, y_km, Z,
-                cmap=cmap,
-                norm=norm,
-                linewidth=0,
-                antialiased=True,
-                rstride=1,
-                cstride=1,
-                alpha=0.92,
-            )
-            ax.contour(
-                x_km, y_km, Z,
-                zdir="z",
-                offset=0.0,
-                cmap=cmap,
-                norm=norm,
-                levels=12,
-                alpha=0.35,
-                linewidths=0.7,
-            )
-            ax.set_title(f"{title}\n{desc}", fontsize=10.5, fontweight="bold", pad=12)
-            ax.set_xlabel("Easting (km)", fontsize=9, labelpad=6)
-            ax.set_ylabel("Northing (km)", fontsize=9, labelpad=6)
-            ax.set_zlabel("2D Shift (m)", fontsize=9, labelpad=6)
-            ax.set_zlim(0.0, 2.8)
-            ax.view_init(elev=28, azim=-55)
-            ax.grid(True, linestyle=":", alpha=0.4)
-
-        fig_3d.subplots_adjust(right=0.91, hspace=0.25, wspace=0.18, top=0.90, bottom=0.06)
-        cbar_ax_3d = fig_3d.add_axes([0.93, 0.15, 0.015, 0.70])
-        cbar_3d = fig_3d.colorbar(matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cbar_ax_3d)
-        cbar_3d.set_label("2D Distortion Shift Magnitude (meters)", fontsize=11, fontweight="bold")
-        fig_3d.suptitle(
-            "Level 3 Surface Progression: Flat Plane vs. Polynomial vs. Elastic Sheet (RBF / TPS)",
-            fontsize=14.5,
-            fontweight="bold",
-            y=0.97,
+        plot_surface_comparison_grids(
+            models_info=models_info,
+            ref_dataset=ds_4x4,
+            out_3d_path=out_3d_path,
+            out_2d_path=out_2d_path,
+            title_3d="Level 3 Surface Progression: Flat Plane vs. Polynomial vs. Elastic Sheet (RBF / TPS)",
+            title_2d="2D Plan-View Contours: Level 1 (Helmert) vs. Level 2 (Polynomial) vs. Level 3 (RBF / TPS)",
         )
-        out_3d_path.parent.mkdir(parents=True, exist_ok=True)
-        fig_3d.savefig(out_3d_path, dpi=200)
-        plt.close(fig_3d)
-
-        # 2D Contour Grid
-        fig_2d, axes_2d = plt.subplots(2, 3, figsize=(18, 10.5))
-        axes_flat = axes_2d.flatten()
-        contour_levels = np.linspace(0.0, 2.8, 29)
-        major_levels = [0.25, 0.50, 1.00, 1.50, 2.00, 2.50]
-
-        for idx, (title, Z, desc) in enumerate(surfaces):
-            ax = axes_flat[idx]
-            ax.contourf(x_km, y_km, Z, levels=contour_levels, cmap=cmap, norm=norm, extend="both")
-            cs = ax.contour(x_km, y_km, Z, levels=major_levels, colors="#1e293b", linewidths=0.6, alpha=0.7)
-            ax.clabel(cs, inline=True, fontsize=7.5, fmt="%.2fm")
-            ax.set_title(f"{title}\n{desc}", fontsize=10.5, fontweight="bold")
-            ax.set_xlabel("Easting (km)", fontsize=9)
-            ax.set_ylabel("Northing (km)", fontsize=9)
-            ax.set_aspect("equal")
-            ax.grid(True, linestyle="--", alpha=0.3)
-
-        fig_2d.subplots_adjust(right=0.90, hspace=0.28, wspace=0.20, top=0.90, bottom=0.06)
-        cbar_ax_2d = fig_2d.add_axes([0.92, 0.15, 0.015, 0.70])
-        cbar_2d = fig_2d.colorbar(matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cbar_ax_2d)
-        cbar_2d.set_label("2D Distortion Shift Magnitude (meters)", fontsize=11, fontweight="bold")
-        fig_2d.suptitle(
-            "2D Plan-View Contours: Level 1 (Helmert) vs. Level 2 (Polynomial) vs. Level 3 (RBF / TPS)",
-            fontsize=14.5,
-            fontweight="bold",
-            y=0.97,
-        )
-        out_2d_path.parent.mkdir(parents=True, exist_ok=True)
-        fig_2d.savefig(out_2d_path, dpi=200)
-        plt.close(fig_2d)
 
     def _plot_foundation_and_smoothing(
         self,
@@ -377,9 +270,10 @@ class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
         plt.close(fig)
 
 
+def main() -> None:
+    unit = RBFSurfaceRegressorUnit(Path("experiments/rbf_surface_regressor"))
+    unit.run()
+
+
 if __name__ == "__main__":
-    unit_dir = Path(__file__).resolve().parent
-    unit = RBFSurfaceRegressorUnit(unit_dir)
-    summary = unit.run()
-    brief_path = unit.save_brief(summary)
-    print(f"=== Research Unit 08 complete. Brief saved to {brief_path} ===")
+    main()

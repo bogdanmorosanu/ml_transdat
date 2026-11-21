@@ -1,9 +1,12 @@
 {
-  "unit_id": "01",
-  "unit_name": "spg_grid_analysis",
-  "grid_file": "rom_grid3d_25.09.spg",
-  "sample_count": 36435,
-  "statistics": {
+  "schema_version": "2.0",
+  "slug": "spg_grid_analysis",
+  "experiment_type": "analysis",
+  "status": "completed",
+  "runtime_s": 4.357,
+  "key_metrics": {
+    "grid_file": "rom_grid3d_25.09.spg",
+    "sample_count": 36435,
     "dn_min_m": -2.736405889503658,
     "dn_max_m": 1.2292720079421997,
     "dn_mean_m": -0.0043296799232488995,
@@ -16,15 +19,30 @@
     "mag_p99_m": 1.1497851902112812,
     "mag_max_m": 2.7570166502673428
   },
-  "plots": {
-    "spg_shift_dn": "spg_shift_dn.png",
-    "spg_shift_de": "spg_shift_de.png",
-    "spg_shift_mag": "spg_shift_mag.png",
-    "quiver": "spg_shift_quiver.png",
-    "spatial_error": "spg_grid_shifts_2d_bicubic_spatial_error.png",
-    "hist_ecdf": "spg_grid_shifts_2d_bicubic_hist_ecdf.png",
-    "signed_scatter": "spg_grid_shifts_2d_bicubic_signed_scatter.png",
-    "subcell_heatmap": "spg_grid_shifts_2d_bicubic_subcell_heatmap.png"
+  "artifacts": {
+    "report": "report.md",
+    "plots": [
+      "spg_shift_dn.png",
+      "spg_shift_de.png",
+      "spg_shift_mag.png",
+      "spg_shift_quiver.png",
+      "spg_grid_shifts_ro_grid_4x4_2d_bicubic_spatial_error.png",
+      "spg_grid_shifts_ro_grid_4x4_2d_bicubic_hist_ecdf.png",
+      "spg_grid_shifts_ro_grid_4x4_2d_bicubic_signed_scatter.png",
+      "spg_grid_shifts_ro_grid_4x4_2d_bicubic_subcell_heatmap.png"
+    ]
   },
-  "runtime_s": 5.856
+  "benchmark_candidates": [],
+  "extra": {
+    "plot_map": {
+      "spg_shift_dn": "spg_shift_dn.png",
+      "spg_shift_de": "spg_shift_de.png",
+      "spg_shift_mag": "spg_shift_mag.png",
+      "quiver": "spg_shift_quiver.png",
+      "spatial_error": "spg_grid_shifts_ro_grid_4x4_2d_bicubic_spatial_error.png",
+      "hist_ecdf": "spg_grid_shifts_ro_grid_4x4_2d_bicubic_hist_ecdf.png",
+      "signed_scatter": "spg_grid_shifts_ro_grid_4x4_2d_bicubic_signed_scatter.png",
+      "subcell_heatmap": "spg_grid_shifts_ro_grid_4x4_2d_bicubic_subcell_heatmap.png"
+    }
+  }
 }

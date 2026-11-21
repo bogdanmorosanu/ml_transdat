@@ -71,3 +71,16 @@ The 66 km transect across 6 SPG cells confirms:
 * **Raw MLP (11 km)** severely underfits, cutting straight through curves and missing cell peaks.
 * **Fourier MLP (11 km)** smoothly captures the general waveform but has slight offset drift.
 * **Fourier MLP (4x4 and 8x8)** track the true bicubic ground truth curve almost indistinguishably, producing a smooth $C^\infty$ interpolating function without any of the staircase steps of Decision Trees or the pointed nodes of KNN.
+
+### Spectral Bias & Bandwidth Notes
+* **Network Depth Alone Fails**: Increasing raw MLP capacity (e.g., 3 hidden layers) yields negligible gain ($\sim 176\,\text{mm}$) without positional encoding.
+* **Nyquist Bandwidth Limit**: Higher Fourier scales ($\sigma=5.0$) over-oscillate (Runge-like phenomenon) due to the $11\,\text{km}$ Nyquist sampling limit of the base training nodes; $\sigma=3.0$ balances smoothness and fidelity.
+
+---
+
+## 6. Benchmark Candidates
+Promoted to `benchmarks/grid_shift_models/` via `specs_from_unit(MLPSpatialRegressorUnit, suite="grid_shift_models")`:
+
+| Variant | Benchmark Label | Train Grid | Exact Hyperparameters |
+| :--- | :--- | :--- | :--- |
+| `mlp_fourier_4x4` | `Fourier MLP (4x4, 2.7km)` | `ro_grid_4x4` | `hidden_layer_sizes=(256, 128), use_fourier_features=True, fourier_scale=3.0, num_fourier_frequencies=64, solver="adam", batch_size=128, learning_rate_init=0.001, tol=1e-7, n_iter_no_change=25, max_iter=300, alpha=1e-6` |

@@ -4,13 +4,16 @@ from __future__ import annotations
 
 import abc
 import gc
+import inspect
 import json
 import time
 from collections.abc import Sequence
 from dataclasses import dataclass, field
+from enum import Enum
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pandas as pd
 
 from src.data.catalog import GridDataset, GridId, GridManager
@@ -21,8 +24,98 @@ from src.viz.dispatcher import PlotDispatcher
 from src.viz.registry import PlotGroup, PlotSpec, PlotType
 
 
+class ExperimentType(str, Enum):
+    """Canonical experiment category taxonomy."""
+
+    GRID_SHIFT = "grid_shift"
+    TRANSFORMATION = "transformation"
+    ANALYSIS = "analysis"
+
+
+def _to_json_safe(val: Any) -> Any:
+    """Convert common Python/NumPy/Path objects into JSON-serializable primitives."""
+    if val is None or isinstance(val, (bool, int, float, str)):
+        return val
+    if isinstance(val, Enum):
+        return val.value
+    if isinstance(val, Path):
+        return val.as_posix()
+    if isinstance(val, (np.integer, np.floating, np.bool_)):
+        return val.item()
+    if isinstance(val, (list, tuple)):
+        return [_to_json_safe(v) for v in val]
+    if isinstance(val, dict):
+        return {str(k): _to_json_safe(v) for k, v in val.items()}
+    if isinstance(val, pd.DataFrame):
+        return f"<DataFrame shape={val.shape}>"
+    if isinstance(val, np.ndarray):
+        return f"<ndarray shape={val.shape}>"
+    return repr(val)
+
+
+def _extract_model_config(model: Any) -> dict[str, Any]:
+    """Inspect a model instance to capture its class path and constructor hyperparameters."""
+    cls = type(model)
+    sig = inspect.signature(cls.__init__)
+    params: dict[str, Any] = {}
+    for param_name, param in sig.parameters.items():
+        if param_name == "self":
+            continue
+        if param.kind in (
+            inspect.Parameter.VAR_POSITIONAL,
+            inspect.Parameter.VAR_KEYWORD,
+        ):
+            continue
+        if hasattr(model, param_name):
+            raw_val = getattr(model, param_name)
+        elif hasattr(model, f"_{param_name}"):
+            raw_val = getattr(model, f"_{param_name}")
+        elif param.default is not inspect.Parameter.empty:
+            raw_val = param.default
+        else:
+            raw_val = "<unset>"
+        params[param_name] = _to_json_safe(raw_val)
+
+    return {
+        "model_class": f"{cls.__module__}.{cls.__qualname__}",
+        "params": params,
+    }
+
+
+def summarize_eval_results(results: Sequence[EvaluationResult]) -> list[dict[str, Any]]:
+    """Convert a sequence of :class:`EvaluationResult` objects into compact v2 brief rows."""
+    rows: list[dict[str, Any]] = []
+    for res in results:
+        s = res.summary
+        pr = s.get("pass_rates_pct", {})
+        mb = res.memory_breakdown
+        total_mb = (
+            mb.total_mb if mb is not None else res.model_size_bytes / (1024.0 * 1024.0)
+        )
+        rows.append(
+            {
+                "model": res.model_name,
+                "dataset": res.dataset_id,
+                "direction": res.direction,
+                "count": int(s.get("count", 0)),
+                "mean_2d_mm": round(float(s["mean_2d_m"]) * 1000.0, 4),
+                "rmse_2d_mm": round(float(s["rmse_2d_m"]) * 1000.0, 4),
+                "p95_2d_mm": round(float(s["p95_2d_m"]) * 1000.0, 4),
+                "max_2d_mm": round(float(s["max_2d_m"]) * 1000.0, 4),
+                "pass_lt_1cm_pct": round(float(pr.get("lt_1cm", 0.0)), 2),
+                "total_size_mb": round(float(total_mb), 4),
+                "fit_time_s": round(float(res.fit_time_sec), 4),
+                "eval_time_s": round(float(res.eval_time_sec), 4),
+                "throughput_pts_per_s": round(float(res.throughput_pts_per_sec), 1),
+            }
+        )
+    return rows
+
+
 class ResearchUnit(abc.ABC):
     """Base interface for all self-contained research units in ``experiments/``."""
+
+    SCHEMA_VERSION: str = "2.0"
 
     def __init__(self, unit_dir: Path) -> None:
         self.unit_dir = Path(unit_dir)
@@ -35,22 +128,53 @@ class ResearchUnit(abc.ABC):
 
     @property
     @abc.abstractmethod
-    def unit_id(self) -> str:
-        """Sequential unit identifier (e.g., '01', '02')."""
+    def slug(self) -> str:
+        """Descriptive snake_case slug (e.g., ``'spg_grid_analysis'``)."""
 
     @property
     @abc.abstractmethod
+    def experiment_type(self) -> ExperimentType:
+        """Experiment category (``grid_shift``, ``transformation``, or ``analysis``)."""
+
+    @property
     def unit_name(self) -> str:
-        """Descriptive slug (e.g., 'spg_grid_analysis')."""
+        """Backward-compatible alias for :attr:`slug`."""
+        return self.slug
 
     @abc.abstractmethod
     def run(self) -> dict[str, Any]:
         """Execute the unit workflow, produce artifacts, and return summary dict."""
 
+    def build_brief(
+        self,
+        *,
+        status: str = "completed",
+        runtime_s: float = 0.0,
+        key_metrics: list[dict[str, Any]] | dict[str, Any] | None = None,
+        artifacts: dict[str, Any] | None = None,
+        benchmark_candidates: list[dict[str, Any]] | None = None,
+        extra: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Build a standardized Schema v2 ``unit_brief.json`` payload."""
+        merged_artifacts: dict[str, Any] = {"report": "report.md"}
+        if artifacts:
+            merged_artifacts.update(artifacts)
+        return {
+            "schema_version": self.SCHEMA_VERSION,
+            "slug": self.slug,
+            "experiment_type": self.experiment_type.value,
+            "status": status,
+            "runtime_s": round(float(runtime_s), 3),
+            "key_metrics": key_metrics if key_metrics is not None else [],
+            "artifacts": merged_artifacts,
+            "benchmark_candidates": benchmark_candidates or [],
+            "extra": _to_json_safe(extra) if extra else {},
+        }
+
     def save_brief(self, payload: dict[str, Any]) -> Path:
         """Save standard machine-readable summary brief for AI agent consumption."""
         brief_path = self.unit_dir / "unit_brief.json"
-        brief_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        brief_path.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
         return brief_path
 
 
@@ -66,6 +190,11 @@ class TransformationExperimentUnit(ResearchUnit):
         self.grid_manager = GridManager(cache_enabled=cache_grids)
         self.evaluator = ModelEvaluator()
         self.plotter = PlotDispatcher()
+
+    @property
+    def experiment_type(self) -> ExperimentType:
+        """Return :attr:`ExperimentType.TRANSFORMATION`."""
+        return ExperimentType.TRANSFORMATION
 
     def load_grid(
         self, grid_id: GridId | str, force_regenerate: bool = False
@@ -191,15 +320,41 @@ class ExperimentModelSpec:
     train_grid: GridId | str | None = None
     plots: PlotSpec | None = PlotGroup.STANDARD_DIAGNOSTIC
     keep_in_memory: bool = False
+    benchmark_candidate: bool = False
+    benchmark_suite: str | None = None
+    benchmark_label: str | None = None
     extra: dict[str, Any] = field(default_factory=dict)
+
+    def to_benchmark_candidate_dict(self) -> dict[str, Any]:
+        """Serialize benchmark promotion metadata and exact model config."""
+        cfg = _extract_model_config(self.model)
+        train_val = (
+            self.train_grid.value
+            if isinstance(self.train_grid, GridId)
+            else self.train_grid
+        )
+        return {
+            "name": self.name,
+            "label": self.benchmark_label or self.name,
+            "suite": self.benchmark_suite,
+            "train_grid": train_val,
+            "model_class": cfg["model_class"],
+            "params": cfg["params"],
+            "extra": _to_json_safe(self.extra),
+        }
 
 
 class GridShiftExperimentUnit(TransformationExperimentUnit):
     """Template Method orchestrator for 2D grid shift experiments.
 
-    Subclasses only declare :meth:`get_model_specs` (and an optional
+    Subclasses declare :meth:`get_model_specs` (and an optional
     :meth:`after_run` hook for custom comparison plots such as transects).
     """
+
+    @property
+    def experiment_type(self) -> ExperimentType:
+        """Return :attr:`ExperimentType.GRID_SHIFT`."""
+        return ExperimentType.GRID_SHIFT
 
     @abc.abstractmethod
     def get_model_specs(self) -> list[ExperimentModelSpec]:
@@ -216,7 +371,7 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
     def run(self) -> dict[str, Any]:
         """Execute the full grid-shift experiment lifecycle automatically."""
         t0 = time.perf_counter()
-        print(f"=== Starting Research Unit {self.unit_id}: {self.unit_name} ===")
+        print(f"=== Starting Experiment [{self.experiment_type.value}]: {self.slug} ===")
 
         specs = self.get_model_specs()
         all_results: list[EvaluationResult] = []
@@ -254,14 +409,89 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
         self.save_scorecards(all_results)
         extra_brief = self.after_run(kept_models, all_results)
 
+        plot_files: list[str] = []
+        for r in all_results:
+            for p_name in r.extra.get("plots", {}).values():
+                if p_name not in plot_files:
+                    plot_files.append(p_name)
+        for v in extra_brief.values():
+            if isinstance(v, str) and v.endswith(".png") and v not in plot_files:
+                plot_files.append(v)
+
         elapsed = time.perf_counter() - t0
-        brief: dict[str, Any] = {
-            "unit_id": self.unit_id,
-            "unit_name": self.unit_name,
-            "models_evaluated": [f"{r.model_name}@{r.dataset_id}" for r in all_results],
-            "runtime_s": round(elapsed, 3),
-            **extra_brief,
-        }
+        brief = self.build_brief(
+            runtime_s=elapsed,
+            key_metrics=summarize_eval_results(all_results),
+            artifacts={
+                "scorecard_csv": "results/scorecard.csv",
+                "scorecard_json": "results/scorecard_summary.json",
+                "scorecard_md": "results/summary_table.md",
+                "plots": plot_files,
+            },
+            benchmark_candidates=[
+                s.to_benchmark_candidate_dict()
+                for s in specs
+                if s.benchmark_candidate
+            ],
+            extra=extra_brief,
+        )
         self.save_brief(brief)
-        print(f"=== Research Unit {self.unit_id} Complete in {elapsed:.2f}s ===")
+        print(f"=== Experiment '{self.slug}' Complete in {elapsed:.2f}s ===")
+        return brief
+
+
+class AnalysisExperimentUnit(ResearchUnit):
+    """Template Method orchestrator for exploratory, geometric, and feature-engineering units."""
+
+    def __init__(self, unit_dir: Path, cache_grids: bool = True) -> None:
+        super().__init__(unit_dir)
+        self.grid_manager = GridManager(cache_enabled=cache_grids)
+        self.plotter = PlotDispatcher()
+        self.data_features_dir = Path("data/features")
+
+    @property
+    def experiment_type(self) -> ExperimentType:
+        """Return :attr:`ExperimentType.ANALYSIS`."""
+        return ExperimentType.ANALYSIS
+
+    def load_grid(
+        self, grid_id: GridId | str, force_regenerate: bool = False
+    ) -> GridDataset:
+        """Retrieve a :class:`GridDataset` via the unified :class:`GridManager`."""
+        return self.grid_manager.get(grid_id, force_regenerate=force_regenerate)
+
+    def render_plots(
+        self,
+        eval_result: EvaluationResult,
+        plots: PlotSpec = PlotGroup.STANDARD_DIAGNOSTIC,
+        dpi: int = 200,
+    ) -> dict[PlotType, Path]:
+        """Convenience wrapper around :meth:`PlotDispatcher.render`."""
+        return self.plotter.render(
+            eval_result=eval_result,
+            out_dir=self.plots_dir,
+            plots=plots,
+            dpi=dpi,
+        )
+
+    @abc.abstractmethod
+    def run_analysis(self) -> dict[str, Any]:
+        """Execute the analysis workflow and return ``key_metrics``, ``artifacts``, and ``extra``."""
+
+    def run(self) -> dict[str, Any]:
+        """Execute the analysis unit lifecycle and write standardized ``unit_brief.json`` v2."""
+        t0 = time.perf_counter()
+        print(f"=== Starting Experiment [{self.experiment_type.value}]: {self.slug} ===")
+
+        out = self.run_analysis()
+        elapsed = time.perf_counter() - t0
+        brief = self.build_brief(
+            runtime_s=elapsed,
+            key_metrics=out.get("key_metrics", {}),
+            artifacts=out.get("artifacts", {}),
+            benchmark_candidates=[],
+            extra=out.get("extra", {}),
+        )
+        self.save_brief(brief)
+        print(f"=== Experiment '{self.slug}' Complete in {elapsed:.2f}s ===")
         return brief

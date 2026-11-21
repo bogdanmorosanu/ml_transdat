@@ -1,0 +1,121 @@
+{
+  "schema_version": "2.0",
+  "slug": "adaptive_quadtree_grid",
+  "experiment_type": "grid_shift",
+  "status": "completed",
+  "runtime_s": 6.085,
+  "key_metrics": [
+    {
+      "model": "quadtree_2cm",
+      "dataset": "ro_corridor_snw",
+      "direction": "grid_shift_2d",
+      "count": 36435,
+      "mean_2d_mm": 9.2669,
+      "rmse_2d_mm": 11.1741,
+      "p95_2d_mm": 20.511,
+      "max_2d_mm": 59.2054,
+      "pass_lt_1cm_pct": 61.21,
+      "total_size_mb": 3.4785,
+      "fit_time_s": 0.0431,
+      "eval_time_s": 0.0181,
+      "throughput_pts_per_s": 2008732.9
+    },
+    {
+      "model": "quadtree_1cm",
+      "dataset": "ro_corridor_snw",
+      "direction": "grid_shift_2d",
+      "count": 36435,
+      "mean_2d_mm": 4.9736,
+      "rmse_2d_mm": 6.4192,
+      "p95_2d_mm": 11.0419,
+      "max_2d_mm": 59.2054,
+      "pass_lt_1cm_pct": 92.53,
+      "total_size_mb": 7.3292,
+      "fit_time_s": 0.1136,
+      "eval_time_s": 0.015,
+      "throughput_pts_per_s": 2422620.4
+    },
+    {
+      "model": "quadtree_3mm",
+      "dataset": "ro_corridor_snw",
+      "direction": "grid_shift_2d",
+      "count": 36435,
+      "mean_2d_mm": 1.425,
+      "rmse_2d_mm": 1.7727,
+      "p95_2d_mm": 3.081,
+      "max_2d_mm": 26.324,
+      "pass_lt_1cm_pct": 99.91,
+      "total_size_mb": 23.0503,
+      "fit_time_s": 0.3976,
+      "eval_time_s": 0.017,
+      "throughput_pts_per_s": 2147100.1
+    },
+    {
+      "model": "quadtree_1mm",
+      "dataset": "ro_corridor_snw",
+      "direction": "grid_shift_2d",
+      "count": 36435,
+      "mean_2d_mm": 0.4959,
+      "rmse_2d_mm": 0.6009,
+      "p95_2d_mm": 1.0513,
+      "max_2d_mm": 5.7741,
+      "pass_lt_1cm_pct": 100.0,
+      "total_size_mb": 74.9126,
+      "fit_time_s": 1.4368,
+      "eval_time_s": 0.0276,
+      "throughput_pts_per_s": 1319143.2
+    }
+  ],
+  "artifacts": {
+    "report": "report.md",
+    "scorecard_csv": "results/scorecard.csv",
+    "scorecard_json": "results/scorecard_summary.json",
+    "scorecard_md": "results/summary_table.md",
+    "plots": [
+      "quadtree_1mm_ro_corridor_snw_grid_shift_2d_spatial_error.png",
+      "quadtree_1mm_ro_corridor_snw_grid_shift_2d_hist_ecdf.png",
+      "tier_comparison.png"
+    ]
+  },
+  "benchmark_candidates": [
+    {
+      "name": "quadtree_3mm",
+      "label": "Adaptive Quadtree (3mm tier)",
+      "suite": "grid_shift_models",
+      "train_grid": null,
+      "model_class": "src.models.quadtree_regressor.AdaptiveQuadtreeRegressor",
+      "params": {
+        "dn_grid": null,
+        "de_grid": null
+      },
+      "extra": {
+        "tier": "3mm",
+        "leaf_count": 176350
+      }
+    },
+    {
+      "name": "quadtree_1mm",
+      "label": "Adaptive Quadtree (1mm tier)",
+      "suite": "grid_shift_models",
+      "train_grid": null,
+      "model_class": "src.models.quadtree_regressor.AdaptiveQuadtreeRegressor",
+      "params": {
+        "dn_grid": null,
+        "de_grid": null
+      },
+      "extra": {
+        "tier": "1mm",
+        "leaf_count": 564325
+      }
+    }
+  ],
+  "extra": {
+    "tiers": [
+      "2cm",
+      "1cm",
+      "3mm",
+      "1mm"
+    ],
+    "tier_comparison_plot": "tier_comparison.png"
+  }
+}

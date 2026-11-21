@@ -96,9 +96,13 @@ batch_features = extractor.extract_features(northing_arr, easting_arr, tol_mm=5.
 ---
 
 ## 5. Generated Artifacts
-- **Datasets**:
-  - [`results/cell_shape_metrics.parquet`](results/cell_shape_metrics.parquet) and [`results/cell_shape_metrics.csv`](results/cell_shape_metrics.csv) ($2,297\text{ rows} \times 19\text{ columns}$).
+- **Shared Feature Datasets (`data/features/`)**:
+  - [`../../data/features/cell_planes.parquet`](../../data/features/cell_planes.parquet): Planar slope, aspect, and bilinear twist metrics across 2,556 valid cells.
+  - [`../../data/features/cell_shape_metrics.parquet`](../../data/features/cell_shape_metrics.parquet): Continuous maximum errors for Degrees 1–3 and 3-class curvature labels across tolerances ($2, 3, 5, 10, 15\,\text{mm}$).
+- **Local Unit Outputs**:
+  - [`results/cell_planes.csv`](results/cell_planes.csv) and [`results/cell_shape_metrics.csv`](results/cell_shape_metrics.csv)
 - **National Spatial Maps**:
+  - [`plots/national_cell_slopes_map.png`](plots/national_cell_slopes_map.png), [`plots/national_cell_twist_map.png`](plots/national_cell_twist_map.png), [`plots/national_cell_aspect_distribution.png`](plots/national_cell_aspect_distribution.png)
   - [`plots/national_shape_map_5mm.png`](plots/national_shape_map_5mm.png): 3-panel map showing $\Delta N$, $\Delta E$, and 2D categories at $5\,\text{mm}$.
   - [`plots/national_shape_map_10mm.png`](plots/national_shape_map_10mm.png): 3-panel map at $10\,\text{mm}$ ($1\,\text{cm}$).
 - **Unit Tests**:

@@ -1,50 +1,63 @@
 {
-  "unit_id": "02",
-  "unit_name": "pyproj_baseline",
-  "target_crs": "EPSG:3844",
-  "reference_crs": "EPSG:4258",
-  "pyproj_version": "3.8.0",
-  "proj_version": "9.7.1",
-  "sample_count": 36435,
-  "etrs89_to_st70": {
-    "mean_2d_m": 0.3600742410140025,
-    "rmse_2d_m": 0.4347750808329261,
-    "p50_2d_m": 0.3058492159163766,
-    "p95_2d_m": 0.8460297544540633,
-    "p99_2d_m": 1.1366761495350062,
-    "max_2d_m": 2.8206984788478424,
-    "bias_n_m": 0.008744290727896002,
-    "bias_e_m": -0.01599917231679646,
-    "pass_lt_10cm_pct": 8.365582544256895,
-    "pass_lt_1m_pct": 98.04034582132564,
-    "throughput_pts_per_s": 2806038.0
-  },
-  "st70_to_etrs89": {
-    "mean_2d_m": 0.3600632319764716,
-    "rmse_2d_m": 0.43473329793357585,
-    "p50_2d_m": 0.3057931598431725,
-    "p95_2d_m": 0.8459115905383746,
-    "p99_2d_m": 1.1362312745266376,
-    "max_2d_m": 2.8188870206300423,
-    "bias_n_m": -0.007710892040625063,
-    "bias_e_m": 0.017862027524949097,
-    "pass_lt_10cm_pct": 8.332647179909427,
-    "pass_lt_1m_pct": 98.04034582132564,
-    "throughput_pts_per_s": 1411618.4
-  },
-  "plots": {
-    "etrs89_to_st70": {
-      "spatial_error": "pyproj_epsg3844_etrs89_to_st70_spatial_error.png",
-      "hist_ecdf": "pyproj_epsg3844_etrs89_to_st70_hist_ecdf.png",
-      "signed_scatter": "pyproj_epsg3844_etrs89_to_st70_signed_scatter.png",
-      "subcell_heatmap": "pyproj_epsg3844_etrs89_to_st70_subcell_heatmap.png"
+  "schema_version": "2.0",
+  "slug": "pyproj_baseline",
+  "experiment_type": "transformation",
+  "status": "completed",
+  "runtime_s": 4.64,
+  "key_metrics": [
+    {
+      "model": "pyproj_epsg3844",
+      "dataset": "ro_grid_4x4",
+      "direction": "etrs89_to_st70",
+      "count": 36435,
+      "mean_2d_mm": 360.0742,
+      "rmse_2d_mm": 434.7751,
+      "p95_2d_mm": 846.0298,
+      "max_2d_mm": 2820.6985,
+      "pass_lt_1cm_pct": 0.09,
+      "total_size_mb": 8.9287,
+      "fit_time_s": 0.0,
+      "eval_time_s": 0.015,
+      "throughput_pts_per_s": 2425458.8
     },
-    "st70_to_etrs89": {
-      "spatial_error": "pyproj_epsg3844_st70_to_etrs89_spatial_error.png",
-      "hist_ecdf": "pyproj_epsg3844_st70_to_etrs89_hist_ecdf.png",
-      "signed_scatter": "pyproj_epsg3844_st70_to_etrs89_signed_scatter.png",
-      "subcell_heatmap": "pyproj_epsg3844_st70_to_etrs89_subcell_heatmap.png"
+    {
+      "model": "pyproj_epsg3844",
+      "dataset": "ro_grid_4x4",
+      "direction": "st70_to_etrs89",
+      "count": 36435,
+      "mean_2d_mm": 360.0632,
+      "rmse_2d_mm": 434.7333,
+      "p95_2d_mm": 845.9116,
+      "max_2d_mm": 2818.887,
+      "pass_lt_1cm_pct": 0.09,
+      "total_size_mb": 8.9287,
+      "fit_time_s": 0.0,
+      "eval_time_s": 0.0302,
+      "throughput_pts_per_s": 1204506.6
     }
+  ],
+  "artifacts": {
+    "report": "report.md",
+    "scorecard_csv": "results/scorecard.csv",
+    "scorecard_json": "results/scorecard_summary.json",
+    "scorecard_md": "results/summary_table.md",
+    "plots": [
+      "pyproj_epsg3844_ro_grid_4x4_etrs89_to_st70_spatial_error.png",
+      "pyproj_epsg3844_ro_grid_4x4_etrs89_to_st70_hist_ecdf.png",
+      "pyproj_epsg3844_ro_grid_4x4_etrs89_to_st70_signed_scatter.png",
+      "pyproj_epsg3844_ro_grid_4x4_etrs89_to_st70_subcell_heatmap.png",
+      "pyproj_epsg3844_ro_grid_4x4_st70_to_etrs89_spatial_error.png",
+      "pyproj_epsg3844_ro_grid_4x4_st70_to_etrs89_hist_ecdf.png",
+      "pyproj_epsg3844_ro_grid_4x4_st70_to_etrs89_signed_scatter.png",
+      "pyproj_epsg3844_ro_grid_4x4_st70_to_etrs89_subcell_heatmap.png"
+    ]
   },
-  "runtime_s": 3.932
+  "benchmark_candidates": [],
+  "extra": {
+    "target_crs": "EPSG:3844",
+    "reference_crs": "EPSG:4258",
+    "pyproj_version": "3.8.0",
+    "proj_version": "9.7.1",
+    "sample_count": 36435
+  }
 }

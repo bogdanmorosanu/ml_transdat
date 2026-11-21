@@ -17,3 +17,13 @@ Evaluate how multi-output `DecisionTreeRegressor` (`(N, E) -> (dN, dE)`) models 
 2. **Step-Plateau Interior Error**: On the 11 km base grid, orthogonal axis-aligned cuts create flat rectangular plateaus with $0.0844\,\text{m}$ ($8.44\,\text{cm}$) interior error on 4x4 and $0.0817\,\text{m}$ on 8x8—more than double KNN $K=4$ IDW ($0.0353\,\text{m}$).
 3. **Densification Scaling**: Training on 4x4 ($36,435$ pts) drops unseen 8x8 error to $0.0246\,\text{m}$ ($2.46\,\text{cm}$). Training on 8x8 ($146,258$ pts) achieves **$0.0080\,\text{m}$ ($0.80\,\text{cm}$)** on the continuous corridor, at the cost of $22.32\,\text{MB}$ model size.
 4. **Impurity Pruning Compression**: Setting `min_impurity_decrease=1e-8` compresses the 8x8 tree from $146,258$ leaves ($22.32\,\text{MB}$) down to $18,424$ leaves ($2.81\,\text{MB}$ — an $87.4\%$ reduction) while maintaining $0.0188\,\text{m}$ ($1.88\,\text{cm}$) corridor RMSE.
+
+---
+
+## 4. Benchmark Candidates
+Promoted to `benchmarks/grid_shift_models/` via `specs_from_unit(DecisionTreeSpatialRegressorUnit, suite="grid_shift_models")`:
+
+| Variant | Benchmark Label | Train Grid | Exact Hyperparameters |
+| :--- | :--- | :--- | :--- |
+| `dt_base_11km` | `Decision Tree (11km)` | `spg_nodes_valid` | `DecisionTreeSpatialRegressor()` (default unconstrained) |
+| `dt_8x8_pruned_1e-8` | `Decision Tree (8x8, pruned 1e-8)` | `ro_grid_8x8` | `min_impurity_decrease=1e-8` |

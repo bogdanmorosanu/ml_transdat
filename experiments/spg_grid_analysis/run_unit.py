@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import time
 from pathlib import Path
 from typing import Any
 
@@ -11,25 +10,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from pytransdat.trans_grid import Grid2D
-from src.core.base_unit import TransformationExperimentUnit
+from src.core.base_unit import AnalysisExperimentUnit
 from src.data import GridId
 from src.evaluation import EvaluationResult, summarize_errors
 from src.viz import PlotGroup, plot_vector_quiver
 
 
-class SpgGridAnalysisUnit(TransformationExperimentUnit):
-    """Research Unit 01: SPG 2D distortion grid profiling."""
+class SpgGridAnalysisUnit(AnalysisExperimentUnit):
+    """Analysis Unit: SPG 2D distortion grid profiling."""
 
     @property
-    def unit_id(self) -> str:
-        return "01"
-
-    @property
-    def unit_name(self) -> str:
+    def slug(self) -> str:
         return "spg_grid_analysis"
 
-    def run(self) -> dict[str, Any]:
-        t0 = time.perf_counter()
+    def run_analysis(self) -> dict[str, Any]:
         dataset = self.load_grid(GridId.RO_GRID_4X4)
         df = dataset.df
         grid2d = Grid2D()
@@ -139,35 +133,29 @@ class SpgGridAnalysisUnit(TransformationExperimentUnit):
         for k, v in diag_paths.items():
             plot_files[k.value] = v.name
 
-        # Save brief
-        elapsed = time.perf_counter() - t0
-        brief = {
-            "unit_id": self.unit_id,
-            "unit_name": self.unit_name,
+        stats = {
             "grid_file": grid2d.file_name,
             "sample_count": len(df),
-            "statistics": {
-                "dn_min_m": float(dn.min()),
-                "dn_max_m": float(dn.max()),
-                "dn_mean_m": float(dn.mean()),
-                "de_min_m": float(de.min()),
-                "de_max_m": float(de.max()),
-                "de_mean_m": float(de.mean()),
-                "mag_mean_m": float(mag.mean()),
-                "mag_p50_m": summary["p50_2d_m"],
-                "mag_p95_m": summary["p95_2d_m"],
-                "mag_p99_m": summary["p99_2d_m"],
-                "mag_max_m": float(mag.max()),
-            },
-            "plots": plot_files,
-            "runtime_s": round(elapsed, 3),
+            "dn_min_m": float(dn.min()),
+            "dn_max_m": float(dn.max()),
+            "dn_mean_m": float(dn.mean()),
+            "de_min_m": float(de.min()),
+            "de_max_m": float(de.max()),
+            "de_mean_m": float(de.mean()),
+            "mag_mean_m": float(mag.mean()),
+            "mag_p50_m": summary["p50_2d_m"],
+            "mag_p95_m": summary["p95_2d_m"],
+            "mag_p99_m": summary["p99_2d_m"],
+            "mag_max_m": float(mag.max()),
         }
-        self.save_brief(brief)
-        print(f"=== Research Unit 01 [{self.unit_name}] Complete ===")
         print(
-            f"Shift Magnitude: Mean={brief['statistics']['mag_mean_m']:.4f} m | Max={brief['statistics']['mag_max_m']:.4f} m"
+            f"Shift Magnitude: Mean={stats['mag_mean_m']:.4f} m | Max={stats['mag_max_m']:.4f} m"
         )
-        return brief
+        return {
+            "key_metrics": stats,
+            "artifacts": {"plots": list(plot_files.values())},
+            "extra": {"plot_map": plot_files},
+        }
 
 
 def main() -> None:

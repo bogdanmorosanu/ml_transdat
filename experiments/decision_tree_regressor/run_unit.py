@@ -15,14 +15,10 @@ from src.viz import PlotGroup, plot_transect_66km
 
 
 class DecisionTreeSpatialRegressorUnit(GridShiftExperimentUnit):
-    """Research Unit 05: Decision Tree 2D spatial distortion learning."""
+    """Grid Shift Unit: Decision Tree 2D spatial distortion learning."""
 
     @property
-    def unit_id(self) -> str:
-        return "05"
-
-    @property
-    def unit_name(self) -> str:
+    def slug(self) -> str:
         return "decision_tree_regressor"
 
     def get_model_specs(self) -> list[ExperimentModelSpec]:
@@ -34,6 +30,9 @@ class DecisionTreeSpatialRegressorUnit(GridShiftExperimentUnit):
                 eval_grids=[GridId.RO_GRID_8X8, GridId.CORRIDOR_SNW],
                 plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
+                benchmark_candidate=True,
+                benchmark_suite="grid_shift_models",
+                benchmark_label="Decision Tree (11km)",
             ),
             ExperimentModelSpec(
                 name="dt_4x4_2750m",
@@ -55,6 +54,9 @@ class DecisionTreeSpatialRegressorUnit(GridShiftExperimentUnit):
                 train_grid=GridId.RO_GRID_8X8,
                 eval_grids=[GridId.CORRIDOR_SNW],
                 plots=None,
+                benchmark_candidate=True,
+                benchmark_suite="grid_shift_models",
+                benchmark_label="Decision Tree (8x8, pruned 1e-8)",
             ),
             ExperimentModelSpec(
                 name="dt_16x16_688m",

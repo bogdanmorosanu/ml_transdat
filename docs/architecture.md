@@ -23,18 +23,20 @@ flowchart LR
 | Directory | Responsibility | What Belongs Here |
 | :--- | :--- | :--- |
 | `src/data/` | Data & Grid Access | `GridId`, `GridDataset`, `GridManager`, `get_default_grid_manager`, lazy samplers, on-the-fly grid generators |
-| `src/models/` | Transformation & ML Models | `BaseSpatialModel`, `BaseGridShiftModel`, `BaseCoordinateTransformer`, `ResidualCoordinateTransformer`, concrete estimators (`KNNSpatialRegressor`, `DecisionTreeSpatialRegressor`, `AdaptiveQuadtreeRegressor`, `TwoStepHelmert2DTransformer`, `PyprojEpsg3844Transformer`) |
+| `src/geometry/` | Cell Geometry & Features | `CellPlane`, `CellPlane2D`, `extract_grid_cell_planes`, `ShapeCategory`, `CellShapeFeatureExtractor` |
+| `src/models/` | Transformation & ML Models | `BaseSpatialModel`, `BaseGridShiftModel`, `BaseCoordinateTransformer`, `ResidualCoordinateTransformer`, concrete estimators (`KNNSpatialRegressor`, `DecisionTreeSpatialRegressor`, `AdaptiveQuadtreeRegressor`, `MLPGridShiftModel`, `PolynomialSurfaceRegressor`, `RBFSurfaceRegressor`, `Helmert2DConformalShiftModel`, `TwoStepHelmert2DTransformer`, `PyprojEpsg3844Transformer`) |
 | `src/evaluation/` | Metrics & Benchmarking | `MetricType`, `MetricMeta`, `MetricGroup`, `EvaluationResult`, `ModelEvaluator` (`evaluate_models`, `tabulate_results`, `compare_models`), `NaN`-safe scorecards & Markdown formatters |
-| `src/viz/` | Declarative Visualization | `PlotType`, `PlotGroup`, `PlotDispatcher`, matplotlib plotting functions (`plot_model_comparison`, `plot_memory_breakdown_stacked`, `plot_speed_workloads`) |
-| `src/core/` | Experiment Lifecycle | `ResearchUnit`, `TransformationExperimentUnit`, `GridShiftExperimentUnit`, `ExperimentModelSpec` |
-| `experiments/<slug>/` | Micro Research Units | Thin declarative `run_unit.py`, `report.md`, `README_AI.md`, `unit_brief.json`, `results/`, `plots/` |
-| `benchmarks/<suite>/` | Macro Cross-Model Suites | `run_benchmark.py`, `summary_scorecard.md`, comparative `plots/`, `results/` |
+| `src/viz/` | Declarative Visualization | `PlotType`, `PlotGroup`, `PlotDispatcher`, matplotlib plotting functions (`plot_model_comparison`, `plot_memory_breakdown_stacked`, `plot_speed_workloads`, `plot_surface_comparison_grids`) |
+| `src/core/` | Experiment & Benchmark Lifecycle | `ResearchUnit`, `ExperimentType`, `TransformationExperimentUnit`, `GridShiftExperimentUnit`, `AnalysisExperimentUnit`, `ExperimentModelSpec`, `BenchmarkSuite`, `BenchmarkModelSpec`, `specs_from_unit` |
+| `experiments/<slug>/` | Micro Research Units | Thin declarative `run_unit.py`, `report.md`, `unit_brief.json` (v2), `results/`, `plots/` |
+| `benchmarks/<suite>/` | Macro Cross-Model Suites | `BenchmarkSuite` subclass `run_benchmark.py`, `summary_scorecard.md`, comparative `plots/`, `results/` |
+| `data/features/` | Shared Feature Tables | Canonical feature datasets (`cell_planes.parquet`, `cell_shape_metrics.parquet`) exported by `analysis` units |
 
 ---
 
 ## 2. Data & Grid Layer (`src/data/`)
 
-- **Registry (`GridId` enum)**: All canonical grids and benchmarks are referenced via [`GridId`](../src/data/catalog.py) (`SPG_NODES_VALID`, `RO_GRID_4X4`, `RO_GRID_8X8`, `RO_GRID_16X16`, `ADAPTIVE_*`, `CORRIDOR_SNW`, `SINGLE_CELL_10K`, `CUSTOM`) — never hardcode Parquet paths in models or experiments.
+- **Registry (`GridId` enum)**: All canonical grids and benchmarks are referenced via [`GridId`](../src/data/catalog.py) (`SPG_NODES_VALID`, `RO_GRID_4X4`, `RO_GRID_8X8`, `RO_GRID_16X16`, `ADAPTIVE_*`, `CORRIDOR_SNW`, `SINGLE_CELL_10K`, `RO_TEST_UNIFORM_4X4`, `RO_TEST_UNIFORM_8X8`, `RO_TEST_UNIFORM_16X16`, `RO_TEST_ADAPTIVE_3MM_MID`, `RO_TEST_ADAPTIVE_1MM_MID`, `CUSTOM`) — never hardcode Parquet paths in models or experiments.
 - **Unified Loader (`GridManager` / `get_default_grid_manager()`)**:
   - `GridManager().get(grid_id, force_regenerate=False)` resolves in order: in-memory cache → static Parquet (if present) → local disk cache (gitignored `.cache/grids/`) → dynamic on-the-fly generator.
   - **On-the-fly vs. Static Policy**:
@@ -86,16 +88,19 @@ Uses the **Template Method** pattern:
 
 ---
 
-## 6. Experiment Orchestration (`src/core/`)
+## 6. Experiment & Benchmark Orchestration (`src/core/`)
 
-- [`GridShiftExperimentUnit`](../src/core/base_unit.py) automates the research unit lifecycle:
+- [`GridShiftExperimentUnit`](../src/core/base_unit.py) automates the 2D grid-shift research unit lifecycle (`ExperimentType.GRID_SHIFT`):
   - Supports both trained models (`train_grid=GridId.SPG_NODES_VALID`) and pre-built lookup models (`train_grid=None`).
   - Subclasses implement `get_model_specs() -> list[ExperimentModelSpec]` and optional `after_run(fitted_models, results)`.
+  - Automatically emits Schema v2 `unit_brief.json` with `key_metrics` and `benchmark_candidates`.
+- [`AnalysisExperimentUnit`](../src/core/base_unit.py) automates exploratory, geometric, and feature-engineering units (`ExperimentType.ANALYSIS`), exporting shared tables to `data/features/`.
+- [`BenchmarkSuite`](../src/core/base_benchmark.py) automates 3-view cross-model suites (`summary_scorecard.md`, `plots/`, `results/benchmark_summary.json`), pulling validated models directly via `specs_from_unit(...)`.
 
 ---
 
 ## 7. Extension Checklist
 
 - **Adding a new Grid Shift Model**: Subclass `BaseGridShiftModel` in `src/models/<name>.py`, implement `_fit_impl`, `_predict_impl`, and `_runtime_dependencies()` / `_grid_lookup_bytes()`; export in `src/models/__init__.py`.
-- **Adding a new Experiment**: Create `experiments/<slug>/run_unit.py` inheriting `GridShiftExperimentUnit` (or `TransformationExperimentUnit`). Never duplicate models, metrics, sampling, or plotting helpers inside `experiments/`.
-- **Adding a new Benchmark**: Add a suite under `benchmarks/<suite>/run_benchmark.py` using `ModelEvaluator.evaluate_models` + `tabulate_results(..., precision_unit="mm")`.
+- **Adding a new Experiment**: Create `experiments/<slug>/run_unit.py` inheriting `GridShiftExperimentUnit`, `TransformationExperimentUnit`, or `AnalysisExperimentUnit`. Never duplicate models, metrics, sampling, or plotting helpers inside `experiments/`. Run `experiment-sync` to validate and document.
+- **Adding or Updating a Benchmark**: Subclass `BenchmarkSuite` under `benchmarks/<suite>/run_benchmark.py` and pull promoted variants via `specs_from_unit(...)` (or run `benchmark-sync`).

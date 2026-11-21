@@ -1,4 +1,5 @@
 {
+  "suite_name": "grid_shift_models",
   "precision_dataset_id": "ro_corridor_snw",
   "precision_unit": "mm",
   "workloads": {
@@ -8,6 +9,7 @@
       "models": [
         {
           "name": "KNN (K=4 IDW, 11km)",
+          "source_experiment": "knn_spatial_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -35,9 +37,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.03701510000246344,
-          "fit_time_sec": 0.001330000002781162,
-          "throughput_pts_per_sec": 984328.0174192468,
+          "eval_time_sec": 0.03813540000192006,
+          "fit_time_sec": 0.0013988999999128282,
+          "throughput_pts_per_sec": 955411.5073702007,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -49,6 +51,7 @@
         },
         {
           "name": "KNN (K=16 IDW, 11km)",
+          "source_experiment": "knn_spatial_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -76,9 +79,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.07604670000000624,
-          "fit_time_sec": 0.001028400001814589,
-          "throughput_pts_per_sec": 479113.49210415455,
+          "eval_time_sec": 0.07021529999838094,
+          "fit_time_sec": 0.001166699999885168,
+          "throughput_pts_per_sec": 518903.99956761755,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -90,6 +93,7 @@
         },
         {
           "name": "Decision Tree (11km)",
+          "source_experiment": "decision_tree_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -117,9 +121,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.001790500002243789,
-          "fit_time_sec": 0.003940800001146272,
-          "throughput_pts_per_sec": 20349064.481620215,
+          "eval_time_sec": 0.0017645000007178169,
+          "fit_time_sec": 0.004215400000248337,
+          "throughput_pts_per_sec": 20648909.03098774,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -131,6 +135,7 @@
         },
         {
           "name": "Decision Tree (8x8, pruned 1e-8)",
+          "source_experiment": "decision_tree_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -158,9 +163,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0027126999993924983,
-          "fit_time_sec": 0.2074425999999221,
-          "throughput_pts_per_sec": 13431267.743635315,
+          "eval_time_sec": 0.0027321000015945174,
+          "fit_time_sec": 0.2098608999986027,
+          "throughput_pts_per_sec": 13335895.457243763,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -172,6 +177,7 @@
         },
         {
           "name": "Adaptive Quadtree (3mm tier)",
+          "source_experiment": "adaptive_quadtree_grid",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -199,9 +205,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.014256300000852207,
-          "fit_time_sec": 0.2676599000005808,
-          "throughput_pts_per_sec": 2555712.2112905877,
+          "eval_time_sec": 0.01395559999946272,
+          "fit_time_sec": 0.26634999999805586,
+          "throughput_pts_per_sec": 2610779.9020753475,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -213,6 +219,7 @@
         },
         {
           "name": "Adaptive Quadtree (1mm tier)",
+          "source_experiment": "adaptive_quadtree_grid",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -240,9 +247,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.02046350000091479,
-          "fit_time_sec": 1.2500863000022946,
-          "throughput_pts_per_sec": 1780487.208853384,
+          "eval_time_sec": 0.018768800000543706,
+          "fit_time_sec": 1.0213741000006848,
+          "throughput_pts_per_sec": 1941253.5696978245,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -254,47 +261,49 @@
         },
         {
           "name": "Fourier MLP (4x4, 2.7km)",
+          "source_experiment": "mlp_spatial_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
             "unmatched_count": 0,
             "coverage_pct": 100.0,
-            "mean_2d_m": 0.019634318413304788,
-            "std_2d_m": 0.010169138055667012,
-            "rmse_2d_m": 0.02211148634421156,
-            "min_2d_m": 0.00010048392494363318,
-            "p50_2d_m": 0.018512875571935712,
-            "p90_2d_m": 0.03346919840048695,
-            "p95_2d_m": 0.03811685449238813,
-            "p99_2d_m": 0.04686918159514999,
-            "p99_9_2d_m": 0.05608162018798712,
-            "max_2d_m": 0.06325470455855045,
-            "bias_n_m": 0.003560639269218505,
-            "bias_e_m": 0.008045313549421158,
-            "rmse_n_m": 0.015659936539665208,
-            "rmse_e_m": 0.015610388077300093,
+            "mean_2d_m": 0.008833616594977297,
+            "std_2d_m": 0.005391647062606143,
+            "rmse_2d_m": 0.010349040544647978,
+            "min_2d_m": 3.968963887988851e-05,
+            "p50_2d_m": 0.007731589276575609,
+            "p90_2d_m": 0.01604123014924599,
+            "p95_2d_m": 0.019483600383464424,
+            "p99_2d_m": 0.026088796139710296,
+            "p99_9_2d_m": 0.03158886306428142,
+            "max_2d_m": 0.0361873656904623,
+            "bias_n_m": -0.002446978121692842,
+            "bias_e_m": 0.0011858088609695866,
+            "rmse_n_m": 0.007527832271659702,
+            "rmse_e_m": 0.007101716798389419,
             "pass_rates_pct": {
-              "lt_1mm": 0.22505832304103196,
-              "lt_1cm": 18.353231782626594,
-              "lt_5cm": 99.53067105804858,
+              "lt_1mm": 1.1609715932482503,
+              "lt_1cm": 66.5239467544943,
+              "lt_5cm": 100.0,
               "lt_10cm": 100.0,
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.06436870000106865,
-          "fit_time_sec": 3.326121999998577,
-          "throughput_pts_per_sec": 566035.9771037027,
+          "eval_time_sec": 0.13371040000129142,
+          "fit_time_sec": 106.23824039999818,
+          "throughput_pts_per_sec": 272491.8929241712,
           "memory_breakdown": {
             "code_bytes": 6332,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 819706,
+            "model_instance_bytes": 2147922,
             "grid_lookup_bytes": 0,
-            "total_bytes": 74254975,
-            "total_mb": 70.81506252288818
+            "total_bytes": 75583191,
+            "total_mb": 72.08174800872803
           }
         },
         {
           "name": "Thin Plate Spline (11km)",
+          "source_experiment": "rbf_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -322,20 +331,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 1.4544623999972828,
-          "fit_time_sec": 1.3730255999980727,
-          "throughput_pts_per_sec": 25050.492883190425,
+          "eval_time_sec": 1.4776716999986093,
+          "fit_time_sec": 1.3352828000024601,
+          "throughput_pts_per_sec": 24657.033087954715,
           "memory_breakdown": {
-            "code_bytes": 5962,
+            "code_bytes": 6111,
             "dependencies_bytes": 123489234,
             "model_instance_bytes": 151515,
             "grid_lookup_bytes": 0,
-            "total_bytes": 123646711,
-            "total_mb": 117.91869258880615
+            "total_bytes": 123646860,
+            "total_mb": 117.9188346862793
           }
         },
         {
           "name": "Thin Plate Spline (4x4, 2.7km)",
+          "source_experiment": "rbf_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -363,16 +373,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 2.277347399998689,
-          "fit_time_sec": 0.006786800000554649,
-          "throughput_pts_per_sec": 15998.876587744573,
+          "eval_time_sec": 2.2490017999989504,
+          "fit_time_sec": 0.006937800000741845,
+          "throughput_pts_per_sec": 16200.520604304098,
           "memory_breakdown": {
-            "code_bytes": 5962,
+            "code_bytes": 6111,
             "dependencies_bytes": 123489234,
             "model_instance_bytes": 3032257,
             "grid_lookup_bytes": 0,
-            "total_bytes": 126527453,
-            "total_mb": 120.66598224639893
+            "total_bytes": 126527602,
+            "total_mb": 120.66612434387207
           }
         }
       ]
@@ -383,6 +393,7 @@
       "models": [
         {
           "name": "KNN (K=4 IDW, 11km)",
+          "source_experiment": "knn_spatial_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -466,9 +477,9 @@
               }
             }
           },
-          "eval_time_sec": 0.03734690000055707,
-          "fit_time_sec": 0.001330000002781162,
-          "throughput_pts_per_sec": 975582.9800989247,
+          "eval_time_sec": 0.037781600000016624,
+          "fit_time_sec": 0.0013988999999128282,
+          "throughput_pts_per_sec": 964358.3119821281,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -480,6 +491,7 @@
         },
         {
           "name": "KNN (K=16 IDW, 11km)",
+          "source_experiment": "knn_spatial_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -563,9 +575,9 @@
               }
             }
           },
-          "eval_time_sec": 0.08010019999710494,
-          "fit_time_sec": 0.001028400001814589,
-          "throughput_pts_per_sec": 454867.77812436013,
+          "eval_time_sec": 0.080229800001689,
+          "fit_time_sec": 0.001166699999885168,
+          "throughput_pts_per_sec": 454133.0029394685,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -577,6 +589,7 @@
         },
         {
           "name": "Decision Tree (11km)",
+          "source_experiment": "decision_tree_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -660,9 +673,9 @@
               }
             }
           },
-          "eval_time_sec": 0.0025022999980137683,
-          "fit_time_sec": 0.003940800001146272,
-          "throughput_pts_per_sec": 14560604.255653093,
+          "eval_time_sec": 0.0024130999991029967,
+          "fit_time_sec": 0.004215400000248337,
+          "throughput_pts_per_sec": 15098835.528384114,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -674,6 +687,7 @@
         },
         {
           "name": "Decision Tree (8x8, pruned 1e-8)",
+          "source_experiment": "decision_tree_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -757,9 +771,9 @@
               }
             }
           },
-          "eval_time_sec": 0.0036427999984880444,
-          "fit_time_sec": 0.2074425999999221,
-          "throughput_pts_per_sec": 10001921.602921506,
+          "eval_time_sec": 0.003343100001075072,
+          "fit_time_sec": 0.2098608999986027,
+          "throughput_pts_per_sec": 10898567.194604784,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -771,6 +785,7 @@
         },
         {
           "name": "Adaptive Quadtree (3mm tier)",
+          "source_experiment": "adaptive_quadtree_grid",
           "summary": {
             "count": 36243,
             "total_count": 36435,
@@ -854,9 +869,9 @@
               }
             }
           },
-          "eval_time_sec": 0.017951800000446383,
-          "fit_time_sec": 0.2676599000005808,
-          "throughput_pts_per_sec": 2029601.4883796622,
+          "eval_time_sec": 0.017895599998155376,
+          "fit_time_sec": 0.26634999999805586,
+          "throughput_pts_per_sec": 2035975.3237530794,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -868,6 +883,7 @@
         },
         {
           "name": "Adaptive Quadtree (1mm tier)",
+          "source_experiment": "adaptive_quadtree_grid",
           "summary": {
             "count": 36243,
             "total_count": 36435,
@@ -951,9 +967,9 @@
               }
             }
           },
-          "eval_time_sec": 0.02105219999793917,
-          "fit_time_sec": 1.2500863000022946,
-          "throughput_pts_per_sec": 1730697.9794779965,
+          "eval_time_sec": 0.02179439999963506,
+          "fit_time_sec": 1.0213741000006848,
+          "throughput_pts_per_sec": 1671759.718120714,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -965,30 +981,31 @@
         },
         {
           "name": "Fourier MLP (4x4, 2.7km)",
+          "source_experiment": "mlp_spatial_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
             "unmatched_count": 0,
             "coverage_pct": 100.0,
-            "mean_2d_m": 0.02057447342244425,
-            "std_2d_m": 0.011613030574176054,
-            "rmse_2d_m": 0.023625652069892433,
-            "min_2d_m": 9.282824179678236e-05,
-            "p50_2d_m": 0.019020059068985695,
-            "p90_2d_m": 0.03545001214966778,
-            "p95_2d_m": 0.040779578778871076,
-            "p99_2d_m": 0.05186955781181226,
-            "p99_9_2d_m": 0.07382556605214717,
-            "max_2d_m": 0.3820235852253094,
-            "bias_n_m": 0.0048241082323497156,
-            "bias_e_m": 0.007127256348726423,
-            "rmse_n_m": 0.01707506188595486,
-            "rmse_e_m": 0.016328309689567503,
+            "mean_2d_m": 0.01051303493076607,
+            "std_2d_m": 0.007096154429024564,
+            "rmse_2d_m": 0.012683820841373962,
+            "min_2d_m": 7.052019502176234e-05,
+            "p50_2d_m": 0.009067181200375925,
+            "p90_2d_m": 0.019452231395798228,
+            "p95_2d_m": 0.02348472893417796,
+            "p99_2d_m": 0.033800609906792255,
+            "p99_9_2d_m": 0.05076784562187974,
+            "max_2d_m": 0.24129738978431622,
+            "bias_n_m": -0.0025862810718320305,
+            "bias_e_m": 0.0017014572676061672,
+            "rmse_n_m": 0.009347560269146564,
+            "rmse_e_m": 0.0085733557111988,
             "pass_rates_pct": {
-              "lt_1mm": 0.1811445039110745,
-              "lt_1cm": 17.439275421984355,
-              "lt_5cm": 98.65239467544943,
-              "lt_10cm": 99.9368738850007,
+              "lt_1mm": 0.8947440647728832,
+              "lt_1cm": 55.992864004391386,
+              "lt_5cm": 99.88198161108825,
+              "lt_10cm": 99.99176615891314,
               "lt_1m": 100.0
             },
             "by_point_type": {
@@ -997,25 +1014,25 @@
                 "total_count": 2222,
                 "unmatched_count": 0,
                 "coverage_pct": 100.0,
-                "mean_2d_m": 0.02360953589748187,
-                "std_2d_m": 0.013330449481067595,
-                "rmse_2d_m": 0.02711293176072592,
-                "min_2d_m": 0.000760180153401684,
-                "p50_2d_m": 0.0214528669466474,
-                "p90_2d_m": 0.04129227053894572,
-                "p95_2d_m": 0.04734279797511408,
-                "p99_2d_m": 0.061533414330490185,
-                "p99_9_2d_m": 0.07135100391274692,
-                "max_2d_m": 0.15296069095671058,
-                "bias_n_m": 0.004618379415408743,
-                "bias_e_m": 0.007368479954819832,
-                "rmse_n_m": 0.01960545964642489,
-                "rmse_e_m": 0.018727974282185072,
+                "mean_2d_m": 0.011881101742320778,
+                "std_2d_m": 0.007730531674513053,
+                "rmse_2d_m": 0.01417468513167144,
+                "min_2d_m": 0.0002899964097225753,
+                "p50_2d_m": 0.010366856949367034,
+                "p90_2d_m": 0.02148828952363115,
+                "p95_2d_m": 0.026129171710734225,
+                "p99_2d_m": 0.037862622271180986,
+                "p99_9_2d_m": 0.05973337110739278,
+                "max_2d_m": 0.06663489861013734,
+                "bias_n_m": -0.00261857567969198,
+                "bias_e_m": 0.0017162750450304125,
+                "rmse_n_m": 0.0105212302033197,
+                "rmse_e_m": 0.00949870589031899,
                 "pass_rates_pct": {
-                  "lt_1mm": 0.18001800180018002,
-                  "lt_1cm": 14.221422142214221,
-                  "lt_5cm": 96.03960396039604,
-                  "lt_10cm": 99.9099909990999,
+                  "lt_1mm": 0.585058505850585,
+                  "lt_1cm": 47.7947794779478,
+                  "lt_5cm": 99.77497749774977,
+                  "lt_10cm": 100.0,
                   "lt_1m": 100.0
                 }
               },
@@ -1024,44 +1041,45 @@
                 "total_count": 34213,
                 "unmatched_count": 0,
                 "coverage_pct": 100.0,
-                "mean_2d_m": 0.02037735803298604,
-                "std_2d_m": 0.011464867246634687,
-                "rmse_2d_m": 0.02338118691143496,
-                "min_2d_m": 9.282824179678236e-05,
-                "p50_2d_m": 0.018884310797684534,
-                "p90_2d_m": 0.035089377350633645,
-                "p95_2d_m": 0.040225076867751876,
-                "p99_2d_m": 0.05093135007000041,
-                "p99_9_2d_m": 0.07386274157637011,
-                "max_2d_m": 0.3820235852253094,
-                "bias_n_m": 0.004837469511139733,
-                "bias_e_m": 0.007111589822764374,
-                "rmse_n_m": 0.016897623607544387,
-                "rmse_e_m": 0.016160142877005023,
+                "mean_2d_m": 0.01042418436357598,
+                "std_2d_m": 0.0070437983834634186,
+                "rmse_2d_m": 0.012580886904853084,
+                "min_2d_m": 7.052019502176234e-05,
+                "p50_2d_m": 0.008989759280257883,
+                "p90_2d_m": 0.019234047462473303,
+                "p95_2d_m": 0.023299208926370697,
+                "p99_2d_m": 0.03345774009711819,
+                "p99_9_2d_m": 0.05041432343139477,
+                "max_2d_m": 0.24129738978431622,
+                "bias_n_m": -0.00258418366386825,
+                "bias_e_m": 0.001700494911149947,
+                "rmse_n_m": 0.009266195519052079,
+                "rmse_e_m": 0.00850977884056942,
                 "pass_rates_pct": {
-                  "lt_1mm": 0.18121766579954987,
-                  "lt_1cm": 17.64826235641423,
-                  "lt_5cm": 98.82208517230292,
-                  "lt_10cm": 99.93861982287434,
+                  "lt_1mm": 0.9148569257299857,
+                  "lt_1cm": 56.5252974015725,
+                  "lt_5cm": 99.88893110805834,
+                  "lt_10cm": 99.99123140326776,
                   "lt_1m": 100.0
                 }
               }
             }
           },
-          "eval_time_sec": 0.0694664999973611,
-          "fit_time_sec": 3.326121999998577,
-          "throughput_pts_per_sec": 524497.4196394535,
+          "eval_time_sec": 0.1344652000007045,
+          "fit_time_sec": 106.23824039999818,
+          "throughput_pts_per_sec": 270962.30102516565,
           "memory_breakdown": {
             "code_bytes": 6332,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 819706,
+            "model_instance_bytes": 2147922,
             "grid_lookup_bytes": 0,
-            "total_bytes": 74254975,
-            "total_mb": 70.81506252288818
+            "total_bytes": 75583191,
+            "total_mb": 72.08174800872803
           }
         },
         {
           "name": "Thin Plate Spline (11km)",
+          "source_experiment": "rbf_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -1145,20 +1163,21 @@
               }
             }
           },
-          "eval_time_sec": 1.4500011000018276,
-          "fit_time_sec": 1.3730255999980727,
-          "throughput_pts_per_sec": 25127.567144572564,
+          "eval_time_sec": 1.4746611999980814,
+          "fit_time_sec": 1.3352828000024601,
+          "throughput_pts_per_sec": 24707.370072561345,
           "memory_breakdown": {
-            "code_bytes": 5962,
+            "code_bytes": 6111,
             "dependencies_bytes": 123489234,
             "model_instance_bytes": 151515,
             "grid_lookup_bytes": 0,
-            "total_bytes": 123646711,
-            "total_mb": 117.91869258880615
+            "total_bytes": 123646860,
+            "total_mb": 117.9188346862793
           }
         },
         {
           "name": "Thin Plate Spline (4x4, 2.7km)",
+          "source_experiment": "rbf_surface_regressor",
           "summary": {
             "count": 36435,
             "total_count": 36435,
@@ -1242,16 +1261,16 @@
               }
             }
           },
-          "eval_time_sec": 2.585377100000187,
-          "fit_time_sec": 0.006786800000554649,
-          "throughput_pts_per_sec": 14092.721715527443,
+          "eval_time_sec": 2.5607286999984353,
+          "fit_time_sec": 0.006937800000741845,
+          "throughput_pts_per_sec": 14228.37179121016,
           "memory_breakdown": {
-            "code_bytes": 5962,
+            "code_bytes": 6111,
             "dependencies_bytes": 123489234,
             "model_instance_bytes": 3032257,
             "grid_lookup_bytes": 0,
-            "total_bytes": 126527453,
-            "total_mb": 120.66598224639893
+            "total_bytes": 126527602,
+            "total_mb": 120.66612434387207
           }
         }
       ]
@@ -1262,6 +1281,7 @@
       "models": [
         {
           "name": "KNN (K=4 IDW, 11km)",
+          "source_experiment": "knn_spatial_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1289,9 +1309,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0198517000026186,
-          "fit_time_sec": 0.001330000002781162,
-          "throughput_pts_per_sec": 503735.19641546666,
+          "eval_time_sec": 0.019705499998963205,
+          "fit_time_sec": 0.0013988999999128282,
+          "throughput_pts_per_sec": 507472.5330758491,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -1303,6 +1323,7 @@
         },
         {
           "name": "KNN (K=16 IDW, 11km)",
+          "source_experiment": "knn_spatial_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1330,9 +1351,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.03195580000101472,
-          "fit_time_sec": 0.001028400001814589,
-          "throughput_pts_per_sec": 312932.23764332174,
+          "eval_time_sec": 0.03195310000228346,
+          "fit_time_sec": 0.001166699999885168,
+          "throughput_pts_per_sec": 312958.680043106,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -1344,6 +1365,7 @@
         },
         {
           "name": "Decision Tree (11km)",
+          "source_experiment": "decision_tree_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1371,9 +1393,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0006730000022798777,
-          "fit_time_sec": 0.003940800001146272,
-          "throughput_pts_per_sec": 14858840.960064875,
+          "eval_time_sec": 0.0006599000007554423,
+          "fit_time_sec": 0.004215400000248337,
+          "throughput_pts_per_sec": 15153811.166164828,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -1385,6 +1407,7 @@
         },
         {
           "name": "Decision Tree (8x8, pruned 1e-8)",
+          "source_experiment": "decision_tree_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1412,9 +1435,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0006702000027871691,
-          "fit_time_sec": 0.2074425999999221,
-          "throughput_pts_per_sec": 14920919.066566512,
+          "eval_time_sec": 0.0006489000006695278,
+          "fit_time_sec": 0.2098608999986027,
+          "throughput_pts_per_sec": 15410695.006444924,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -1426,6 +1449,7 @@
         },
         {
           "name": "Adaptive Quadtree (3mm tier)",
+          "source_experiment": "adaptive_quadtree_grid",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1453,9 +1477,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.004484900000534253,
-          "fit_time_sec": 0.2676599000005808,
-          "throughput_pts_per_sec": 2229704.1179978983,
+          "eval_time_sec": 0.004273899998224806,
+          "fit_time_sec": 0.26634999999805586,
+          "throughput_pts_per_sec": 2339783.337034926,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -1467,6 +1491,7 @@
         },
         {
           "name": "Adaptive Quadtree (1mm tier)",
+          "source_experiment": "adaptive_quadtree_grid",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1494,9 +1519,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.005196300000534393,
-          "fit_time_sec": 1.2500863000022946,
-          "throughput_pts_per_sec": 1924446.240396357,
+          "eval_time_sec": 0.005026499999075895,
+          "fit_time_sec": 1.0213741000006848,
+          "throughput_pts_per_sec": 1989455.8841815311,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -1508,47 +1533,49 @@
         },
         {
           "name": "Fourier MLP (4x4, 2.7km)",
+          "source_experiment": "mlp_spatial_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
             "unmatched_count": 0,
             "coverage_pct": 100.0,
-            "mean_2d_m": 0.02123531318330229,
-            "std_2d_m": 0.011046495781804895,
-            "rmse_2d_m": 0.023936657975798654,
-            "min_2d_m": 0.00039224527095422043,
-            "p50_2d_m": 0.01936096478869595,
-            "p90_2d_m": 0.0378248851802498,
-            "p95_2d_m": 0.039868231974378374,
-            "p99_2d_m": 0.045001300292200765,
-            "p99_9_2d_m": 0.046129670042724155,
-            "max_2d_m": 0.04640631924522021,
-            "bias_n_m": 0.016673850947957397,
-            "bias_e_m": -0.007597386434019931,
-            "rmse_n_m": 0.021565574980307003,
-            "rmse_e_m": 0.010386990460143975,
+            "mean_2d_m": 0.004589333168392041,
+            "std_2d_m": 0.0024523557283351208,
+            "rmse_2d_m": 0.005203463034249538,
+            "min_2d_m": 0.00012217566619739836,
+            "p50_2d_m": 0.004123574499477527,
+            "p90_2d_m": 0.007867614346803069,
+            "p95_2d_m": 0.00942716313126038,
+            "p99_2d_m": 0.011494829715466151,
+            "p99_9_2d_m": 0.013296928986241128,
+            "max_2d_m": 0.014016583813758747,
+            "bias_n_m": 0.000514697599046919,
+            "bias_e_m": -0.002585055679069291,
+            "rmse_n_m": 0.002911573437368013,
+            "rmse_e_m": 0.004312628858088118,
             "pass_rates_pct": {
-              "lt_1mm": 0.16999999999999998,
-              "lt_1cm": 18.790000000000003,
+              "lt_1mm": 2.56,
+              "lt_1cm": 96.24000000000001,
               "lt_5cm": 100.0,
               "lt_10cm": 100.0,
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.015161200000875397,
-          "fit_time_sec": 3.326121999998577,
-          "throughput_pts_per_sec": 659578.3974502418,
+          "eval_time_sec": 0.0364953999996942,
+          "fit_time_sec": 106.23824039999818,
+          "throughput_pts_per_sec": 274007.13514809514,
           "memory_breakdown": {
             "code_bytes": 6332,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 819706,
+            "model_instance_bytes": 2147922,
             "grid_lookup_bytes": 0,
-            "total_bytes": 74254975,
-            "total_mb": 70.81506252288818
+            "total_bytes": 75583191,
+            "total_mb": 72.08174800872803
           }
         },
         {
           "name": "Thin Plate Spline (11km)",
+          "source_experiment": "rbf_surface_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1576,20 +1603,21 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.3907011000010243,
-          "fit_time_sec": 1.3730255999980727,
-          "throughput_pts_per_sec": 25595.01368174746,
+          "eval_time_sec": 0.39689480000015465,
+          "fit_time_sec": 1.3352828000024601,
+          "throughput_pts_per_sec": 25195.593391488383,
           "memory_breakdown": {
-            "code_bytes": 5962,
+            "code_bytes": 6111,
             "dependencies_bytes": 123489234,
             "model_instance_bytes": 151515,
             "grid_lookup_bytes": 0,
-            "total_bytes": 123646711,
-            "total_mb": 117.91869258880615
+            "total_bytes": 123646860,
+            "total_mb": 117.9188346862793
           }
         },
         {
           "name": "Thin Plate Spline (4x4, 2.7km)",
+          "source_experiment": "rbf_surface_regressor",
           "summary": {
             "count": 10000,
             "total_count": 10000,
@@ -1617,16 +1645,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.21905300000071293,
-          "fit_time_sec": 0.006786800000554649,
-          "throughput_pts_per_sec": 45651.052484866465,
+          "eval_time_sec": 0.2098262999970757,
+          "fit_time_sec": 0.006937800000741845,
+          "throughput_pts_per_sec": 47658.4679810842,
           "memory_breakdown": {
-            "code_bytes": 5962,
+            "code_bytes": 6111,
             "dependencies_bytes": 123489234,
             "model_instance_bytes": 3032257,
             "grid_lookup_bytes": 0,
-            "total_bytes": 126527453,
-            "total_mb": 120.66598224639893
+            "total_bytes": 126527602,
+            "total_mb": 120.66612434387207
           }
         }
       ]

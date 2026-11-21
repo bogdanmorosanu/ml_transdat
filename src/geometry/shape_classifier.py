@@ -20,6 +20,7 @@ import numpy as np
 import pandas as pd
 
 from pytransdat.exceptions import PyTransDatError
+from pytransdat.spg_reader import SpgReader
 
 
 class ShapeCategory(IntEnum):
@@ -290,14 +291,10 @@ class CellShapeFeatureExtractor:
         self.default_tol_mm: float = default_tol_mm
 
         if metrics_df_or_path is None:
-            # Auto-resolve canonical parquet path in experiments/
+            # Auto-resolve canonical parquet path in data/features/
             base_dir = Path(__file__).resolve().parents[2]
             metrics_df_or_path = (
-                base_dir
-                / "experiments"
-                / "cell_planar_features"
-                / "results"
-                / "cell_shape_metrics.parquet"
+                base_dir / "data" / "features" / "cell_shape_metrics.parquet"
             )
 
         if isinstance(metrics_df_or_path, (str, Path)):
@@ -309,13 +306,17 @@ class CellShapeFeatureExtractor:
         else:
             self.df = metrics_df_or_path.copy()
 
-        # Grid matrix extents
-        self.step_n: float = 11000.0
-        self.step_e: float = 11000.0
-        self.min_n: float = 213634.564
-        self.min_e: float = 109783.040
-        self.nrows: int = 53
-        self.ncols: int = 72
+        # Grid matrix extents derived from official SPG metadata
+        reader = SpgReader()
+        min_e, max_e, min_n, max_n, step_e, step_n = (
+            float(v) for v in reader.shift_bounds
+        )
+        self.step_n: float = step_n
+        self.step_e: float = step_e
+        self.min_n: float = min_n
+        self.min_e: float = min_e
+        self.nrows: int = round((max_n - min_n) / step_n) + 1
+        self.ncols: int = round((max_e - min_e) / step_e) + 1
 
         # Build dense lookup matrices for O(1) indexing: (nrows, ncols)
         # NaN sentinel for unmapped / offshore cells

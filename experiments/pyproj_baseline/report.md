@@ -1,7 +1,7 @@
 # Research Unit 02: PyProj (EPSG:3844) Baseline Evaluation
 
 ## Executive Summary
-This unit establishes the baseline accuracy of standard GIS transformation pipelines using `pyproj` (`3.8.0` / PROJ `9.7.1`) between **ETRS89** (`EPSG:4258`) and **Stereo 70** (`EPSG:3844`, Pulkovo 1942(58) / Stereo70). Evaluated against golden-standard `pytransdat` outputs on the nationwide 36,435-point grid `ro_grid_4x4.parquet`.
+This unit establishes the baseline accuracy of standard GIS transformation pipelines using `pyproj` (`3.8.0` / PROJ `9.7.1`) between **ETRS89** (`EPSG:4258`) and **Stereo 70** (`EPSG:3844`, Pulkovo 1942(58) / Stereo70) via Conformal Oblique Stereographic + 7-parameter Helmert (`Pulkovo 1942(58) to ETRS89 (4)`). Evaluated against golden-standard `pytransdat` outputs on the nationwide 36,435-point grid `ro_grid_4x4.parquet`.
 
 ---
 
