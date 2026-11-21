@@ -20,6 +20,7 @@ This directory contains modular, self-contained scientific experiments evaluatin
 | [`polynomial_surface_regressor/`](polynomial_surface_regressor/) | `grid_shift` | **2D Polynomial Surface Regressor**: Evaluates bivariate polynomial surfaces ($D=1\dots 12$) on normalized coordinates, upgrading the flat Helmert plane to a curved mathematical surface. | `Validated` | $\text{RMSE}=42.8\,\text{cm}$ ($D=1$, 3 terms) $\to$ $27.0\,\text{cm}$ ($D=5$, 21 terms) $\to$ $19.2\,\text{cm}$ ($D=12$, 91 terms); cuts max error from $2.60\,\text{m} \to 0.89\,\text{m}$. |
 | [`rbf_surface_regressor/`](rbf_surface_regressor/) | `grid_shift` | **Thin Plate Spline (TPS) Regressor**: Localized 2D elastic sheet surface deformation with nugget smoothing ($\lambda=2\times 10^{-4}$), smoothing legacy grid slope breaks. | `Validated` | $\text{RMSE}=\mathbf{8.6\,\text{mm}}$ nationwide ($<1\,\text{cm}$), $\text{Max}=24.7\,\text{cm}$ ($0\,\text{MB}$ grid lookup); first continuous sub-centimeter model from 11 km nodes. |
 | [`cell_planar_features/`](cell_planar_features/) | `analysis` | **Grid Cell Curvature & Shape Classification**: Functional geometric classification of $11\times 11\,\text{km}$ cells into a 3-class polynomial order taxonomy (Linear, Dome/Bowl, S-Shape). | `Validated` | Proves $53.2\%$ Dome vs. $46.8\%$ S-Shape at $5\,\text{mm}$, and $92.5\%$ Dome at $10\,\text{mm}$; exports shared features to `data/features/` for $O(1)$ extraction. |
+| [`mlp_shape_features/`](mlp_shape_features/) | `grid_shift` | **Fourier MLP with Cell Shape Features**: Controlled ablation testing 3/5/10 mm per-axis shape categories (`cat_dn`, `cat_de`) and S-Shape sample weighting (`2x`, `3x`) on `mlp_fourier_4x4`. | `Dead End` | Discrete shape inputs degrade RMSE (`13.0` $\to$ `14.4 mm` uniform, `32.5` $\to$ `40.8 mm` adaptive); `2x`/`3x` S-Shape weighting trims `Max` outliers (`374.7` $\to$ `179.1 mm`) without improving adaptive RMSE. |
 
 ---
 
@@ -73,4 +74,7 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.rbf_surface_regressor.ru
 
 # 10. Grid Cell Planar & Shape Classification (analysis)
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.cell_planar_features.run_unit
+
+# 11. Fourier MLP with Cell Shape Features (grid_shift)
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.mlp_shape_features.run_unit
 ```

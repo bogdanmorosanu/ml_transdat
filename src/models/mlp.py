@@ -34,6 +34,9 @@ class MLPGridShiftModel(BaseGridShiftModel):
         learning_rate_init: float = 0.001,
         tol: float = 1e-4,
         n_iter_no_change: int = 10,
+        use_shape_features: bool = False,
+        shape_tol_mm: float = 5.0,
+        s_shape_weight: int = 1,
     ) -> None:
         """Initialize the MLP neural network spatial regressor.
 
@@ -67,6 +70,10 @@ class MLPGridShiftModel(BaseGridShiftModel):
         self.learning_rate_init = float(learning_rate_init)
         self.tol = float(tol)
         self.n_iter_no_change = int(n_iter_no_change)
+        self.use_shape_features = bool(use_shape_features)
+        self.shape_tol_mm = float(shape_tol_mm)
+        self.s_shape_weight = int(s_shape_weight)
+        self._shape_extractor: object | None = None
 
         self._model = MLPRegressor(
             hidden_layer_sizes=self.hidden_layer_sizes,
@@ -98,13 +105,40 @@ class MLPGridShiftModel(BaseGridShiftModel):
             x_norm = coords
 
         if not self.use_fourier_features:
-            return x_norm
+            x_spatial = x_norm
+        else:
+            if self._fourier_basis is None:
+                raise RuntimeError("Fourier projection matrix B is uninitialized.")
 
-        if self._fourier_basis is None:
-            raise RuntimeError("Fourier projection matrix B is uninitialized.")
+            proj = 2.0 * np.pi * (x_norm @ self._fourier_basis)
+            x_spatial = np.concatenate([x_norm, np.sin(proj), np.cos(proj)], axis=1)
 
-        proj = 2.0 * np.pi * (x_norm @ self._fourier_basis)
-        return np.concatenate([x_norm, np.sin(proj), np.cos(proj)], axis=1)
+        if not self.use_shape_features:
+            return x_spatial
+
+        if self._shape_extractor is None:
+            from src.geometry.shape_classifier import CellShapeFeatureExtractor
+
+            self._shape_extractor = CellShapeFeatureExtractor(
+                default_tol_mm=self.shape_tol_mm
+            )
+
+        feats = self._shape_extractor.extract_features(  # type: ignore[union-attr]
+            coords[:, 0], coords[:, 1], tol_mm=self.shape_tol_mm
+        )
+        cat_dn = feats["cat_dn"]
+        cat_de = feats["cat_de"]
+        shape_onehot = np.column_stack(
+            [
+                (cat_dn == 1).astype(np.float64),
+                (cat_dn == 2).astype(np.float64),
+                (cat_dn == 3).astype(np.float64),
+                (cat_de == 1).astype(np.float64),
+                (cat_de == 2).astype(np.float64),
+                (cat_de == 3).astype(np.float64),
+            ]
+        )
+        return np.concatenate([x_spatial, shape_onehot], axis=1)
 
     def _fit_impl(self, coords: np.ndarray, shifts: np.ndarray) -> None:
         """Fit the MLP regressor on (coords, shifts)."""
@@ -119,7 +153,29 @@ class MLPGridShiftModel(BaseGridShiftModel):
             )
 
         x_feats = self._transform_features(coords)
-        self._model.fit(x_feats, shifts)
+        fit_x, fit_y = x_feats, shifts
+        if self.s_shape_weight > 1:
+            if self._shape_extractor is None:
+                from src.geometry.shape_classifier import CellShapeFeatureExtractor
+
+                self._shape_extractor = CellShapeFeatureExtractor(
+                    default_tol_mm=self.shape_tol_mm
+                )
+            feats = self._shape_extractor.extract_features(  # type: ignore[union-attr]
+                coords[:, 0], coords[:, 1], tol_mm=self.shape_tol_mm
+            )
+            s_mask = feats["cat_2d"] == 3
+            if np.any(s_mask):
+                extra_x = np.repeat(x_feats[s_mask], self.s_shape_weight - 1, axis=0)
+                extra_y = np.repeat(shifts[s_mask], self.s_shape_weight - 1, axis=0)
+                fit_x = np.concatenate([x_feats, extra_x], axis=0)
+                fit_y = np.concatenate([shifts, extra_y], axis=0)
+                rng = np.random.RandomState(self.random_state)
+                perm = rng.permutation(len(fit_x))
+                fit_x = fit_x[perm]
+                fit_y = fit_y[perm]
+
+        self._model.fit(fit_x, fit_y)
 
     def _predict_impl(self, coords: np.ndarray) -> np.ndarray:
         """Predict shift_n and shift_e for given query coordinates."""
