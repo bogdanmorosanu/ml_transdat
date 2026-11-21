@@ -1,0 +1,32 @@
+{
+  "schema_version": "2.0",
+  "slug": "cell_neighbor_features",
+  "experiment_type": "analysis",
+  "status": "completed",
+  "runtime_s": 0.701,
+  "key_metrics": {
+    "valid_interior_cells": 2297,
+    "num_engineered_features": 40,
+    "nan_count": 0,
+    "max_abs_slope_mm": 2080.796,
+    "mean_abs_slope_mm": 94.559,
+    "max_abs_twist_mm": 660.115,
+    "mean_abs_twist_mm": 43.341,
+    "o1_lookup_valid_rows": 2
+  },
+  "artifacts": {
+    "report": "report.md",
+    "shared_features": [
+      "data/features/cell_neighbor_features.parquet"
+    ],
+    "results": [
+      "results/cell_neighbor_features.csv"
+    ],
+    "plots": [
+      "national_neighbor_slope_max_map.png",
+      "national_neighbor_twist_max_map.png"
+    ]
+  },
+  "benchmark_candidates": [],
+  "extra": {}
+}

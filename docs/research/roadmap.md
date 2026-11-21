@@ -20,10 +20,14 @@ flowchart TD
     AQG["adaptive_quadtree_grid<br><b>Status: Validated</b><br>Curvature-driven partitioning: 1.4mm (3mm tier) & 0.5mm (1mm tier)"]
     MLP["mlp_spatial_regressor<br><b>Status: Validated</b><br>Fourier MLP: 1.3cm nationwide RMSE (4x4), 3.0cm (8x8) on adaptive stress test"]
     CSF["cell_planar_features<br><b>Status: Validated</b><br>3-Class Shape Taxonomy: 53% Dome / 47% S-Shape at 5mm; 93% Dome at 10mm"]
+    MSF["mlp_shape_features<br><b>Status: Dead End</b><br>Discrete shape tags degrade Fourier MLP (13.0 -> 14.4mm uniform, 32.5 -> 40.8mm adaptive)"]
+    CNF["cell_neighbor_features<br><b>Status: Validated</b><br>40 continuous 3x3 corner slopes & twists on 2,297 interior 11km cells"]
     ML["Next: Sub-Millimeter Hybrid Decompositions<br><b>Status: Exploring</b><br>Goal: Sub-millimeter via Densified RBF / Helmert Hybrid Models"]
 
     SPG -->|"motivates"| PROJ
     SPG -->|"motivates"| H2D
+    SPG -->|"extracts 3-class geometry"| CSF
+    SPG -->|"extracts 3x3 corner slopes & twists"| CNF
     PROJ -->|"establishes floor for"| ML
     H2D -->|"bends flat plane into"| POLY
     H2D -->|"provides analytical base for"| KNN
@@ -35,8 +39,8 @@ flowchart TD
     DT -->|"motivates smooth interpolation"| MLP
     AQG -->|"establishes geometric lookup baseline for"| MLP
     AQG -->|"provides continuous stress benchmarks for"| MLP
-    MLP -->|"identifies global capacity limit for"| CSF
-    CSF -->|"provides functional shape priors & (u,v) parameterization for"| ML
+    CSF -->|"feeds discrete shape priors into"| MSF
+    CNF -->|"provides continuous 3x3 neighbor priors for"| ML
 ```
 
 ---
@@ -78,3 +82,4 @@ flowchart TD
 | [`adaptive_quadtree_grid`](adaptive_quadtree_grid.md) | `Validated` | Curvature-driven quadtree space partitioning; achieves $1.4\,\text{mm}$ (3mm tier, 176k cells) and $0.5\,\text{mm}$ (1mm tier, 564k cells) with $>97\%$ fewer points than uniform grids. | [`experiments/adaptive_quadtree_grid/`](../../experiments/adaptive_quadtree_grid/README.md) | [`data/grids/adaptive/`](../../data/grids/adaptive/) |
 | [`mlp_spatial_regressor`](mlp_spatial_regressor.md) | `Validated` | Continuous parametric neural network solving spectral bias via Random Fourier Features; achieves $1.3\,\text{cm}$ nationwide RMSE ($4\times 4$) and $3.0\,\text{cm}$ on adaptive stress test ($8\times 8$) with 0 lookup table. | [`experiments/mlp_spatial_regressor/`](../../experiments/mlp_spatial_regressor/report.md) | [`src/models/mlp.py`](../../src/models/mlp.py) |
 | [`cell_planar_features`](cell_planar_features.md) | `Validated` | Functional geometric classification of $11\times 11\,\text{km}$ cells into a 3-class curvature taxonomy (Linear, Dome/Bowl, S-Shape); proves $92.5\%$ of Romania is quadratic at $10\,\text{mm}$ and $53\%/47\%$ Dome/S-Shape at $5\,\text{mm}$; delivers $O(1)$ spatial feature extractor. | [`experiments/cell_planar_features/`](../../experiments/cell_planar_features/report.md) | [`src/geometry/shape_classifier.py`](../../src/geometry/shape_classifier.py) |
+| [`cell_neighbor_features`](cell_neighbor_features.md) | `Validated` | Extracts 40 continuous $3\times 3$ one-sided corner slopes and diagonal twists across 2,297 interior `11 km` cells; delivers $O(1)$ `CellNeighborFeatureExtractor`. | [`experiments/cell_neighbor_features/`](../../experiments/cell_neighbor_features/report.md) | [`src/geometry/neighbor_features.py`](../../src/geometry/neighbor_features.py) |
