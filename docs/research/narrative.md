@@ -48,3 +48,13 @@ An ordered, causal record of how our understanding, hypotheses, and modeling dec
    - *Question*: Can we avoid brute-force uniform densification by dynamically splitting cells only where the distortion field bends away from local bilinear planarity?
    - *Finding*: Checking 5 interior points (cell center + 4 sub-quadrant centers) against bilinear interpolation allows generating full-Romania grids down to $1\,\text{mm}$ tolerance with $564\,\text{k}$ cells ($45\,\text{MB}$ Parquet)—over $97\%$ smaller than a uniform 100 m grid ($27+$ million points). Evaluated on the national corridor benchmark, the $3\,\text{mm}$ official tier achieves $1.4\,\text{mm}$ mean 2D error ($3.1\,\text{mm}$ P95), and the $1\,\text{mm}$ aspirational tier achieves $0.5\,\text{mm}$ mean 2D error ($1.0\,\text{mm}$ P95).
    - *Impact*: Establishes an ultra-accurate pure geometric lookup baseline and provides the blueprint for curvature-stratified test benchmark generation.
+
+---
+
+## Phase 3: Continuous Neural Surface Models & Spectral Bias Resolution
+
+5. **Continuous Neural Network Spatial Regressor (`mlp_spatial_regressor`)**:
+   - *Question*: Can a compact, pure parametric neural network (Multilayer Perceptron) learn the continuous 2D distortion field of Romania without storing any discrete lookup grid, and how does it perform on off-lattice points?
+   - *Finding*: Standard feedforward networks on raw coordinates suffer from **spectral bias**, yielding $18.2\,\text{cm}$ uniform RMSE and failing on local domes ($>1.5\,\text{m}$ max error in Banat). Augmenting inputs with **Random Fourier Features (RFF)** ($\sigma=3.0$) resolved spectral bias, cutting error by $3.7\times$ down to $4.6\,\text{cm}$ RMSE on the 2,689 official anchor nodes.
+   - *Density Scaling*: Scaling training data to the $4\times 4$ densified subgrid (36,435 pts) dropped nationwide uniform RMSE to **$1.3\,\text{cm}$** ($99.8\% < 5\,\text{cm}$), with a median error of **$8.8\,\text{mm}$**. Scaling further to the $8\times 8$ subgrid (146,258 pts) regularized edge-case anomalies (cutting max error from $37.5\,\text{cm} \to 15.2\,\text{cm}$), but reached a natural capacity floor around $\sim 3\,\text{cm}$ on the curvature-weighted adaptive stress test.
+   - *Impact*: Proves that a ~200 KB continuous neural network can achieve near-centimeter accuracy nationwide with zero external lookup table, while revealing that pushing to sub-millimeter precision requires hybrid decomposition (e.g., Helmert + local residual models).

@@ -16,17 +16,20 @@ flowchart TD
     KNN["knn_spatial_regressor<br><b>Status: Validated</b><br>1st ML baseline: 3.5cm RMSE via K=4 IDW (92% reduction)"]
     DT["decision_tree_regressor<br><b>Status: Validated</b><br>Step-lookup scaling: 8.2cm (11km) -> 0.4cm (16x16, 89MB)"]
     AQG["adaptive_quadtree_grid<br><b>Status: Validated</b><br>Curvature-driven partitioning: 1.4mm (3mm tier) & 0.5mm (1mm tier)"]
-    ML["Next: Continuous & Neural Surface Models<br><b>Status: Exploring</b><br>Goal: Sub-centimeter precision (<0.01m) via RBF / MLP"]
+    MLP["mlp_spatial_regressor<br><b>Status: Validated</b><br>Fourier MLP: 1.3cm nationwide RMSE (4x4), 3.0cm (8x8) on adaptive stress test"]
+    ML["Next: Classical Surface & Hybrid Models<br><b>Status: Exploring</b><br>Goal: Sub-centimeter / Sub-millimeter via Polynomials / RBF / Helmert Hybrid"]
 
     SPG -->|"motivates"| PROJ
     SPG -->|"motivates"| H2D
     PROJ -->|"establishes floor for"| ML
     H2D -->|"provides analytical base for"| KNN
-    KNN -->|"establishes local baseline for"| ML
+    KNN -->|"establishes local baseline for"| MLP
     KNN -->|"contrasted with"| DT
     DT -->|"motivates non-uniform space partitioning"| AQG
-    DT -->|"motivates smooth interpolation"| ML
-    AQG -->|"establishes geometric lookup baseline for"| ML
+    DT -->|"motivates smooth interpolation"| MLP
+    AQG -->|"establishes geometric lookup baseline for"| MLP
+    AQG -->|"provides continuous stress benchmarks for"| MLP
+    MLP -->|"identifies global capacity limit for"| ML
 ```
 
 ---
@@ -43,8 +46,10 @@ flowchart TD
 | `knn_spatial_regressor` | `Continuous ML Models` | `establishes local baseline` | Sets the first spatial ML baseline ($0.0353\,\text{m}$ RMSE) and reveals official grid $C^0/C^1$ boundary slope kinks. |
 | `knn_spatial_regressor` | `decision_tree_regressor` | `contrasted with` | Contrasts smooth local distance-weighted blending ($3.5\,\text{cm}$) against orthogonal axis-aligned step plateaus ($8.2\,\text{cm}$ on base nodes). |
 | `decision_tree_regressor` | `adaptive_quadtree_grid` | `motivates non-uniform partitioning` | Proves that uniform step-lookup models waste memory on flat zones; adaptive quadtree splits only where curvature exceeds tolerance. |
-| `adaptive_quadtree_grid` | `Continuous ML Models` | `establishes geometric baseline` | Delivers $1.4\,\text{mm}$ (3mm tier) and $0.5\,\text{mm}$ (1mm tier) pure geometric lookup, establishing the compact compression baseline for neural models. |
-| `decision_tree_regressor` | `Continuous ML Models` | `motivates smooth interpolation` | Proves step-lookup models require massive densification ($586\text{k}$ pts / $89\,\text{MB}$) to reach $4\,\text{mm}$, motivating smooth interpolators. |
+| `adaptive_quadtree_grid` | `mlp_spatial_regressor` | `establishes geometric baseline` | Delivers $1.4\,\text{mm}$ (3mm tier) and $0.5\,\text{mm}$ (1mm tier) pure geometric lookup, establishing the compression baseline for neural models. |
+| `adaptive_quadtree_grid` | `mlp_spatial_regressor` | `provides continuous stress benchmarks` | Quadtree cell midpoints provide the hard curvature-weighted stress test benchmark (`RO_TEST_ADAPTIVE_3MM_MID`). |
+| `decision_tree_regressor` | `mlp_spatial_regressor` | `motivates smooth interpolation` | Proves step-lookup models require massive densification ($586\text{k}$ pts / $89\,\text{MB}$) to reach $4\,\text{mm}$, motivating smooth interpolators. |
+| `mlp_spatial_regressor` | `Classical Surface & Hybrid Models` | `identifies global capacity limit` | Proves single global neural net reaches $\sim 3\,\text{cm}$ floor on adaptive zones, motivating hybrid decompositions (Helmert + local RBF/polynomials). |
 
 ---
 
@@ -58,3 +63,4 @@ flowchart TD
 | [`knn_spatial_regressor`](knn_spatial_regressor.md) | `Validated` | First non-linear ML baseline ($K=4$ IDW achieves $\text{RMSE}=0.0353\,\text{m}$, $92.1\%$ reduction over floor); discovers piecewise $C^0/C^1$ grid kinks. | [`experiments/knn_spatial_regressor/`](../../experiments/knn_spatial_regressor/README_AI.md) |
 | [`decision_tree_regressor`](decision_tree_regressor.md) | `Validated` | Orthogonal step-plateau scaling ($8.17\,\text{cm}$ on 11 km nodes $\to$ $0.40\,\text{cm}$ on `16x16` at $89.4\,\text{MB}$); impurity pruning compresses $87\%$ ($2.8\,\text{MB}$ at $1.88\,\text{cm}$). | [`experiments/decision_tree_regressor/`](../../experiments/decision_tree_regressor/report.md) | [`experiments/knn_spatial_regressor/`](../../experiments/knn_spatial_regressor/README_AI.md) |
 | [`adaptive_quadtree_grid`](adaptive_quadtree_grid.md) | `Validated` | Curvature-driven quadtree space partitioning; achieves $1.4\,\text{mm}$ (3mm tier, 176k cells) and $0.5\,\text{mm}$ (1mm tier, 564k cells) with $>97\%$ fewer points than uniform grids. | [`experiments/adaptive_quadtree_grid/`](../../experiments/adaptive_quadtree_grid/README.md) | [`data/grids/adaptive/`](../../data/grids/adaptive/) |
+| [`mlp_spatial_regressor`](mlp_spatial_regressor.md) | `Validated` | Continuous parametric neural network solving spectral bias via Random Fourier Features; achieves $1.3\,\text{cm}$ nationwide RMSE ($4\times 4$) and $3.0\,\text{cm}$ on adaptive stress test ($8\times 8$) with 0 lookup table. | [`experiments/mlp_spatial_regressor/`](../../experiments/mlp_spatial_regressor/report.md) | [`src/models/mlp.py`](../../src/models/mlp.py) |
