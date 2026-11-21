@@ -80,3 +80,15 @@ An ordered, causal record of how our understanding, hypotheses, and modeling dec
      - **Grid Kink Filtering**: Relaxing exact interpolation improves nationwide accuracy by $30\%$ ($13.2\,\text{mm} \to 9.3\,\text{mm}$) and cuts maximum nationwide error by $12.4\,\text{cm}$ ($34.3\,\text{cm} \to 21.9\,\text{cm}$) by smoothing over the legacy $C^0/C^1$ boundary slope breaks of Romania's official `.spg` grid.
      - **Foundation Invariance**: Testing Affine (Deg 1) vs. Quadratic (Deg 2) vs. Cubic (Deg 3) underlying polynomial trends yielded virtually identical performance ($13.25\,\text{mm}$ exact / $9.30\,\text{mm}$ smooth), proving that localized radial bending completely absorbs macroscopic curvature.
    - *Impact*: Delivers our first continuous, closed-form mathematical model achieving **sub-centimeter nationwide accuracy** with zero lookup tables ($0\,\text{MB}$ grid data).
+
+---
+
+## Phase 5: Local Patch Re-Parameterization & Functional Curvature Taxonomy
+
+8. **Grid Cell Curvature & Shape Classification (`cell_planar_features`)**:
+   - *Question*: Instead of forcing continuous models to learn nationwide coordinates $(N, E)$ across $800\,\text{km}$, can we re-parameterize the domain into normalized local cell coordinates $(u, v) \in [0, 1]$ and classify cells into discrete polynomial order archetypes?
+   - *Finding*:
+     - **Curvature Trumps Slope**: Planar steepness and compass aspect do not govern transformation complexity; a steep ramp is just as linear as a flat floor. Mathematical difficulty is strictly determined by internal non-linear curvature.
+     - **3-Class Taxonomy**: Evaluating 25 interior test points per cell across polynomial orders proves that under a $5\,\text{mm}$ geodetic tolerance, Category 4 (high-order bicubic anomalies) vanishes ($< 0.5\%$), yielding a clean **$53.2\%$ Parabolic Dome/Bowl** vs. **$46.8\%$ Cubic S-Shape** split. Within $1\,\text{cm}$ ($10\,\text{mm}$), **$92.5\%$ of Romania** is captured by a simple 2nd-degree parabola.
+     - **High Axis Concordance**: In $68.7\%$ of cells at $5\,\text{mm}$ (and $69.6\%$ at $10\,\text{mm}$), Northing and Easting shifts share the exact same shape category.
+   - *Impact*: Delivers `CellShapeFeatureExtractor` providing $O(1)$ spatial feature lookups, providing downstream neural networks and hybrid models with localized scale-free $(u, v)$ coordinates, zero-offset base shifts, and functional shape priors.

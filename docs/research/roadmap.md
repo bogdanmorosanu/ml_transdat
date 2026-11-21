@@ -19,6 +19,7 @@ flowchart TD
     DT["decision_tree_regressor<br><b>Status: Validated</b><br>Step-lookup scaling: 8.2cm (11km) -> 0.4cm (16x16, 89MB)"]
     AQG["adaptive_quadtree_grid<br><b>Status: Validated</b><br>Curvature-driven partitioning: 1.4mm (3mm tier) & 0.5mm (1mm tier)"]
     MLP["mlp_spatial_regressor<br><b>Status: Validated</b><br>Fourier MLP: 1.3cm nationwide RMSE (4x4), 3.0cm (8x8) on adaptive stress test"]
+    CSF["cell_planar_features<br><b>Status: Validated</b><br>3-Class Shape Taxonomy: 53% Dome / 47% S-Shape at 5mm; 93% Dome at 10mm"]
     ML["Next: Sub-Millimeter Hybrid Decompositions<br><b>Status: Exploring</b><br>Goal: Sub-millimeter via Densified RBF / Helmert Hybrid Models"]
 
     SPG -->|"motivates"| PROJ
@@ -34,7 +35,8 @@ flowchart TD
     DT -->|"motivates smooth interpolation"| MLP
     AQG -->|"establishes geometric lookup baseline for"| MLP
     AQG -->|"provides continuous stress benchmarks for"| MLP
-    MLP -->|"identifies global capacity limit for"| ML
+    MLP -->|"identifies global capacity limit for"| CSF
+    CSF -->|"provides functional shape priors & (u,v) parameterization for"| ML
 ```
 
 ---
@@ -57,7 +59,8 @@ flowchart TD
 | `adaptive_quadtree_grid` | `mlp_spatial_regressor` | `establishes geometric baseline` | Delivers $1.4\,\text{mm}$ (3mm tier) and $0.5\,\text{mm}$ (1mm tier) pure geometric lookup, establishing the compression baseline for neural models. |
 | `adaptive_quadtree_grid` | `mlp_spatial_regressor` | `provides continuous stress benchmarks` | Quadtree cell midpoints provide the hard curvature-weighted stress test benchmark (`RO_TEST_ADAPTIVE_3MM_MID`). |
 | `decision_tree_regressor` | `mlp_spatial_regressor` | `motivates smooth interpolation` | Proves step-lookup models require massive densification ($586\text{k}$ pts / $89\,\text{MB}$) to reach $4\,\text{mm}$, motivating smooth interpolators. |
-| `mlp_spatial_regressor` | `Classical Surface & Hybrid Models` | `identifies global capacity limit` | Proves single global neural net reaches $\sim 3\,\text{cm}$ floor on adaptive zones, motivating hybrid decompositions (Helmert + local RBF/polynomials). |
+| `mlp_spatial_regressor` | `cell_planar_features` | `identifies global capacity limit` | Proves single global neural net reaches $\sim 3\,\text{cm}$ floor on adaptive zones, motivating local patch re-parameterization and shape classification. |
+| `cell_planar_features` | `Sub-Millimeter Hybrids` | `provides functional shape priors` | Decouples macro shift from micro curvature, classifying 100% of cells into Linear, Dome, or S-Shape for model conditioning. |
 
 ---
 
@@ -74,3 +77,4 @@ flowchart TD
 | [`decision_tree_regressor`](decision_tree_regressor.md) | `Validated` | Orthogonal step-plateau scaling ($8.17\,\text{cm}$ on 11 km nodes $\to$ $0.40\,\text{cm}$ on `16x16` at $89.4\,\text{MB}$); impurity pruning compresses $87\%$ ($2.8\,\text{MB}$ at $1.88\,\text{cm}$). | [`experiments/decision_tree_regressor/`](../../experiments/decision_tree_regressor/report.md) | [`experiments/knn_spatial_regressor/`](../../experiments/knn_spatial_regressor/README_AI.md) |
 | [`adaptive_quadtree_grid`](adaptive_quadtree_grid.md) | `Validated` | Curvature-driven quadtree space partitioning; achieves $1.4\,\text{mm}$ (3mm tier, 176k cells) and $0.5\,\text{mm}$ (1mm tier, 564k cells) with $>97\%$ fewer points than uniform grids. | [`experiments/adaptive_quadtree_grid/`](../../experiments/adaptive_quadtree_grid/README.md) | [`data/grids/adaptive/`](../../data/grids/adaptive/) |
 | [`mlp_spatial_regressor`](mlp_spatial_regressor.md) | `Validated` | Continuous parametric neural network solving spectral bias via Random Fourier Features; achieves $1.3\,\text{cm}$ nationwide RMSE ($4\times 4$) and $3.0\,\text{cm}$ on adaptive stress test ($8\times 8$) with 0 lookup table. | [`experiments/mlp_spatial_regressor/`](../../experiments/mlp_spatial_regressor/report.md) | [`src/models/mlp.py`](../../src/models/mlp.py) |
+| [`cell_planar_features`](cell_planar_features.md) | `Validated` | Functional geometric classification of $11\times 11\,\text{km}$ cells into a 3-class curvature taxonomy (Linear, Dome/Bowl, S-Shape); proves $92.5\%$ of Romania is quadratic at $10\,\text{mm}$ and $53\%/47\%$ Dome/S-Shape at $5\,\text{mm}$; delivers $O(1)$ spatial feature extractor. | [`experiments/cell_planar_features/`](../../experiments/cell_planar_features/report.md) | [`src/geometry/shape_classifier.py`](../../src/geometry/shape_classifier.py) |
