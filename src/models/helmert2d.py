@@ -10,7 +10,7 @@ from typing import Any
 import numpy as np
 
 from pytransdat.proj_stereo import StereoProj
-from src.models.base import BaseCoordinateTransformer
+from src.models.base import BaseCoordinateTransformer, BaseGridShiftModel
 
 ARCSEC_PER_RAD: float = 180.0 * 3600.0 / math.pi
 CENTER_N_M: float = 500_000.0
@@ -167,3 +167,70 @@ class TwoStepHelmert2DTransformer(BaseCoordinateTransformer):
         return np.asarray(lat_rad, dtype=np.float64), np.asarray(
             lon_rad, dtype=np.float64
         )
+
+
+class Helmert2DConformalShiftModel(BaseGridShiftModel):
+    """4-parameter 2D conformal Helmert regressor for spatial distortion shifts.
+
+    Fits translation (tn, te), uniform scale factor (a), and rotation (b)
+    under the strictly angle-preserving conformal Cauchy-Riemann constraint:
+        dn = tn + a * (N - N0) + b * (E - E0)
+        de = te - b * (N - N0) + a * (E - E0)
+    """
+
+    def __init__(
+        self, center_n: float = CENTER_N_M, center_e: float = CENTER_E_M
+    ) -> None:
+        super().__init__()
+        self.center_n = center_n
+        self.center_e = center_e
+        self.tn_: float = 0.0
+        self.te_: float = 0.0
+        self.a_: float = 0.0
+        self.b_: float = 0.0
+        self.ppm_: float = 0.0
+        self.rot_rad_: float = 0.0
+        self.rot_arcsec_: float = 0.0
+
+    def _fit_impl(self, coords: np.ndarray, shifts: np.ndarray) -> None:
+        sn = coords[:, 0] - self.center_n
+        se = coords[:, 1] - self.center_e
+        n_pts = len(sn)
+
+        design = np.empty((2 * n_pts, 4), dtype=np.float64)
+        design[:n_pts, 0] = 1.0
+        design[:n_pts, 1] = 0.0
+        design[:n_pts, 2] = sn
+        design[:n_pts, 3] = se
+        design[n_pts:, 0] = 0.0
+        design[n_pts:, 1] = 1.0
+        design[n_pts:, 2] = se
+        design[n_pts:, 3] = -sn
+        rhs = np.concatenate([shifts[:, 0], shifts[:, 1]])
+
+        coeffs, _, _, _ = np.linalg.lstsq(design, rhs, rcond=None)
+        self.tn_ = float(coeffs[0])
+        self.te_ = float(coeffs[1])
+        self.a_ = float(coeffs[2])
+        self.b_ = float(coeffs[3])
+
+        scale = math.hypot(self.a_, self.b_)
+        self.ppm_ = scale * 1e6
+        self.rot_rad_ = math.atan2(self.b_, self.a_)
+        self.rot_arcsec_ = self.rot_rad_ * ARCSEC_PER_RAD
+
+    def _predict_impl(self, coords: np.ndarray) -> np.ndarray:
+        sn = coords[:, 0] - self.center_n
+        se = coords[:, 1] - self.center_e
+        pred_dn = self.tn_ + self.a_ * sn + self.b_ * se
+        pred_de = self.te_ - self.b_ * sn + self.a_ * se
+        return np.column_stack([pred_dn, pred_de])
+
+    def _runtime_dependencies(self) -> tuple[str, ...]:
+        return ("numpy",)
+
+    @property
+    def n_parameters(self) -> int:
+        """Return total number of fitted conformal parameters (strictly 4)."""
+        return 4
+

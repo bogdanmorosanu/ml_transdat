@@ -1,0 +1,31 @@
+{
+  "unit_id": "07",
+  "unit_name": "polynomial_surface_regressor",
+  "models_evaluated": [
+    "poly_deg1_11km@ro_test_uniform_4x4",
+    "poly_deg1_11km@ro_test_adaptive_3mm_mid",
+    "poly_deg2_11km@ro_test_uniform_4x4",
+    "poly_deg2_11km@ro_test_adaptive_3mm_mid",
+    "poly_deg3_11km@ro_test_uniform_4x4",
+    "poly_deg3_11km@ro_test_adaptive_3mm_mid",
+    "poly_deg5_11km@ro_test_uniform_4x4",
+    "poly_deg5_11km@ro_test_adaptive_3mm_mid",
+    "poly_deg8_11km@ro_test_uniform_4x4",
+    "poly_deg8_11km@ro_test_adaptive_3mm_mid",
+    "poly_deg12_11km@ro_test_uniform_4x4",
+    "poly_deg12_11km@ro_test_adaptive_3mm_mid",
+    "poly_deg5_4x4@ro_test_uniform_4x4",
+    "poly_deg5_4x4@ro_test_adaptive_3mm_mid",
+    "poly_deg12_4x4@ro_test_uniform_4x4",
+    "poly_deg12_4x4@ro_test_adaptive_3mm_mid",
+    "poly_deg5_sparse_lasso@ro_test_uniform_4x4",
+    "poly_deg5_sparse_lasso@ro_test_adaptive_3mm_mid",
+    "poly_deg12_sparse_lasso@ro_test_uniform_4x4",
+    "poly_deg12_sparse_lasso@ro_test_adaptive_3mm_mid"
+  ],
+  "runtime_s": 15.563,
+  "transect_plot": "cell_transect_66km_polynomial.png",
+  "degree_scaling_plot": "polynomial_degree_scaling.png",
+  "surfaces_3d_plot": "polynomial_3d_surfaces_comparison.png",
+  "heatmaps_2d_plot": "polynomial_2d_heatmaps_comparison.png"
+}

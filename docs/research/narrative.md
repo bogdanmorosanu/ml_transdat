@@ -58,3 +58,16 @@ An ordered, causal record of how our understanding, hypotheses, and modeling dec
    - *Finding*: Standard feedforward networks on raw coordinates suffer from **spectral bias**, yielding $18.2\,\text{cm}$ uniform RMSE and failing on local domes ($>1.5\,\text{m}$ max error in Banat). Augmenting inputs with **Random Fourier Features (RFF)** ($\sigma=3.0$) resolved spectral bias, cutting error by $3.7\times$ down to $4.6\,\text{cm}$ RMSE on the 2,689 official anchor nodes.
    - *Density Scaling*: Scaling training data to the $4\times 4$ densified subgrid (36,435 pts) dropped nationwide uniform RMSE to **$1.3\,\text{cm}$** ($99.8\% < 5\,\text{cm}$), with a median error of **$8.8\,\text{mm}$**. Scaling further to the $8\times 8$ subgrid (146,258 pts) regularized edge-case anomalies (cutting max error from $37.5\,\text{cm} \to 15.2\,\text{cm}$), but reached a natural capacity floor around $\sim 3\,\text{cm}$ on the curvature-weighted adaptive stress test.
    - *Impact*: Proves that a ~200 KB continuous neural network can achieve near-centimeter accuracy nationwide with zero external lookup table, while revealing that pushing to sub-millimeter precision requires hybrid decomposition (e.g., Helmert + local residual models).
+
+---
+
+## Phase 4: Classical Mathematical & Analytical Surface Models
+
+6. **2D Bivariate Polynomial Surface Regressors (`polynomial_surface_regressor`)**:
+   - *Question*: How much accuracy gain is achieved by upgrading the rigid flat plane of the 2D Helmert baseline into a smooth curved 2D polynomial surface of degree $D$, and at what degree does Runge's phenomenon emerge?
+   - *Finding*:
+     - Moving from a flat plane ($D=1$, $42.8\,\text{cm}$ uniform RMSE) to a quadratic bowl/saddle ($D=2$, $33.0\,\text{cm}$) reduces error by **$23\%$** with just 6 parameters per axis.
+     - Odd-degree surfaces ($D=3, 5$) introduce inflection S-curves, reducing uniform RMSE to **$27.0\,\text{cm}$** and slashing worst-case max error by **$76\,\text{cm}$** ($2.60\,\text{m} \to 1.84\,\text{m}$).
+     - Pushing to Degree 12 achieves **$19.2\,\text{cm}$ uniform RMSE** and cuts maximum nationwide error below 1 meter (**$89.3\,\text{cm}$**).
+     - However, global polynomials hit an asymptotic ceiling near $\sim 17\text{--}18\,\text{cm}$; at higher degrees ($D \ge 16$), border ripple oscillations (Runge's phenomenon) begin to emerge.
+   - *Impact*: Validates historical geodetic practice (stopping at degrees 3 to 5) and establishes the curved macroscopic foundation, providing the direct mathematical motivation for Level 3: Radial Basis Functions (RBF) and Thin Plate Splines (TPS).

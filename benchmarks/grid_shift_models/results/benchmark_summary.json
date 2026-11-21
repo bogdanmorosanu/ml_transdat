@@ -35,16 +35,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.03884950000792742,
-          "fit_time_sec": 0.001331100007519126,
-          "throughput_pts_per_sec": 937849.907786851,
+          "eval_time_sec": 0.05714779999834718,
+          "fit_time_sec": 0.0012682999986282084,
+          "throughput_pts_per_sec": 637557.3513075528,
           "memory_breakdown": {
-            "code_bytes": 2992,
+            "code_bytes": 3075,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 30809,
             "grid_lookup_bytes": 86048,
-            "total_bytes": 41149433,
-            "total_mb": 39.243157386779785
+            "total_bytes": 41149516,
+            "total_mb": 39.24323654174805
           }
         },
         {
@@ -76,16 +76,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.07609569991473109,
-          "fit_time_sec": 0.0010367999784648418,
-          "throughput_pts_per_sec": 478804.9790044271,
+          "eval_time_sec": 0.10060209999937797,
+          "fit_time_sec": 0.0010412000010546762,
+          "throughput_pts_per_sec": 362169.3781762536,
           "memory_breakdown": {
-            "code_bytes": 2992,
+            "code_bytes": 3075,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 30811,
             "grid_lookup_bytes": 86048,
-            "total_bytes": 41149435,
-            "total_mb": 39.24315929412842
+            "total_bytes": 41149518,
+            "total_mb": 39.24323844909668
           }
         },
         {
@@ -117,16 +117,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.001803399994969368,
-          "fit_time_sec": 0.0037417999701574445,
-          "throughput_pts_per_sec": 20203504.547874235,
+          "eval_time_sec": 0.002238599998236168,
+          "fit_time_sec": 0.003681199999846285,
+          "throughput_pts_per_sec": 16275797.386182332,
           "memory_breakdown": {
-            "code_bytes": 4079,
+            "code_bytes": 4184,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 431362,
             "grid_lookup_bytes": 0,
-            "total_bytes": 41465025,
-            "total_mb": 39.544129371643066
+            "total_bytes": 41465130,
+            "total_mb": 39.54422950744629
           }
         },
         {
@@ -158,16 +158,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0025179999647662044,
-          "fit_time_sec": 0.2111017000861466,
-          "throughput_pts_per_sec": 14469817.51780246,
+          "eval_time_sec": 0.002630800001497846,
+          "fit_time_sec": 0.21023309999873163,
+          "throughput_pts_per_sec": 13849399.414343823,
           "memory_breakdown": {
-            "code_bytes": 4079,
+            "code_bytes": 4184,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 2948962,
             "grid_lookup_bytes": 0,
-            "total_bytes": 43982625,
-            "total_mb": 41.94509983062744
+            "total_bytes": 43982730,
+            "total_mb": 41.945199966430664
           }
         },
         {
@@ -199,16 +199,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.013504100032150745,
-          "fit_time_sec": 0.2781191000249237,
-          "throughput_pts_per_sec": 2698069.468772821,
+          "eval_time_sec": 0.01797409999926458,
+          "fit_time_sec": 0.26614150000023074,
+          "throughput_pts_per_sec": 2027083.4145515356,
           "memory_breakdown": {
-            "code_bytes": 12092,
+            "code_bytes": 12444,
             "dependencies_bytes": 0,
             "model_instance_bytes": 9040,
             "grid_lookup_bytes": 24148512,
-            "total_bytes": 24169644,
-            "total_mb": 23.049968719482422
+            "total_bytes": 24169996,
+            "total_mb": 23.050304412841797
           }
         },
         {
@@ -240,16 +240,57 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.019509500009007752,
-          "fit_time_sec": 0.99246320000384,
-          "throughput_pts_per_sec": 1867551.7047170638,
+          "eval_time_sec": 0.02689969999846653,
+          "fit_time_sec": 1.047326099997008,
+          "throughput_pts_per_sec": 1354476.0723010683,
           "memory_breakdown": {
-            "code_bytes": 12092,
+            "code_bytes": 12444,
             "dependencies_bytes": 0,
             "model_instance_bytes": 9814,
             "grid_lookup_bytes": 78529320,
-            "total_bytes": 78551226,
-            "total_mb": 74.91228675842285
+            "total_bytes": 78551578,
+            "total_mb": 74.91262245178223
+          }
+        },
+        {
+          "name": "Fourier MLP (4x4, 2.7km)",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.019634318413304788,
+            "std_2d_m": 0.010169138055667012,
+            "rmse_2d_m": 0.02211148634421156,
+            "min_2d_m": 0.00010048392494363318,
+            "p50_2d_m": 0.018512875571935712,
+            "p90_2d_m": 0.03346919840048695,
+            "p95_2d_m": 0.03811685449238813,
+            "p99_2d_m": 0.04686918159514999,
+            "p99_9_2d_m": 0.05608162018798712,
+            "max_2d_m": 0.06325470455855045,
+            "bias_n_m": 0.003560639269218505,
+            "bias_e_m": 0.008045313549421158,
+            "rmse_n_m": 0.015659936539665208,
+            "rmse_e_m": 0.015610388077300093,
+            "pass_rates_pct": {
+              "lt_1mm": 0.22505832304103196,
+              "lt_1cm": 18.353231782626594,
+              "lt_5cm": 99.53067105804858,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 0.09414620000097784,
+          "fit_time_sec": 3.5109415000006265,
+          "throughput_pts_per_sec": 387004.46751564665,
+          "memory_breakdown": {
+            "code_bytes": 6332,
+            "dependencies_bytes": 73428937,
+            "model_instance_bytes": 819706,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 74254975,
+            "total_mb": 70.81506252288818
           }
         }
       ]
@@ -343,16 +384,16 @@
               }
             }
           },
-          "eval_time_sec": 0.04452309990301728,
-          "fit_time_sec": 0.001331100007519126,
-          "throughput_pts_per_sec": 818339.2459052664,
+          "eval_time_sec": 0.05319700000109151,
+          "fit_time_sec": 0.0012682999986282084,
+          "throughput_pts_per_sec": 684907.0436162268,
           "memory_breakdown": {
-            "code_bytes": 2992,
+            "code_bytes": 3075,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 30809,
             "grid_lookup_bytes": 86048,
-            "total_bytes": 41149433,
-            "total_mb": 39.243157386779785
+            "total_bytes": 41149516,
+            "total_mb": 39.24323654174805
           }
         },
         {
@@ -440,16 +481,16 @@
               }
             }
           },
-          "eval_time_sec": 0.09190670005045831,
-          "fit_time_sec": 0.0010367999784648418,
-          "throughput_pts_per_sec": 396434.6449170363,
+          "eval_time_sec": 0.10838430000148946,
+          "fit_time_sec": 0.0010412000010546762,
+          "throughput_pts_per_sec": 336164.92425101507,
           "memory_breakdown": {
-            "code_bytes": 2992,
+            "code_bytes": 3075,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 30811,
             "grid_lookup_bytes": 86048,
-            "total_bytes": 41149435,
-            "total_mb": 39.24315929412842
+            "total_bytes": 41149518,
+            "total_mb": 39.24323844909668
           }
         },
         {
@@ -537,16 +578,16 @@
               }
             }
           },
-          "eval_time_sec": 0.0025257000233978033,
-          "fit_time_sec": 0.0037417999701574445,
-          "throughput_pts_per_sec": 14425703.63165468,
+          "eval_time_sec": 0.0029897000022174325,
+          "fit_time_sec": 0.003681199999846285,
+          "throughput_pts_per_sec": 12186841.480073754,
           "memory_breakdown": {
-            "code_bytes": 4079,
+            "code_bytes": 4184,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 431362,
             "grid_lookup_bytes": 0,
-            "total_bytes": 41465025,
-            "total_mb": 39.544129371643066
+            "total_bytes": 41465130,
+            "total_mb": 39.54422950744629
           }
         },
         {
@@ -634,16 +675,16 @@
               }
             }
           },
-          "eval_time_sec": 0.003239199984818697,
-          "fit_time_sec": 0.2111017000861466,
-          "throughput_pts_per_sec": 11248147.743505044,
+          "eval_time_sec": 0.0037415000006149057,
+          "fit_time_sec": 0.21023309999873163,
+          "throughput_pts_per_sec": 9738072.963787787,
           "memory_breakdown": {
-            "code_bytes": 4079,
+            "code_bytes": 4184,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 2948962,
             "grid_lookup_bytes": 0,
-            "total_bytes": 43982625,
-            "total_mb": 41.94509983062744
+            "total_bytes": 43982730,
+            "total_mb": 41.945199966430664
           }
         },
         {
@@ -731,16 +772,16 @@
               }
             }
           },
-          "eval_time_sec": 0.018232000060379505,
-          "fit_time_sec": 0.2781191000249237,
-          "throughput_pts_per_sec": 1998409.3834651727,
+          "eval_time_sec": 0.022676299999147886,
+          "fit_time_sec": 0.26614150000023074,
+          "throughput_pts_per_sec": 1606743.604616676,
           "memory_breakdown": {
-            "code_bytes": 12092,
+            "code_bytes": 12444,
             "dependencies_bytes": 0,
             "model_instance_bytes": 9040,
             "grid_lookup_bytes": 24148512,
-            "total_bytes": 24169644,
-            "total_mb": 23.049968719482422
+            "total_bytes": 24169996,
+            "total_mb": 23.050304412841797
           }
         },
         {
@@ -828,16 +869,113 @@
               }
             }
           },
-          "eval_time_sec": 0.021595600061118603,
-          "fit_time_sec": 0.99246320000384,
-          "throughput_pts_per_sec": 1687149.2293283723,
+          "eval_time_sec": 0.023675700002058875,
+          "fit_time_sec": 1.047326099997008,
+          "throughput_pts_per_sec": 1538919.6516610514,
           "memory_breakdown": {
-            "code_bytes": 12092,
+            "code_bytes": 12444,
             "dependencies_bytes": 0,
             "model_instance_bytes": 9814,
             "grid_lookup_bytes": 78529320,
-            "total_bytes": 78551226,
-            "total_mb": 74.91228675842285
+            "total_bytes": 78551578,
+            "total_mb": 74.91262245178223
+          }
+        },
+        {
+          "name": "Fourier MLP (4x4, 2.7km)",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.02057447342244425,
+            "std_2d_m": 0.011613030574176054,
+            "rmse_2d_m": 0.023625652069892433,
+            "min_2d_m": 9.282824179678236e-05,
+            "p50_2d_m": 0.019020059068985695,
+            "p90_2d_m": 0.03545001214966778,
+            "p95_2d_m": 0.040779578778871076,
+            "p99_2d_m": 0.05186955781181226,
+            "p99_9_2d_m": 0.07382556605214717,
+            "max_2d_m": 0.3820235852253094,
+            "bias_n_m": 0.0048241082323497156,
+            "bias_e_m": 0.007127256348726423,
+            "rmse_n_m": 0.01707506188595486,
+            "rmse_e_m": 0.016328309689567503,
+            "pass_rates_pct": {
+              "lt_1mm": 0.1811445039110745,
+              "lt_1cm": 17.439275421984355,
+              "lt_5cm": 98.65239467544943,
+              "lt_10cm": 99.9368738850007,
+              "lt_1m": 100.0
+            },
+            "by_point_type": {
+              "nodes": {
+                "count": 2222,
+                "total_count": 2222,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.02360953589748187,
+                "std_2d_m": 0.013330449481067595,
+                "rmse_2d_m": 0.02711293176072592,
+                "min_2d_m": 0.000760180153401684,
+                "p50_2d_m": 0.0214528669466474,
+                "p90_2d_m": 0.04129227053894572,
+                "p95_2d_m": 0.04734279797511408,
+                "p99_2d_m": 0.061533414330490185,
+                "p99_9_2d_m": 0.07135100391274692,
+                "max_2d_m": 0.15296069095671058,
+                "bias_n_m": 0.004618379415408743,
+                "bias_e_m": 0.007368479954819832,
+                "rmse_n_m": 0.01960545964642489,
+                "rmse_e_m": 0.018727974282185072,
+                "pass_rates_pct": {
+                  "lt_1mm": 0.18001800180018002,
+                  "lt_1cm": 14.221422142214221,
+                  "lt_5cm": 96.03960396039604,
+                  "lt_10cm": 99.9099909990999,
+                  "lt_1m": 100.0
+                }
+              },
+              "interior": {
+                "count": 34213,
+                "total_count": 34213,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.02037735803298604,
+                "std_2d_m": 0.011464867246634687,
+                "rmse_2d_m": 0.02338118691143496,
+                "min_2d_m": 9.282824179678236e-05,
+                "p50_2d_m": 0.018884310797684534,
+                "p90_2d_m": 0.035089377350633645,
+                "p95_2d_m": 0.040225076867751876,
+                "p99_2d_m": 0.05093135007000041,
+                "p99_9_2d_m": 0.07386274157637011,
+                "max_2d_m": 0.3820235852253094,
+                "bias_n_m": 0.004837469511139733,
+                "bias_e_m": 0.007111589822764374,
+                "rmse_n_m": 0.016897623607544387,
+                "rmse_e_m": 0.016160142877005023,
+                "pass_rates_pct": {
+                  "lt_1mm": 0.18121766579954987,
+                  "lt_1cm": 17.64826235641423,
+                  "lt_5cm": 98.82208517230292,
+                  "lt_10cm": 99.93861982287434,
+                  "lt_1m": 100.0
+                }
+              }
+            }
+          },
+          "eval_time_sec": 0.07672109999839449,
+          "fit_time_sec": 3.5109415000006265,
+          "throughput_pts_per_sec": 474901.950060185,
+          "memory_breakdown": {
+            "code_bytes": 6332,
+            "dependencies_bytes": 73428937,
+            "model_instance_bytes": 819706,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 74254975,
+            "total_mb": 70.81506252288818
           }
         }
       ]
@@ -875,16 +1013,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.020616100053302944,
-          "fit_time_sec": 0.001331100007519126,
-          "throughput_pts_per_sec": 485057.79338211357,
+          "eval_time_sec": 0.02581580000332906,
+          "fit_time_sec": 0.0012682999986282084,
+          "throughput_pts_per_sec": 387359.6789063464,
           "memory_breakdown": {
-            "code_bytes": 2992,
+            "code_bytes": 3075,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 30809,
             "grid_lookup_bytes": 86048,
-            "total_bytes": 41149433,
-            "total_mb": 39.243157386779785
+            "total_bytes": 41149516,
+            "total_mb": 39.24323654174805
           }
         },
         {
@@ -916,16 +1054,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.032364899991080165,
-          "fit_time_sec": 0.0010367999784648418,
-          "throughput_pts_per_sec": 308976.70015220257,
+          "eval_time_sec": 0.04343760000119801,
+          "fit_time_sec": 0.0010412000010546762,
+          "throughput_pts_per_sec": 230215.2973397287,
           "memory_breakdown": {
-            "code_bytes": 2992,
+            "code_bytes": 3075,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 30809,
             "grid_lookup_bytes": 86048,
-            "total_bytes": 41149433,
-            "total_mb": 39.243157386779785
+            "total_bytes": 41149516,
+            "total_mb": 39.24323654174805
           }
         },
         {
@@ -957,16 +1095,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0006818999536335468,
-          "fit_time_sec": 0.0037417999701574445,
-          "throughput_pts_per_sec": 14664907.874995988,
+          "eval_time_sec": 0.0008052000011957716,
+          "fit_time_sec": 0.003681199999846285,
+          "throughput_pts_per_sec": 12419274.695913292,
           "memory_breakdown": {
-            "code_bytes": 4079,
+            "code_bytes": 4184,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 431362,
             "grid_lookup_bytes": 0,
-            "total_bytes": 41465025,
-            "total_mb": 39.544129371643066
+            "total_bytes": 41465130,
+            "total_mb": 39.54422950744629
           }
         },
         {
@@ -998,16 +1136,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.000677499920129776,
-          "fit_time_sec": 0.2111017000861466,
-          "throughput_pts_per_sec": 14760149.341544552,
+          "eval_time_sec": 0.0007598999982292298,
+          "fit_time_sec": 0.21023309999873163,
+          "throughput_pts_per_sec": 13159626.297279475,
           "memory_breakdown": {
-            "code_bytes": 4079,
+            "code_bytes": 4184,
             "dependencies_bytes": 41029584,
             "model_instance_bytes": 2948962,
             "grid_lookup_bytes": 0,
-            "total_bytes": 43982625,
-            "total_mb": 41.94509983062744
+            "total_bytes": 43982730,
+            "total_mb": 41.945199966430664
           }
         },
         {
@@ -1039,16 +1177,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.004596200073137879,
-          "fit_time_sec": 0.2781191000249237,
-          "throughput_pts_per_sec": 2175710.334814229,
+          "eval_time_sec": 0.005798700000013923,
+          "fit_time_sec": 0.26614150000023074,
+          "throughput_pts_per_sec": 1724524.462375358,
           "memory_breakdown": {
-            "code_bytes": 12092,
+            "code_bytes": 12444,
             "dependencies_bytes": 0,
             "model_instance_bytes": 9040,
             "grid_lookup_bytes": 24148512,
-            "total_bytes": 24169644,
-            "total_mb": 23.049968719482422
+            "total_bytes": 24169996,
+            "total_mb": 23.050304412841797
           }
         },
         {
@@ -1080,16 +1218,57 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.005337600014172494,
-          "fit_time_sec": 0.99246320000384,
-          "throughput_pts_per_sec": 1873501.1940662123,
+          "eval_time_sec": 0.005448899999464629,
+          "fit_time_sec": 1.047326099997008,
+          "throughput_pts_per_sec": 1835232.7994609058,
           "memory_breakdown": {
-            "code_bytes": 12092,
+            "code_bytes": 12444,
             "dependencies_bytes": 0,
             "model_instance_bytes": 9814,
             "grid_lookup_bytes": 78529320,
-            "total_bytes": 78551226,
-            "total_mb": 74.91228675842285
+            "total_bytes": 78551578,
+            "total_mb": 74.91262245178223
+          }
+        },
+        {
+          "name": "Fourier MLP (4x4, 2.7km)",
+          "summary": {
+            "count": 10000,
+            "total_count": 10000,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.02123531318330229,
+            "std_2d_m": 0.011046495781804895,
+            "rmse_2d_m": 0.023936657975798654,
+            "min_2d_m": 0.00039224527095422043,
+            "p50_2d_m": 0.01936096478869595,
+            "p90_2d_m": 0.0378248851802498,
+            "p95_2d_m": 0.039868231974378374,
+            "p99_2d_m": 0.045001300292200765,
+            "p99_9_2d_m": 0.046129670042724155,
+            "max_2d_m": 0.04640631924522021,
+            "bias_n_m": 0.016673850947957397,
+            "bias_e_m": -0.007597386434019931,
+            "rmse_n_m": 0.021565574980307003,
+            "rmse_e_m": 0.010386990460143975,
+            "pass_rates_pct": {
+              "lt_1mm": 0.16999999999999998,
+              "lt_1cm": 18.790000000000003,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 0.020873599998594727,
+          "fit_time_sec": 3.5109415000006265,
+          "throughput_pts_per_sec": 479074.0457167537,
+          "memory_breakdown": {
+            "code_bytes": 6332,
+            "dependencies_bytes": 73428937,
+            "model_instance_bytes": 819706,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 74254975,
+            "total_mb": 70.81506252288818
           }
         }
       ]

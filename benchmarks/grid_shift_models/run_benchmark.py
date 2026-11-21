@@ -28,6 +28,7 @@ from src.models import (
     AdaptiveQuadtreeRegressor,
     DecisionTreeSpatialRegressor,
     KNNSpatialRegressor,
+    MLPGridShiftModel,
 )
 from src.viz import (
     plot_memory_breakdown_stacked,
@@ -74,6 +75,18 @@ def main() -> None:
     dn_1mm, de_1mm = gm.get_adaptive_pair("1mm")
     quadtree_1mm = AdaptiveQuadtreeRegressor(dn_grid=dn_1mm.df, de_grid=de_1mm.df)
 
+    train_4x4 = gm.get(GridId.RO_GRID_4X4)
+    mlp_fourier_4x4 = MLPGridShiftModel(
+        hidden_layer_sizes=(128, 128),
+        use_fourier_features=True,
+        fourier_scale=3.0,
+        num_fourier_frequencies=32,
+        solver="adam",
+        max_iter=100,
+        batch_size=256,
+        alpha=1e-5,
+    ).fit(train_4x4.coords, train_4x4.true_shifts)
+
     models: list[tuple[str, Any]] = [
         ("KNN (K=4 IDW, 11km)", knn_k4),
         ("KNN (K=16 IDW, 11km)", knn_k16),
@@ -81,6 +94,7 @@ def main() -> None:
         ("Decision Tree (8x8, pruned 1e-8)", dt_8x8_pruned),
         ("Adaptive Quadtree (3mm tier)", quadtree_3mm),
         ("Adaptive Quadtree (1mm tier)", quadtree_1mm),
+        ("Fourier MLP (4x4, 2.7km)", mlp_fourier_4x4),
     ]
 
     evaluator = ModelEvaluator()
