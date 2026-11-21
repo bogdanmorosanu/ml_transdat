@@ -22,6 +22,7 @@ This directory contains modular, self-contained scientific experiments evaluatin
 | [`cell_planar_features/`](cell_planar_features/) | `analysis` | **Grid Cell Curvature & Shape Classification**: Functional geometric classification of $11\times 11\,\text{km}$ cells into a 3-class polynomial order taxonomy (Linear, Dome/Bowl, S-Shape). | `Validated` | Proves $53.2\%$ Dome vs. $46.8\%$ S-Shape at $5\,\text{mm}$, and $92.5\%$ Dome at $10\,\text{mm}$; exports shared features to `data/features/` for $O(1)$ extraction. |
 | [`mlp_shape_features/`](mlp_shape_features/) | `grid_shift` | **Fourier MLP with Cell Shape Features**: Controlled ablation testing 3/5/10 mm per-axis shape categories (`cat_dn`, `cat_de`) and S-Shape sample weighting (`2x`, `3x`) on `mlp_fourier_4x4`. | `Dead End` | Discrete shape inputs degrade RMSE (`13.0` $\to$ `14.4 mm` uniform, `32.5` $\to$ `40.8 mm` adaptive); `2x`/`3x` S-Shape weighting trims `Max` outliers (`374.7` $\to$ `179.1 mm`) without improving adaptive RMSE. |
 | [`cell_neighbor_features/`](cell_neighbor_features/) | `analysis` | **3×3 Grid Cell Neighbor Feature Extraction**: Extracts 40 continuous one-sided corner slopes and diagonal twists from the 3×3 `.spg` neighborhood (`11 km` grid). | `Validated` | Extracts 2,297 interior cells (`0` NaNs) to `data/features/cell_neighbor_features.parquet`; provides $O(1)$ `CellNeighborFeatureExtractor` for downstream models. |
+| [`mlp_neighbor_features/`](mlp_neighbor_features/) | `grid_shift` | **Fourier MLP with 3×3 Neighbor Features & Center Distance**: Controlled ablation testing 32 slopes, 40 slopes+twists, and continuous `[0, 1]` midpoint distance on `mlp_fourier_4x4`. | `Dead End` | Adding neighbor slopes/twists or symmetric midpoint distance degrades RMSE (`13.0` $\to$ `13.7–15.5 mm` uniform, `32.5` $\to$ `42.0–47.3 mm` adaptive); `center_dist` helps 40-feature models (`51.4` $\to$ `47.0 mm`) but does not beat baseline. |
 
 ---
 
@@ -81,4 +82,7 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.mlp_shape_features.run_u
 
 # 12. 3x3 Grid Cell Neighbor Feature Extraction (analysis)
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.cell_neighbor_features.run_unit
+
+# 13. Fourier MLP with 3x3 Cell Neighbor Features (grid_shift)
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.mlp_neighbor_features.run_unit
 ```

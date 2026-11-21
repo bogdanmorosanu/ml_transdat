@@ -22,6 +22,7 @@ flowchart TD
     CSF["cell_planar_features<br><b>Status: Validated</b><br>3-Class Shape Taxonomy: 53% Dome / 47% S-Shape at 5mm; 93% Dome at 10mm"]
     MSF["mlp_shape_features<br><b>Status: Dead End</b><br>Discrete shape tags degrade Fourier MLP (13.0 -> 14.4mm uniform, 32.5 -> 40.8mm adaptive)"]
     CNF["cell_neighbor_features<br><b>Status: Validated</b><br>40 continuous 3x3 corner slopes & twists on 2,297 interior 11km cells"]
+    MNF["mlp_neighbor_features<br><b>Status: Dead End</b><br>3x3 slopes/twists & center_dist degrade Fourier MLP (13.0 -> 13.7-15.5mm uniform, 32.5 -> 42.0-47.3mm adaptive)"]
     ML["Next: Sub-Millimeter Hybrid Decompositions<br><b>Status: Exploring</b><br>Goal: Sub-millimeter via Densified RBF / Helmert Hybrid Models"]
 
     SPG -->|"motivates"| PROJ
@@ -39,7 +40,10 @@ flowchart TD
     DT -->|"motivates smooth interpolation"| MLP
     AQG -->|"establishes geometric lookup baseline for"| MLP
     AQG -->|"provides continuous stress benchmarks for"| MLP
+    MLP -->|"provides baseline for"| MSF
+    MLP -->|"provides baseline for"| MNF
     CSF -->|"feeds discrete shape priors into"| MSF
+    CNF -->|"feeds 3x3 neighbor priors into"| MNF
     CNF -->|"provides continuous 3x3 neighbor priors for"| ML
 ```
 
@@ -65,6 +69,9 @@ flowchart TD
 | `decision_tree_regressor` | `mlp_spatial_regressor` | `motivates smooth interpolation` | Proves step-lookup models require massive densification ($586\text{k}$ pts / $89\,\text{MB}$) to reach $4\,\text{mm}$, motivating smooth interpolators. |
 | `mlp_spatial_regressor` | `cell_planar_features` | `identifies global capacity limit` | Proves single global neural net reaches $\sim 3\,\text{cm}$ floor on adaptive zones, motivating local patch re-parameterization and shape classification. |
 | `cell_planar_features` | `Sub-Millimeter Hybrids` | `provides functional shape priors` | Decouples macro shift from micro curvature, classifying 100% of cells into Linear, Dome, or S-Shape for model conditioning. |
+| `mlp_spatial_regressor` | `mlp_shape_features` | `provides baseline for` | Supplies the `mlp_fourier_4x4` baseline for testing whether discrete per-axis cell shape categories improve neural accuracy. |
+| `mlp_spatial_regressor` | `mlp_neighbor_features` | `provides baseline for` | Supplies the `mlp_fourier_4x4` baseline for testing whether continuous $3\times 3$ neighbor slopes, twists, and midpoint distance improve neural accuracy. |
+| `cell_neighbor_features` | `mlp_neighbor_features` | `feeds 3x3 neighbor priors into` | Supplies the 40 continuous corner slopes/twists and `[0, 1]` midpoint distance for controlled Fourier MLP ablation (`Dead End` via additive concatenation). |
 
 ---
 
@@ -82,4 +89,6 @@ flowchart TD
 | [`adaptive_quadtree_grid`](adaptive_quadtree_grid.md) | `Validated` | Curvature-driven quadtree space partitioning; achieves $1.4\,\text{mm}$ (3mm tier, 176k cells) and $0.5\,\text{mm}$ (1mm tier, 564k cells) with $>97\%$ fewer points than uniform grids. | [`experiments/adaptive_quadtree_grid/`](../../experiments/adaptive_quadtree_grid/README.md) | [`data/grids/adaptive/`](../../data/grids/adaptive/) |
 | [`mlp_spatial_regressor`](mlp_spatial_regressor.md) | `Validated` | Continuous parametric neural network solving spectral bias via Random Fourier Features; achieves $1.3\,\text{cm}$ nationwide RMSE ($4\times 4$) and $3.0\,\text{cm}$ on adaptive stress test ($8\times 8$) with 0 lookup table. | [`experiments/mlp_spatial_regressor/`](../../experiments/mlp_spatial_regressor/report.md) | [`src/models/mlp.py`](../../src/models/mlp.py) |
 | [`cell_planar_features`](cell_planar_features.md) | `Validated` | Functional geometric classification of $11\times 11\,\text{km}$ cells into a 3-class curvature taxonomy (Linear, Dome/Bowl, S-Shape); proves $92.5\%$ of Romania is quadratic at $10\,\text{mm}$ and $53\%/47\%$ Dome/S-Shape at $5\,\text{mm}$; delivers $O(1)$ spatial feature extractor. | [`experiments/cell_planar_features/`](../../experiments/cell_planar_features/report.md) | [`src/geometry/shape_classifier.py`](../../src/geometry/shape_classifier.py) |
+| [`mlp_shape_features`](mlp_shape_features.md) | `Dead End` | Controlled ablation of discrete 3/5/10 mm per-axis shape categories and S-Shape sample weighting (`2x`, `3x`) on `mlp_fourier_4x4`; degrades RMSE (`13.0 -> 14.4 mm` uniform, `32.5 -> 40.8 mm` adaptive). | [`experiments/mlp_shape_features/report.md`](../../experiments/mlp_shape_features/report.md) |
 | [`cell_neighbor_features`](cell_neighbor_features.md) | `Validated` | Extracts 40 continuous $3\times 3$ one-sided corner slopes and diagonal twists across 2,297 interior `11 km` cells; delivers $O(1)$ `CellNeighborFeatureExtractor`. | [`experiments/cell_neighbor_features/`](../../experiments/cell_neighbor_features/report.md) | [`src/geometry/neighbor_features.py`](../../src/geometry/neighbor_features.py) |
+| [`mlp_neighbor_features`](mlp_neighbor_features.md) | `Dead End` | Controlled ablation of 32 slopes, 40 slopes+twists, and continuous `[0, 1]` midpoint distance on `mlp_fourier_4x4`; degrades RMSE (`13.0 -> 13.7–15.5 mm` uniform, `32.5 -> 42.0–47.3 mm` adaptive). | [`experiments/mlp_neighbor_features/report.md`](../../experiments/mlp_neighbor_features/report.md) |

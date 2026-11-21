@@ -146,3 +146,24 @@ class CellNeighborFeatureExtractor:
         )
         out[in_bounds] = self._grid[r_idx[in_bounds], c_idx[in_bounds]]
         return out
+
+    def lookup_center_distances(
+        self, n_coords: np.ndarray, e_coords: np.ndarray
+    ) -> np.ndarray:
+        """Return (N, 2) normalized [0, 1] distances from each 11 km cell midpoint.
+
+        Equals 0.0 at the cell center and 1.0 at the cell edges, forming a
+        continuous C0 triangle wave across cell boundaries.
+        """
+        n_arr = np.asarray(n_coords, dtype=np.float64)
+        e_arr = np.asarray(e_coords, dtype=np.float64)
+
+        r_idx = np.floor((n_arr - self._origin_n) / self.step_n)
+        c_idx = np.floor((e_arr - self._origin_e) / self.step_e)
+
+        u = (n_arr - (self._origin_n + r_idx * self.step_n)) / self.step_n
+        v = (e_arr - (self._origin_e + c_idx * self.step_e)) / self.step_e
+
+        dist_n = 2.0 * np.abs(u - 0.5)
+        dist_e = 2.0 * np.abs(v - 0.5)
+        return np.column_stack([dist_n, dist_e])
