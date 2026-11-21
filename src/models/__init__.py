@@ -20,6 +20,7 @@ from src.models.mlp import MLPGridShiftModel
 from src.models.polynomial_surface import PolynomialSurfaceRegressor
 from src.models.pyproj_transformer import PyprojEpsg3844Transformer
 from src.models.quadtree_regressor import AdaptiveQuadtreeRegressor
+from src.models.rbf_surface import RBFSurfaceRegressor
 
 __all__ = [
     "AdaptiveQuadtreeRegressor",
@@ -35,6 +36,7 @@ __all__ = [
     "MemoryBreakdown",
     "PolynomialSurfaceRegressor",
     "PyprojEpsg3844Transformer",
+    "RBFSurfaceRegressor",
     "ResidualCoordinateTransformer",
     "TwoStepHelmert2DTransformer",
     "fit_helmert2d",

@@ -1,0 +1,27 @@
+{
+  "unit_id": "08",
+  "unit_name": "rbf_surface_regressor",
+  "models_evaluated": [
+    "tps_base_exact@ro_test_uniform_4x4",
+    "tps_base_exact@ro_test_adaptive_3mm_mid",
+    "tps_base_smooth_1e-4@ro_test_uniform_4x4",
+    "tps_base_smooth_1e-4@ro_test_adaptive_3mm_mid",
+    "tps_base_optimal_2e-4@ro_test_uniform_4x4",
+    "tps_base_optimal_2e-4@ro_test_adaptive_3mm_mid",
+    "tps_densified_4x4@ro_test_uniform_4x4",
+    "tps_densified_4x4@ro_test_adaptive_3mm_mid",
+    "mq_tuned_eps10@ro_test_uniform_4x4",
+    "mq_tuned_eps10@ro_test_adaptive_3mm_mid",
+    "gaussian_tuned_eps40@ro_test_uniform_4x4",
+    "gaussian_tuned_eps40@ro_test_adaptive_3mm_mid",
+    "linear_base@ro_test_uniform_4x4",
+    "linear_base@ro_test_adaptive_3mm_mid",
+    "cubic_base@ro_test_uniform_4x4",
+    "cubic_base@ro_test_adaptive_3mm_mid"
+  ],
+  "runtime_s": 142.698,
+  "transect_plot": "cell_transect_66km_rbf.png",
+  "surfaces_3d_plot": "rbf_3d_surfaces_comparison.png",
+  "heatmaps_2d_plot": "rbf_2d_heatmaps_comparison.png",
+  "foundation_plot": "rbf_foundation_and_smoothing.png"
+}
