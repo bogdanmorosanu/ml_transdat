@@ -15,6 +15,7 @@ from src.models.helmert2d import (
     fit_helmert2d,
 )
 from src.models.knn_regressor import KNNSpatialRegressor
+from src.models.mlp import MLPGridShiftModel
 from src.models.pyproj_transformer import PyprojEpsg3844Transformer
 from src.models.quadtree_regressor import AdaptiveQuadtreeRegressor
 
@@ -27,6 +28,7 @@ __all__ = [
     "FittedHelmert2D",
     "Helmert2DParams",
     "KNNSpatialRegressor",
+    "MLPGridShiftModel",
     "MemoryBreakdown",
     "PyprojEpsg3844Transformer",
     "ResidualCoordinateTransformer",

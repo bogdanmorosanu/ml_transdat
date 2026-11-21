@@ -1,0 +1,16 @@
+{
+  "unit_id": "06",
+  "unit_name": "mlp_spatial_regressor",
+  "models_evaluated": [
+    "mlp_raw_11km@ro_test_uniform_4x4",
+    "mlp_raw_11km@ro_test_adaptive_3mm_mid",
+    "mlp_fourier_11km@ro_test_uniform_4x4",
+    "mlp_fourier_11km@ro_test_adaptive_3mm_mid",
+    "mlp_fourier_4x4@ro_test_uniform_4x4",
+    "mlp_fourier_4x4@ro_test_adaptive_3mm_mid",
+    "mlp_fourier_8x8@ro_test_uniform_4x4",
+    "mlp_fourier_8x8@ro_test_adaptive_3mm_mid"
+  ],
+  "runtime_s": 379.178,
+  "transect_plot": "cell_transect_66km_mlp.png"
+}

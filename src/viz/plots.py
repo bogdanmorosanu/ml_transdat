@@ -321,9 +321,15 @@ def plot_subcell_heatmap(
     if "u" not in err_df.columns or "v" not in err_df.columns:
         return None
 
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.8))
     u_vals = sorted(err_df["u"].unique())
     v_vals = sorted(err_df["v"].unique())
+
+    # Continuous stratified samples have thousands of distinct float u, v values.
+    # Heatmap requires discrete lattice offsets (e.g., 4x4 or 8x8 subgrid).
+    if len(u_vals) > 32 or len(v_vals) > 32:
+        return None
+
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.8))
 
     mean_piv = err_df.pivot_table(
         index="u", columns="v", values="err_2d_m", aggfunc="mean"
