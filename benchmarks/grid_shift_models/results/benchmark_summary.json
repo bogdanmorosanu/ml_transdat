@@ -37,9 +37,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.052387400006409734,
-          "fit_time_sec": 0.004562000001897104,
-          "throughput_pts_per_sec": 695491.6639409874,
+          "eval_time_sec": 0.051865799992810935,
+          "fit_time_sec": 0.01757989999896381,
+          "throughput_pts_per_sec": 702486.0313549626,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -79,9 +79,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.07614319999993313,
-          "fit_time_sec": 0.0015221999929053709,
-          "throughput_pts_per_sec": 478506.2881522184,
+          "eval_time_sec": 0.07324640000297222,
+          "fit_time_sec": 0.0009873999952105805,
+          "throughput_pts_per_sec": 497430.5904252158,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -121,9 +121,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0017568999901413918,
-          "fit_time_sec": 0.008186999999452382,
-          "throughput_pts_per_sec": 20738232.229751326,
+          "eval_time_sec": 0.002733000001171604,
+          "fit_time_sec": 0.008549699996365234,
+          "throughput_pts_per_sec": 13331503.83621689,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -163,9 +163,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.002547900003264658,
-          "fit_time_sec": 0.23654870000609662,
-          "throughput_pts_per_sec": 14300011.756079653,
+          "eval_time_sec": 0.0033029000042006373,
+          "fit_time_sec": 0.1914044000004651,
+          "throughput_pts_per_sec": 11031214.978855511,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -205,9 +205,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.014300099996034987,
-          "fit_time_sec": 0.3158733000018401,
-          "throughput_pts_per_sec": 2547884.281235963,
+          "eval_time_sec": 0.014432500000111759,
+          "fit_time_sec": 0.2403011999995215,
+          "throughput_pts_per_sec": 2524510.6530204653,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -247,9 +247,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.01805279999098275,
-          "fit_time_sec": 1.1031137000099989,
-          "throughput_pts_per_sec": 2018246.4780088982,
+          "eval_time_sec": 0.020809199995710514,
+          "fit_time_sec": 0.8740808000002289,
+          "throughput_pts_per_sec": 1750908.2524801767,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -289,9 +289,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.1320211999991443,
-          "fit_time_sec": 106.61366279999493,
-          "throughput_pts_per_sec": 275978.4034703226,
+          "eval_time_sec": 0.1304452000040328,
+          "fit_time_sec": 101.1035539000004,
+          "throughput_pts_per_sec": 279312.69221767905,
           "memory_breakdown": {
             "code_bytes": 12550,
             "dependencies_bytes": 73428937,
@@ -331,16 +331,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 1.5078533999912906,
-          "fit_time_sec": 1.315572899999097,
-          "throughput_pts_per_sec": 24163.489633813504,
+          "eval_time_sec": 1.4363314999936847,
+          "fit_time_sec": 1.2652348999981768,
+          "throughput_pts_per_sec": 25366.70678054488,
           "memory_breakdown": {
-            "code_bytes": 6111,
+            "code_bytes": 8477,
             "dependencies_bytes": 123489234,
-            "model_instance_bytes": 151515,
+            "model_instance_bytes": 151553,
             "grid_lookup_bytes": 0,
-            "total_bytes": 123646860,
-            "total_mb": 117.9188346862793
+            "total_bytes": 123649264,
+            "total_mb": 117.92112731933594
           }
         },
         {
@@ -373,16 +373,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 2.3076053999975557,
-          "fit_time_sec": 0.009183299989672378,
-          "throughput_pts_per_sec": 15789.094617320012,
+          "eval_time_sec": 2.278525100002298,
+          "fit_time_sec": 0.023177800001576543,
+          "throughput_pts_per_sec": 15990.60725728378,
           "memory_breakdown": {
-            "code_bytes": 6111,
+            "code_bytes": 8477,
             "dependencies_bytes": 123489234,
-            "model_instance_bytes": 3032257,
+            "model_instance_bytes": 3032295,
             "grid_lookup_bytes": 0,
-            "total_bytes": 126527602,
-            "total_mb": 120.66612434387207
+            "total_bytes": 126530006,
+            "total_mb": 120.66841697692871
           }
         },
         {
@@ -415,16 +415,100 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.27871899999445304,
-          "fit_time_sec": 115.05665159999626,
-          "throughput_pts_per_sec": 130723.05799290724,
+          "eval_time_sec": 0.24826819999725558,
+          "fit_time_sec": 126.05699789999926,
+          "throughput_pts_per_sec": 146756.61240707737,
           "memory_breakdown": {
-            "code_bytes": 17815,
+            "code_bytes": 24277,
             "dependencies_bytes": 4280113426,
-            "model_instance_bytes": 2321091,
+            "model_instance_bytes": 2321218,
             "grid_lookup_bytes": 0,
-            "total_bytes": 4282452332,
-            "total_mb": 4084.064800262451
+            "total_bytes": 4282458921,
+            "total_mb": 4084.071084022522
+          }
+        },
+        {
+          "name": "PyTorch ResNet + Cyclic CellPos (Adaptive Hybrid)",
+          "source_experiment": "submillimeter_exploration",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.002571224393639726,
+            "std_2d_m": 0.0016975045833575223,
+            "rmse_2d_m": 0.0030810252665253767,
+            "min_2d_m": 1.3280375553544177e-05,
+            "p50_2d_m": 0.0022374632008828354,
+            "p90_2d_m": 0.004680610459129325,
+            "p95_2d_m": 0.005703748725105198,
+            "p99_2d_m": 0.008416975744788925,
+            "p99_9_2d_m": 0.012618033034448039,
+            "max_2d_m": 0.01796251199080526,
+            "bias_n_m": 4.81487816593342e-05,
+            "bias_e_m": 3.389834125012148e-05,
+            "rmse_n_m": 0.0021877071391680505,
+            "rmse_e_m": 0.002169482465059563,
+            "pass_rates_pct": {
+              "lt_1mm": 14.554686427885274,
+              "lt_1cm": 99.61300946891724,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 0.22189529999741353,
+          "fit_time_sec": 340.2506219000061,
+          "throughput_pts_per_sec": 164199.061451165,
+          "memory_breakdown": {
+            "code_bytes": 24277,
+            "dependencies_bytes": 4280113426,
+            "model_instance_bytes": 2321218,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 4282458921,
+            "total_mb": 4084.071084022522
+          }
+        },
+        {
+          "name": "Bilinear + Neural Feature Grid (8x8)",
+          "source_experiment": "submillimeter_exploration",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.0007069144341394497,
+            "std_2d_m": 0.0004605772507140845,
+            "rmse_2d_m": 0.0008437176192720187,
+            "min_2d_m": 1.7500030143333863e-06,
+            "p50_2d_m": 0.0006086143675754198,
+            "p90_2d_m": 0.0013221991996344809,
+            "p95_2d_m": 0.0015895534531516111,
+            "p99_2d_m": 0.0022003475343576415,
+            "p99_9_2d_m": 0.0030262758871051278,
+            "max_2d_m": 0.004444730463954062,
+            "bias_n_m": -4.06718841837788e-05,
+            "bias_e_m": 1.2769317391220013e-05,
+            "rmse_n_m": 0.0006172278592498129,
+            "rmse_e_m": 0.0005752296852874824,
+            "pass_rates_pct": {
+              "lt_1mm": 78.3038287361054,
+              "lt_1cm": 100.0,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 0.02497740001126658,
+          "fit_time_sec": 294.5726646999974,
+          "throughput_pts_per_sec": 1458718.6810302604,
+          "memory_breakdown": {
+            "code_bytes": 4956,
+            "dependencies_bytes": 4280113426,
+            "model_instance_bytes": 29127,
+            "grid_lookup_bytes": 663648,
+            "total_bytes": 4280811157,
+            "total_mb": 4082.499653816223
           }
         }
       ]
@@ -519,9 +603,9 @@
               }
             }
           },
-          "eval_time_sec": 0.04098429999430664,
-          "fit_time_sec": 0.004562000001897104,
-          "throughput_pts_per_sec": 888998.9582611242,
+          "eval_time_sec": 0.04081370000494644,
+          "fit_time_sec": 0.01757989999896381,
+          "throughput_pts_per_sec": 892714.9460985953,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -617,9 +701,9 @@
               }
             }
           },
-          "eval_time_sec": 0.07937060001131613,
-          "fit_time_sec": 0.0015221999929053709,
-          "throughput_pts_per_sec": 459049.06848134374,
+          "eval_time_sec": 0.08216340000217315,
+          "fit_time_sec": 0.0009873999952105805,
+          "throughput_pts_per_sec": 443445.6217614695,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -715,9 +799,9 @@
               }
             }
           },
-          "eval_time_sec": 0.00262470000598114,
-          "fit_time_sec": 0.008186999999452382,
-          "throughput_pts_per_sec": 13881586.435391584,
+          "eval_time_sec": 0.002547199997934513,
+          "fit_time_sec": 0.008549699996365234,
+          "throughput_pts_per_sec": 14303941.59451343,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -813,9 +897,9 @@
               }
             }
           },
-          "eval_time_sec": 0.0033544000034453347,
-          "fit_time_sec": 0.23654870000609662,
-          "throughput_pts_per_sec": 10861853.077324493,
+          "eval_time_sec": 0.0036038999969605356,
+          "fit_time_sec": 0.1914044000004651,
+          "throughput_pts_per_sec": 10109880.970817342,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -911,9 +995,9 @@
               }
             }
           },
-          "eval_time_sec": 0.017113800000515766,
-          "fit_time_sec": 0.3158733000018401,
-          "throughput_pts_per_sec": 2128983.6271840236,
+          "eval_time_sec": 0.01728200000070501,
+          "fit_time_sec": 0.2403011999995215,
+          "throughput_pts_per_sec": 2108262.9324449515,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -1009,9 +1093,9 @@
               }
             }
           },
-          "eval_time_sec": 0.020678699991549365,
-          "fit_time_sec": 1.1031137000099989,
-          "throughput_pts_per_sec": 1761957.957458141,
+          "eval_time_sec": 0.021023100009188056,
+          "fit_time_sec": 0.8740808000002289,
+          "throughput_pts_per_sec": 1733093.5962858112,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -1107,9 +1191,9 @@
               }
             }
           },
-          "eval_time_sec": 0.13294389999646228,
-          "fit_time_sec": 106.61366279999493,
-          "throughput_pts_per_sec": 274062.9694252204,
+          "eval_time_sec": 0.1477312999923015,
+          "fit_time_sec": 101.1035539000004,
+          "throughput_pts_per_sec": 246630.1995711043,
           "memory_breakdown": {
             "code_bytes": 12550,
             "dependencies_bytes": 73428937,
@@ -1205,16 +1289,16 @@
               }
             }
           },
-          "eval_time_sec": 1.5712036000040825,
-          "fit_time_sec": 1.315572899999097,
-          "throughput_pts_per_sec": 23189.22894518911,
+          "eval_time_sec": 1.4994951999979094,
+          "fit_time_sec": 1.2652348999981768,
+          "throughput_pts_per_sec": 24298.17714658293,
           "memory_breakdown": {
-            "code_bytes": 6111,
+            "code_bytes": 8477,
             "dependencies_bytes": 123489234,
-            "model_instance_bytes": 151515,
+            "model_instance_bytes": 151553,
             "grid_lookup_bytes": 0,
-            "total_bytes": 123646860,
-            "total_mb": 117.9188346862793
+            "total_bytes": 123649264,
+            "total_mb": 117.92112731933594
           }
         },
         {
@@ -1303,16 +1387,16 @@
               }
             }
           },
-          "eval_time_sec": 2.6996056999923894,
-          "fit_time_sec": 0.009183299989672378,
-          "throughput_pts_per_sec": 13496.415421001191,
+          "eval_time_sec": 2.6934009000106016,
+          "fit_time_sec": 0.023177800001576543,
+          "throughput_pts_per_sec": 13527.50717498334,
           "memory_breakdown": {
-            "code_bytes": 6111,
+            "code_bytes": 8477,
             "dependencies_bytes": 123489234,
-            "model_instance_bytes": 3032257,
+            "model_instance_bytes": 3032295,
             "grid_lookup_bytes": 0,
-            "total_bytes": 126527602,
-            "total_mb": 120.66612434387207
+            "total_bytes": 126530006,
+            "total_mb": 120.66841697692871
           }
         },
         {
@@ -1401,16 +1485,212 @@
               }
             }
           },
-          "eval_time_sec": 0.2701779999915743,
-          "fit_time_sec": 115.05665159999626,
-          "throughput_pts_per_sec": 134855.53968545274,
+          "eval_time_sec": 0.22746579999511596,
+          "fit_time_sec": 126.05699789999926,
+          "throughput_pts_per_sec": 160177.92565204226,
           "memory_breakdown": {
-            "code_bytes": 17815,
+            "code_bytes": 24277,
             "dependencies_bytes": 4280113426,
-            "model_instance_bytes": 2321091,
+            "model_instance_bytes": 2321218,
             "grid_lookup_bytes": 0,
-            "total_bytes": 4282452332,
-            "total_mb": 4084.064800262451
+            "total_bytes": 4282458921,
+            "total_mb": 4084.071084022522
+          }
+        },
+        {
+          "name": "PyTorch ResNet + Cyclic CellPos (Adaptive Hybrid)",
+          "source_experiment": "submillimeter_exploration",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.002050471475138956,
+            "std_2d_m": 0.0015386148873767194,
+            "rmse_2d_m": 0.0025635461848805842,
+            "min_2d_m": 3.787695849914324e-06,
+            "p50_2d_m": 0.0016823473109556766,
+            "p90_2d_m": 0.003875962424335439,
+            "p95_2d_m": 0.004861785850728635,
+            "p99_2d_m": 0.007776881111121046,
+            "p99_9_2d_m": 0.012082668727758754,
+            "max_2d_m": 0.01962755077797692,
+            "bias_n_m": -3.907947719040885e-06,
+            "bias_e_m": -2.6785502783687848e-05,
+            "rmse_n_m": 0.0018967009646799116,
+            "rmse_e_m": 0.0017246143025610372,
+            "pass_rates_pct": {
+              "lt_1mm": 23.968711403869904,
+              "lt_1cm": 99.66241251543845,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            },
+            "by_point_type": {
+              "nodes": {
+                "count": 2222,
+                "total_count": 2222,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.0030902258230506114,
+                "std_2d_m": 0.002163575626245645,
+                "rmse_2d_m": 0.003772340802198691,
+                "min_2d_m": 1.7106844570234304e-05,
+                "p50_2d_m": 0.002599940967787725,
+                "p90_2d_m": 0.005755668813638186,
+                "p95_2d_m": 0.007222837478849671,
+                "p99_2d_m": 0.010199153551050085,
+                "p99_9_2d_m": 0.017117088350140856,
+                "max_2d_m": 0.01962755077797692,
+                "bias_n_m": -9.042945152678967e-06,
+                "bias_e_m": -6.528437359547435e-05,
+                "rmse_n_m": 0.0028003454691498974,
+                "rmse_e_m": 0.002527572032869628,
+                "pass_rates_pct": {
+                  "lt_1mm": 11.431143114311432,
+                  "lt_1cm": 98.82988298829883,
+                  "lt_5cm": 100.0,
+                  "lt_10cm": 100.0,
+                  "lt_1m": 100.0
+                }
+              },
+              "interior": {
+                "count": 34213,
+                "total_count": 34213,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.001982943513222149,
+                "std_2d_m": 0.0014636584246887148,
+                "rmse_2d_m": 0.0024646218697382464,
+                "min_2d_m": 3.787695849914324e-06,
+                "p50_2d_m": 0.001643811369261009,
+                "p90_2d_m": 0.0037187020702150963,
+                "p95_2d_m": 0.004643844962841754,
+                "p99_2d_m": 0.0073550717835036165,
+                "p99_9_2d_m": 0.011512512851303615,
+                "max_2d_m": 0.01890898391884029,
+                "bias_n_m": -3.5744498001929654e-06,
+                "bias_e_m": -2.4285152304519415e-05,
+                "rmse_n_m": 0.0018225842990255558,
+                "rmse_e_m": 0.0016590802975557188,
+                "pass_rates_pct": {
+                  "lt_1mm": 24.78297723087715,
+                  "lt_1cm": 99.71648203899103,
+                  "lt_5cm": 100.0,
+                  "lt_10cm": 100.0,
+                  "lt_1m": 100.0
+                }
+              }
+            }
+          },
+          "eval_time_sec": 0.23139430000446737,
+          "fit_time_sec": 340.2506219000061,
+          "throughput_pts_per_sec": 157458.50264806254,
+          "memory_breakdown": {
+            "code_bytes": 24277,
+            "dependencies_bytes": 4280113426,
+            "model_instance_bytes": 2321218,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 4282458921,
+            "total_mb": 4084.071084022522
+          }
+        },
+        {
+          "name": "Bilinear + Neural Feature Grid (8x8)",
+          "source_experiment": "submillimeter_exploration",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.0003342175914708416,
+            "std_2d_m": 0.00024931666453799014,
+            "rmse_2d_m": 0.0004169654633958538,
+            "min_2d_m": 9.116738947415599e-07,
+            "p50_2d_m": 0.00027117614325278716,
+            "p90_2d_m": 0.0006575656126051468,
+            "p95_2d_m": 0.0008155480112848911,
+            "p99_2d_m": 0.0011783434377606134,
+            "p99_9_2d_m": 0.0017716950122312232,
+            "max_2d_m": 0.004198329546003995,
+            "bias_n_m": 9.857354681088455e-07,
+            "bias_e_m": -3.8044279275211664e-06,
+            "rmse_n_m": 0.00025944504107003753,
+            "rmse_e_m": 0.00032641762870452574,
+            "pass_rates_pct": {
+              "lt_1mm": 97.81528749828462,
+              "lt_1cm": 100.0,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            },
+            "by_point_type": {
+              "nodes": {
+                "count": 2222,
+                "total_count": 2222,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.0002743968633514418,
+                "std_2d_m": 0.00018416909477333968,
+                "rmse_2d_m": 0.0003304722289190745,
+                "min_2d_m": 4.308857520920535e-06,
+                "p50_2d_m": 0.00023419235011957595,
+                "p90_2d_m": 0.0005074885511360186,
+                "p95_2d_m": 0.0006325285640405591,
+                "p99_2d_m": 0.0008575607503691005,
+                "p99_9_2d_m": 0.0012613497572329876,
+                "max_2d_m": 0.0022823980937885634,
+                "bias_n_m": -1.2183297864770248e-05,
+                "bias_e_m": -2.3310159782682062e-05,
+                "rmse_n_m": 0.00023815022448298015,
+                "rmse_e_m": 0.00022912085166009523,
+                "pass_rates_pct": {
+                  "lt_1mm": 99.72997299729973,
+                  "lt_1cm": 100.0,
+                  "lt_5cm": 100.0,
+                  "lt_10cm": 100.0,
+                  "lt_1m": 100.0
+                }
+              },
+              "interior": {
+                "count": 34213,
+                "total_count": 34213,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.00033810271285397974,
+                "std_2d_m": 0.0002524785271614666,
+                "rmse_2d_m": 0.00042197020169301545,
+                "min_2d_m": 9.116738947415599e-07,
+                "p50_2d_m": 0.0002739323520485021,
+                "p90_2d_m": 0.0006665132692158929,
+                "p95_2d_m": 0.0008273923353651271,
+                "p99_2d_m": 0.0011920781381107458,
+                "p99_9_2d_m": 0.001788100544447597,
+                "max_2d_m": 0.004198329546003995,
+                "bias_n_m": 1.8410124699986921e-06,
+                "bias_e_m": -2.53760723999983e-06,
+                "rmse_n_m": 0.0002607679253865097,
+                "rmse_e_m": 0.00033175132284055754,
+                "pass_rates_pct": {
+                  "lt_1mm": 97.69093619384445,
+                  "lt_1cm": 100.0,
+                  "lt_5cm": 100.0,
+                  "lt_10cm": 100.0,
+                  "lt_1m": 100.0
+                }
+              }
+            }
+          },
+          "eval_time_sec": 0.01123340000049211,
+          "fit_time_sec": 294.5726646999974,
+          "throughput_pts_per_sec": 3243452.5609703083,
+          "memory_breakdown": {
+            "code_bytes": 4956,
+            "dependencies_bytes": 4280113426,
+            "model_instance_bytes": 29127,
+            "grid_lookup_bytes": 663648,
+            "total_bytes": 4280811157,
+            "total_mb": 4082.499653816223
           }
         }
       ]
@@ -1449,9 +1729,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.02150180000171531,
-          "fit_time_sec": 0.004562000001897104,
-          "throughput_pts_per_sec": 465077.34232493315,
+          "eval_time_sec": 0.020427999988896772,
+          "fit_time_sec": 0.01757989999896381,
+          "throughput_pts_per_sec": 489524.18276068626,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -1491,9 +1771,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.03484300000127405,
-          "fit_time_sec": 0.0015221999929053709,
-          "throughput_pts_per_sec": 287001.6932994962,
+          "eval_time_sec": 0.03482040000380948,
+          "fit_time_sec": 0.0009873999952105805,
+          "throughput_pts_per_sec": 287187.9702388819,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -1533,9 +1813,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.000676499999826774,
-          "fit_time_sec": 0.008186999999452382,
-          "throughput_pts_per_sec": 14781966.005263297,
+          "eval_time_sec": 0.0008605000039096922,
+          "fit_time_sec": 0.008549699996365234,
+          "throughput_pts_per_sec": 11621150.441098059,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -1575,9 +1855,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0006790999905206263,
-          "fit_time_sec": 0.23654870000609662,
-          "throughput_pts_per_sec": 14725372.02118584,
+          "eval_time_sec": 0.0006827999895904213,
+          "fit_time_sec": 0.1914044000004651,
+          "throughput_pts_per_sec": 14645577.259013312,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -1617,9 +1897,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.004551799996988848,
-          "fit_time_sec": 0.3158733000018401,
-          "throughput_pts_per_sec": 2196933.082871677,
+          "eval_time_sec": 0.0041658999980427325,
+          "fit_time_sec": 0.2403011999995215,
+          "throughput_pts_per_sec": 2400441.6823971546,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -1659,9 +1939,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.005446099996333942,
-          "fit_time_sec": 1.1031137000099989,
-          "throughput_pts_per_sec": 1836176.3476123335,
+          "eval_time_sec": 0.004547499993350357,
+          "fit_time_sec": 0.8740808000002289,
+          "throughput_pts_per_sec": 2199010.448515148,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -1701,9 +1981,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.03515779999725055,
-          "fit_time_sec": 106.61366279999493,
-          "throughput_pts_per_sec": 284431.90418006905,
+          "eval_time_sec": 0.03240830000140704,
+          "fit_time_sec": 101.1035539000004,
+          "throughput_pts_per_sec": 308562.9298533351,
           "memory_breakdown": {
             "code_bytes": 12550,
             "dependencies_bytes": 73428937,
@@ -1743,16 +2023,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.40679090000048745,
-          "fit_time_sec": 1.315572899999097,
-          "throughput_pts_per_sec": 24582.65413505567,
+          "eval_time_sec": 0.38787420000880957,
+          "fit_time_sec": 1.2652348999981768,
+          "throughput_pts_per_sec": 25781.55494686905,
           "memory_breakdown": {
-            "code_bytes": 6111,
+            "code_bytes": 8477,
             "dependencies_bytes": 123489234,
-            "model_instance_bytes": 151515,
+            "model_instance_bytes": 151553,
             "grid_lookup_bytes": 0,
-            "total_bytes": 123646860,
-            "total_mb": 117.9188346862793
+            "total_bytes": 123649264,
+            "total_mb": 117.92112731933594
           }
         },
         {
@@ -1785,16 +2065,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.23733639999409206,
-          "fit_time_sec": 0.009183299989672378,
-          "throughput_pts_per_sec": 42134.28702992431,
+          "eval_time_sec": 0.2166198000049917,
+          "fit_time_sec": 0.023177800001576543,
+          "throughput_pts_per_sec": 46163.83174469538,
           "memory_breakdown": {
-            "code_bytes": 6111,
+            "code_bytes": 8477,
             "dependencies_bytes": 123489234,
-            "model_instance_bytes": 3032257,
+            "model_instance_bytes": 3032295,
             "grid_lookup_bytes": 0,
-            "total_bytes": 126527602,
-            "total_mb": 120.66612434387207
+            "total_bytes": 126530006,
+            "total_mb": 120.66841697692871
           }
         },
         {
@@ -1827,16 +2107,100 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.02496110000356566,
-          "fit_time_sec": 115.05665159999626,
-          "throughput_pts_per_sec": 400623.3699064349,
+          "eval_time_sec": 0.044763500001863576,
+          "fit_time_sec": 126.05699789999926,
+          "throughput_pts_per_sec": 223396.2938461846,
           "memory_breakdown": {
-            "code_bytes": 17815,
+            "code_bytes": 24277,
             "dependencies_bytes": 4280113426,
-            "model_instance_bytes": 2321091,
+            "model_instance_bytes": 2321218,
             "grid_lookup_bytes": 0,
-            "total_bytes": 4282452332,
-            "total_mb": 4084.064800262451
+            "total_bytes": 4282458921,
+            "total_mb": 4084.071084022522
+          }
+        },
+        {
+          "name": "PyTorch ResNet + Cyclic CellPos (Adaptive Hybrid)",
+          "source_experiment": "submillimeter_exploration",
+          "summary": {
+            "count": 10000,
+            "total_count": 10000,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.002348911614602963,
+            "std_2d_m": 0.0013587207848947014,
+            "rmse_2d_m": 0.0027135784389845036,
+            "min_2d_m": 2.3817260481972325e-05,
+            "p50_2d_m": 0.0020750805194850843,
+            "p90_2d_m": 0.0041513390335962954,
+            "p95_2d_m": 0.004952065674641712,
+            "p99_2d_m": 0.006881088885995697,
+            "p99_9_2d_m": 0.008461790793461956,
+            "max_2d_m": 0.008834505369432043,
+            "bias_n_m": -0.0003424216970810874,
+            "bias_e_m": 0.0006536641072623882,
+            "rmse_n_m": 0.001733803466449766,
+            "rmse_e_m": 0.0020874466422518083,
+            "pass_rates_pct": {
+              "lt_1mm": 11.790000000000001,
+              "lt_1cm": 100.0,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 0.043627099992590956,
+          "fit_time_sec": 340.2506219000061,
+          "throughput_pts_per_sec": 229215.3272094241,
+          "memory_breakdown": {
+            "code_bytes": 24277,
+            "dependencies_bytes": 4280113426,
+            "model_instance_bytes": 2321218,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 4282458921,
+            "total_mb": 4084.071084022522
+          }
+        },
+        {
+          "name": "Bilinear + Neural Feature Grid (8x8)",
+          "source_experiment": "submillimeter_exploration",
+          "summary": {
+            "count": 10000,
+            "total_count": 10000,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.0005490596586817439,
+            "std_2d_m": 0.0003061106897093346,
+            "rmse_2d_m": 0.0006286256939912952,
+            "min_2d_m": 6.139462874637454e-06,
+            "p50_2d_m": 0.0005115338143274681,
+            "p90_2d_m": 0.0009650221462293619,
+            "p95_2d_m": 0.0010976894816540357,
+            "p99_2d_m": 0.0014038375465187589,
+            "p99_9_2d_m": 0.0017886534689181054,
+            "max_2d_m": 0.0019230206108890278,
+            "bias_n_m": -5.754302678133276e-05,
+            "bias_e_m": -8.7895103810303e-05,
+            "rmse_n_m": 0.000481061661807379,
+            "rmse_e_m": 0.00040466027811629897,
+            "pass_rates_pct": {
+              "lt_1mm": 91.53,
+              "lt_1cm": 100.0,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 0.0038265999901341274,
+          "fit_time_sec": 294.5726646999974,
+          "throughput_pts_per_sec": 2613285.952485848,
+          "memory_breakdown": {
+            "code_bytes": 4956,
+            "dependencies_bytes": 4280113426,
+            "model_instance_bytes": 29127,
+            "grid_lookup_bytes": 663648,
+            "total_bytes": 4280811157,
+            "total_mb": 4082.499653816223
           }
         }
       ]

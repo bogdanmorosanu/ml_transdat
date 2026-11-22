@@ -11,6 +11,9 @@ from experiments.decision_tree_regressor.run_unit import (
 from experiments.knn_spatial_regressor.run_unit import KnnSpatialRegressorUnit
 from experiments.mlp_spatial_regressor.run_unit import MLPSpatialRegressorUnit
 from experiments.rbf_surface_regressor.run_unit import RBFSurfaceRegressorUnit
+from experiments.submillimeter_exploration.run_unit import (
+    SubmillimeterExplorationUnit,
+)
 from experiments.torch_mlp_regressor.run_unit import TorchMLPRegressorUnit
 from src.core.base_benchmark import (
     BenchmarkModelSpec,
@@ -68,6 +71,11 @@ class GridShiftBenchmarkSuite(BenchmarkSuite):
                 TorchMLPRegressorUnit,
                 suite=self.suite_name,
                 unit_dir=Path("experiments/torch_mlp_regressor"),
+            ),
+            *specs_from_unit(
+                SubmillimeterExplorationUnit,
+                suite=self.suite_name,
+                unit_dir=Path("experiments/submillimeter_exploration"),
             ),
         ]
 

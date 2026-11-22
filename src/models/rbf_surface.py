@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import numpy as np
 from scipy.interpolate import RBFInterpolator
+from scipy.spatial import cKDTree
 
 from src.models.base import BaseGridShiftModel
 
@@ -35,6 +36,8 @@ class RBFSurfaceRegressor(BaseGridShiftModel):
         "linear",
         "cubic",
         "quintic",
+        "matern32",
+        "matern52",
     )
 
     def __init__(
@@ -94,6 +97,9 @@ class RBFSurfaceRegressor(BaseGridShiftModel):
         self.normalize_coords = normalize_coords
 
         self._rbf: RBFInterpolator | None = None
+        self._kdtree: cKDTree | None = None
+        self._norm_coords: np.ndarray | None = None
+        self._shifts: np.ndarray | None = None
         self._center: np.ndarray | None = None
         self._scale: float = 1.0
         self._n_anchors: int = 0
@@ -102,6 +108,15 @@ class RBFSurfaceRegressor(BaseGridShiftModel):
     def n_anchors(self) -> int:
         """Return number of anchor control centers used during fitting."""
         return self._n_anchors
+
+    def _matern_kernel(self, r: np.ndarray) -> np.ndarray:
+        """Evaluate Matérn 3/2 or 5/2 radial kernel at normalized distances ``r``."""
+        eps = self.epsilon if self.epsilon is not None else 10.0
+        if self.kernel == "matern32":
+            s = np.sqrt(3.0) * eps * r
+            return (1.0 + s) * np.exp(-s)
+        s = np.sqrt(5.0) * eps * r
+        return (1.0 + s + (s * s) / 3.0) * np.exp(-s)
 
     def _fit_impl(self, coords: np.ndarray, shifts: np.ndarray) -> None:
         """Fit radial basis function interpolation / smoothing system."""
@@ -120,6 +135,13 @@ class RBFSurfaceRegressor(BaseGridShiftModel):
             self._scale = 1.0
             norm_coords = coords
 
+        if self.kernel in ("matern32", "matern52"):
+            self._kdtree = cKDTree(norm_coords)
+            self._norm_coords = np.asarray(norm_coords, dtype=np.float64)
+            self._shifts = np.asarray(shifts, dtype=np.float64)
+            self._rbf = None
+            return
+
         # Instantiate Scipy RBFInterpolator
         self._rbf = RBFInterpolator(
             y=norm_coords,
@@ -133,13 +155,39 @@ class RBFSurfaceRegressor(BaseGridShiftModel):
 
     def _predict_impl(self, coords: np.ndarray) -> np.ndarray:
         """Evaluate continuous RBF surface at target coordinates."""
-        if self._rbf is None:
-            raise RuntimeError("Model is not fitted. Call fit() before predict().")
-
         if self.normalize_coords and self._center is not None:
             norm_coords = (coords - self._center) / self._scale
         else:
             norm_coords = coords
+
+        if self.kernel in ("matern32", "matern52"):
+            if self._kdtree is None or self._norm_coords is None or self._shifts is None:
+                raise RuntimeError("Model is not fitted. Call fit() before predict().")
+            k = min(self.neighbors or 60, self._n_anchors)
+            n_q = len(norm_coords)
+            preds = np.empty((n_q, 2), dtype=np.float64)
+            nugget = max(self.smoothing, 1e-10)
+            eye_k = np.eye(k, dtype=np.float64) * nugget
+            chunk = 2048
+            for start in range(0, n_q, chunk):
+                end = min(start + chunk, n_q)
+                q_batch = norm_coords[start:end]
+                dists, idxs = self._kdtree.query(q_batch, k=k)
+                if k == 1:
+                    dists = dists[:, None]
+                    idxs = idxs[:, None]
+                pts_loc = self._norm_coords[idxs]  # (B, k, 2)
+                y_loc = self._shifts[idxs]  # (B, k, 2)
+                diff = pts_loc[:, :, None, :] - pts_loc[:, None, :, :]
+                r_mat = np.sqrt(np.sum(diff * diff, axis=-1))  # (B, k, k)
+                k_mat = self._matern_kernel(r_mat) + eye_k[None, :, :]
+                k_vec = self._matern_kernel(dists)  # (B, k)
+                weights = np.linalg.solve(k_mat, y_loc)  # (B, k, 2)
+                preds[start:end] = np.einsum("bk,bkd->bd", k_vec, weights)
+            return preds
+
+        if self._rbf is None:
+            raise RuntimeError("Model is not fitted. Call fit() before predict().")
 
         preds = self._rbf(norm_coords)
         return np.asarray(preds, dtype=np.float64)
