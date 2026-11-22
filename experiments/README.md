@@ -24,6 +24,7 @@ This directory contains modular, self-contained scientific experiments evaluatin
 | [`cell_neighbor_features/`](cell_neighbor_features/) | `analysis` | **3×3 Grid Cell Neighbor Feature Extraction**: Extracts 40 continuous one-sided corner slopes and diagonal twists from the 3×3 `.spg` neighborhood (`11 km` grid). | `Validated` | Extracts 2,297 interior cells (`0` NaNs) to `data/features/cell_neighbor_features.parquet`; provides $O(1)$ `CellNeighborFeatureExtractor` for downstream models. |
 | [`mlp_neighbor_features/`](mlp_neighbor_features/) | `grid_shift` | **Fourier MLP with 3×3 Neighbor Features & Center Distance**: Controlled ablation testing 32 slopes, 40 slopes+twists, and continuous `[0, 1]` midpoint distance on `mlp_fourier_4x4`. | `Dead End` | Adding neighbor slopes/twists or symmetric midpoint distance degrades RMSE (`13.0` $\to$ `13.7–15.5 mm` uniform, `32.5` $\to$ `42.0–47.3 mm` adaptive); `center_dist` helps 40-feature models (`51.4` $\to$ `47.0 mm`) but does not beat baseline. |
 | [`torch_mlp_regressor/`](torch_mlp_regressor/) | `grid_shift` | **Deep PyTorch Residual Neural Network**: Evaluates PyTorch ResNets (`ReLU`, `SiLU`, `GELU`), smooth cyclic `(u, v)` cell position, and raw/Hermite-weighted `3×3` neighbor features on `RO_GRID_4X4`. | `Validated` | PyTorch ResNet (`ReLU`) cuts uniform RMSE from `13.0` $\to$ `7.2 mm`; adding cyclic `(u, v)` improves to **`6.8 mm`** (`95.6% < 1 cm`, `71.3% < 1 cm` adaptive). Neighbor slopes/twists (even Hermite-weighted) hurt adaptive RMSE/Max and are not promoted. |
+| [`bicubic_boundary_analysis/`](bicubic_boundary_analysis/) | `analysis` | **Bicubic Cell Boundary Extension Analysis**: Visualizes `pytransdat` `Grid.BiInterp` polynomials extended across neighboring cells (`[-1, 2]`), Hermite tangents, and extreme S-shape/bowl stress tests, cross-verified against Avramiuc et al. (2009). | `Validated` | Confirmed `Grid.BiInterp` matches published `TransDatRO` one-sided 3-point finite-difference formulas verbatim; $C^1$ slope kinks at 11 km borders are inherent to the specification. |
 
 ---
 
@@ -89,4 +90,7 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.mlp_neighbor_features.ru
 
 # 14. Deep PyTorch Residual Neural Network Spatial Regressor (grid_shift)
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.torch_mlp_regressor.run_unit
+
+# 15. Bicubic Cell Boundary Extension Analysis (analysis)
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.bicubic_boundary_analysis.run_unit
 ```

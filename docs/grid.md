@@ -46,7 +46,7 @@ The grid file embedding includes key build parameters, source file metadata, int
 > - **Coordinate Value ($C^0$)**: 100% continuous across cell borders (zero positional jumps).
 > - **First Derivative ($C^1$)**: Discontinuous across cell borders (slope "kink" on the order of $\Delta\text{slope} \approx 4 \times 10^{-5}\,\text{m/m}$).
 >
-> Validated down to sub-millimeter precision against the official desktop RomGEO application (max discrepancy $< 0.36\,\text{mm}$ across boundary probes). For comprehensive international context (NTv2, NADCON 5, OSTN15), see [`literature/geodetic_grid_interpolation_standards.md`](../literature/geodetic_grid_interpolation_standards.md).
+> Validated down to sub-millimeter precision against the official desktop RomGEO application (max discrepancy $< 0.36\,\text{mm}$ across boundary probes). Primary-source verification against **Avramiuc, Dragomir, & Rus (2009, p. 112)** confirms that `Grid.BiInterp` matches the published `TransDatRO` one-sided 3-point finite-difference and cross-derivative equations verbatim; see [`literature/transdatro_mathematical_model.md`](../literature/transdatro_mathematical_model.md) and [`literature/geodetic_grid_interpolation_standards.md`](../literature/geodetic_grid_interpolation_standards.md).
 
 ---
 

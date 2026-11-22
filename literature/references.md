@@ -74,3 +74,12 @@ This index catalogs all sources retrieved during the initial literature survey f
 
 | **R2.14** | Cambridge Research Pub | XGBoost & Random Forest for local geoid height prediction | [cambridgeresearchpub.com](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQFQNAxtGAYYtwBntRrItSquYRJQmctIH1hba4ftUYA-dIMpqGV49MI0-veD4SGkYh44lb7mmOayDrx1gVA0IxELCOCaeztV26At6YJuLPC7oN3l3yw2IM5Hs0uOyhtK4r15X6aCyTxMeCYuBMCipKOmA-scaKUo) |
 | **R2.15** | ResearchGate | Random Forest Spatial Interpolation (RFSI) for grid-shift & spatial fields | [researchgate.net](https://vertexaisearch.cloud.google.com/grounding-api-redirect/AUZIYQGL2bbcsMJQ-7K4noPRXZpxO0n_4S9qZLJjAzPhgSELKxRzbVe3Fl44vmIvtNukSNn45VDcGvJlo8N5SRjzGpn1_TlAoNp32cn-0II-9keOpvC7q3CMDwBgpMKGH4kKrb_WkAayvnusuTekkuOZ5i2cwbZsjZv2F6nPyvegOpFq_BSOZXF1nD1KghRxnQ==) |
+
+---
+
+## Category 3: Official Romanian `TransDatRO` / `RomGeo` Sources (Local Archive)
+
+| Ref ID | Authors / Venue | Title | Local File |
+| :--- | :--- | :--- | :--- |
+| **R3.1** | Avramiuc, N., Dragomir, P. I., & Rus, T. (2009) — *RevCAD*, pp. 105–114 | *Algorithm for direct and inverse coordinate transformation between ETRS89 CRS and S-42 CRS* | [`articles/18_143_Paper10_RevCAD09_2009.pdf`](../articles/18_143_Paper10_RevCAD09_2009.pdf) |
+| **R3.2** | Ilie, D., Balotă, O. L., Iordan, D., & Nicoară, P. S. (2022) — *ISPRS Annals*, Vol. V-4-2022, pp. 181–188 | *Algorithm and Application Development for Precise and Accurate Transformation of LiDAR Point Clouds into National Coordinate Systems of Romania Using Official Equations and Quasigeoid Model* | [`articles/isprs-annals-V-4-2022-181-2022.pdf`](../articles/isprs-annals-V-4-2022-181-2022.pdf) |

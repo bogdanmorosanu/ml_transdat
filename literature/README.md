@@ -76,8 +76,9 @@ Two overarching paradigms emerge:
 
 ## Category 3: National Geodetic Grid Interpolation Standards & Continuity
 
-For our detailed investigation into whether the derivative discontinuity (slope "kink") identified at cell boundaries in Romania's `.spg` / RomGEO transformation is an isolated bug or standard historical geodetic practice, see the standalone research report:
+For our detailed investigation into whether the derivative discontinuity (slope "kink") identified at cell boundaries in Romania's `.spg` / RomGEO transformation is an isolated bug or standard historical geodetic practice, and for the exact mathematical formulation published by ANCPI/NCC authors, see:
 * **[`literature/geodetic_grid_interpolation_standards.md`](geodetic_grid_interpolation_standards.md)**: Comprehensive study covering Canada (NTv2), the United States (NADCON 1–5), Great Britain (OSTN02/OSTN15), PROJ standards, the mathematical anatomy of the *Numerical Recipes* local bicubic patch algorithm, and why geodetic agencies historically accepted slope kinks.
+* **[`literature/transdatro_mathematical_model.md`](transdatro_mathematical_model.md)**: Primary-source extraction of the official Romanian `TransDatRO` / `RomGeo` mathematical model from Avramiuc, Dragomir, & Rus (2009) and Ilie et al. (2022), confirming that the one-sided 3-point finite-difference bicubic formulas in `pytransdat` match the published `TransDatRO` equations verbatim.
 
 ---
 
