@@ -1,0 +1,27 @@
+{
+  "schema_version": "2.0",
+  "slug": "bicubic_boundary_analysis",
+  "experiment_type": "analysis",
+  "status": "completed",
+  "runtime_s": 2.5,
+  "key_metrics": {
+    "transect_length_km": 198.0,
+    "transect_cells": 18,
+    "max_single_cell_jump_m": 0.6874,
+    "strongest_s_shape_cell": "row_23_col_36_dN",
+    "strongest_bowl_cell": "row_23_col_35_dN"
+  },
+  "artifacts": {
+    "plots": [
+      "bicubic_cell_boundary_extension.png",
+      "single_cell_zoom_col20.png",
+      "extreme_scenarios_s_and_bowl.png"
+    ],
+    "results": []
+  },
+  "benchmark_candidates": [],
+  "extra": {
+    "primary_source": "Avramiuc, Dragomir, & Rus (2009), RevCAD, p. 112",
+    "verdict": "Confirmed pytransdat Grid.BiInterp matches published TransDatRO one-sided 3-point finite-difference formulas verbatim; C1 slope kinks at 11 km borders are inherent to the specification."
+  }
+}

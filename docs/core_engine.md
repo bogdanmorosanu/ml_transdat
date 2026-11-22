@@ -137,11 +137,12 @@ Notice the asymmetric placement of the 2D planimetric grid shift (`Grid2D`): bec
 ### 3.3. Grid Interpolation Methods (`trans_grid.py`)
 
 Both `Grid2D` and `Grid1D` dynamically bind their interpolation method from the `.spg` metadata header (`interpolation_method_id`):
-- **Bicubic Spline (`method_id = 2`, default for `Grid2D` and `Grid1D` in `rom_grid3d_25.09.spg`)**:
+- **Bicubic Spline (`method_id = 2`, default for `Grid2D` in `rom_grid3d_25.09.spg`)**:
   - Extracts a $4 \times 4$ neighborhood of 16 surrounding grid nodes around the normalized cell offset $(\delta_N, \delta_E) \in [0, 1]^2$.
   - If any of the 16 nodes is `NaN` or equals the No-Data sentinel (`999.0`), raises `NoDataGridErr`.
-  - Multiplies the 16-element node vector by the precomputed $16 \times 16$ Catmull-Rom / bicubic spline basis matrix (`BiInterp._C`) to evaluate the 2D cubic polynomial:
-    $$f(\delta_N, \delta_E) = \sum_{i=0}^{3} \sum_{j=0}^{3} a_{ij} \, \delta_N^i \, \delta_E^j$$
+  - Computes corner partial derivatives using **one-sided 3-point finite differences** ($f_N, f_E$) and 4-corner cross-derivatives ($f_{NE}$) to solve the 16 Hermite coefficients `self.__a` in `Grid.BiInterp` (matching the official `TransDatRO` equations published in Avramiuc, Dragomir, & Rus, 2009, p. 112; see [`literature/transdatro_mathematical_model.md`](../literature/transdatro_mathematical_model.md)):
+    $$f(\delta_N, \delta_E) = \sum_{i=0}^{3} \sum_{j=0}^{3} a_{4i+j} \, \delta_E^j \, \delta_N^i$$
+  - Because the 3-point finite-difference stencils are one-sided (forward at $0$, backward at $1$), adjacent cells compute different boundary tangents—preserving $C^0$ coordinate continuity while introducing $C^1$ slope discontinuities ("kinks") at $11\,\text{km}$ cell borders.
 - **Bilinear (`method_id = 1`)**: Evaluates the 4-node cell weighted average over $(1 - \delta_N)(1 - \delta_E)$.
 - **Nearest-Neighbor Colocation (`method_id = 0`)**: Rounds to the nearest grid node index $(i_r, j_c)$.
 
