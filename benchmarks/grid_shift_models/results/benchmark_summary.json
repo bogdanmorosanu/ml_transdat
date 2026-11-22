@@ -37,9 +37,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.03813540000192006,
-          "fit_time_sec": 0.0013988999999128282,
-          "throughput_pts_per_sec": 955411.5073702007,
+          "eval_time_sec": 0.052387400006409734,
+          "fit_time_sec": 0.004562000001897104,
+          "throughput_pts_per_sec": 695491.6639409874,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -79,9 +79,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.07021529999838094,
-          "fit_time_sec": 0.001166699999885168,
-          "throughput_pts_per_sec": 518903.99956761755,
+          "eval_time_sec": 0.07614319999993313,
+          "fit_time_sec": 0.0015221999929053709,
+          "throughput_pts_per_sec": 478506.2881522184,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -121,9 +121,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0017645000007178169,
-          "fit_time_sec": 0.004215400000248337,
-          "throughput_pts_per_sec": 20648909.03098774,
+          "eval_time_sec": 0.0017568999901413918,
+          "fit_time_sec": 0.008186999999452382,
+          "throughput_pts_per_sec": 20738232.229751326,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -163,9 +163,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0027321000015945174,
-          "fit_time_sec": 0.2098608999986027,
-          "throughput_pts_per_sec": 13335895.457243763,
+          "eval_time_sec": 0.002547900003264658,
+          "fit_time_sec": 0.23654870000609662,
+          "throughput_pts_per_sec": 14300011.756079653,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -205,9 +205,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.01395559999946272,
-          "fit_time_sec": 0.26634999999805586,
-          "throughput_pts_per_sec": 2610779.9020753475,
+          "eval_time_sec": 0.014300099996034987,
+          "fit_time_sec": 0.3158733000018401,
+          "throughput_pts_per_sec": 2547884.281235963,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -247,9 +247,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.018768800000543706,
-          "fit_time_sec": 1.0213741000006848,
-          "throughput_pts_per_sec": 1941253.5696978245,
+          "eval_time_sec": 0.01805279999098275,
+          "fit_time_sec": 1.1031137000099989,
+          "throughput_pts_per_sec": 2018246.4780088982,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -289,16 +289,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.13371040000129142,
-          "fit_time_sec": 106.23824039999818,
-          "throughput_pts_per_sec": 272491.8929241712,
+          "eval_time_sec": 0.1320211999991443,
+          "fit_time_sec": 106.61366279999493,
+          "throughput_pts_per_sec": 275978.4034703226,
           "memory_breakdown": {
-            "code_bytes": 6332,
+            "code_bytes": 12550,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 2147922,
+            "model_instance_bytes": 2148272,
             "grid_lookup_bytes": 0,
-            "total_bytes": 75583191,
-            "total_mb": 72.08174800872803
+            "total_bytes": 75589759,
+            "total_mb": 72.08801174163818
           }
         },
         {
@@ -331,9 +331,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 1.4776716999986093,
-          "fit_time_sec": 1.3352828000024601,
-          "throughput_pts_per_sec": 24657.033087954715,
+          "eval_time_sec": 1.5078533999912906,
+          "fit_time_sec": 1.315572899999097,
+          "throughput_pts_per_sec": 24163.489633813504,
           "memory_breakdown": {
             "code_bytes": 6111,
             "dependencies_bytes": 123489234,
@@ -373,9 +373,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 2.2490017999989504,
-          "fit_time_sec": 0.006937800000741845,
-          "throughput_pts_per_sec": 16200.520604304098,
+          "eval_time_sec": 2.3076053999975557,
+          "fit_time_sec": 0.009183299989672378,
+          "throughput_pts_per_sec": 15789.094617320012,
           "memory_breakdown": {
             "code_bytes": 6111,
             "dependencies_bytes": 123489234,
@@ -383,6 +383,48 @@
             "grid_lookup_bytes": 0,
             "total_bytes": 126527602,
             "total_mb": 120.66612434387207
+          }
+        },
+        {
+          "name": "PyTorch ResNet + Cyclic CellPos (4x4)",
+          "source_experiment": "torch_mlp_regressor",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.003906705481668186,
+            "std_2d_m": 0.0026156427847646674,
+            "rmse_2d_m": 0.004701482202240877,
+            "min_2d_m": 4.835130912606274e-06,
+            "p50_2d_m": 0.0033392167836786527,
+            "p90_2d_m": 0.007271787961703812,
+            "p95_2d_m": 0.008926640164837964,
+            "p99_2d_m": 0.012896782859587062,
+            "p99_9_2d_m": 0.0185290662424411,
+            "max_2d_m": 0.024947531066217037,
+            "bias_n_m": 3.014957515578952e-05,
+            "bias_e_m": 0.00012592622157719027,
+            "rmse_n_m": 0.003458033054145252,
+            "rmse_e_m": 0.0031852695795531313,
+            "pass_rates_pct": {
+              "lt_1mm": 6.713325099492247,
+              "lt_1cm": 96.83820502264307,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 0.27871899999445304,
+          "fit_time_sec": 115.05665159999626,
+          "throughput_pts_per_sec": 130723.05799290724,
+          "memory_breakdown": {
+            "code_bytes": 17815,
+            "dependencies_bytes": 4280113426,
+            "model_instance_bytes": 2321091,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 4282452332,
+            "total_mb": 4084.064800262451
           }
         }
       ]
@@ -477,9 +519,9 @@
               }
             }
           },
-          "eval_time_sec": 0.037781600000016624,
-          "fit_time_sec": 0.0013988999999128282,
-          "throughput_pts_per_sec": 964358.3119821281,
+          "eval_time_sec": 0.04098429999430664,
+          "fit_time_sec": 0.004562000001897104,
+          "throughput_pts_per_sec": 888998.9582611242,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -575,9 +617,9 @@
               }
             }
           },
-          "eval_time_sec": 0.080229800001689,
-          "fit_time_sec": 0.001166699999885168,
-          "throughput_pts_per_sec": 454133.0029394685,
+          "eval_time_sec": 0.07937060001131613,
+          "fit_time_sec": 0.0015221999929053709,
+          "throughput_pts_per_sec": 459049.06848134374,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -673,9 +715,9 @@
               }
             }
           },
-          "eval_time_sec": 0.0024130999991029967,
-          "fit_time_sec": 0.004215400000248337,
-          "throughput_pts_per_sec": 15098835.528384114,
+          "eval_time_sec": 0.00262470000598114,
+          "fit_time_sec": 0.008186999999452382,
+          "throughput_pts_per_sec": 13881586.435391584,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -771,9 +813,9 @@
               }
             }
           },
-          "eval_time_sec": 0.003343100001075072,
-          "fit_time_sec": 0.2098608999986027,
-          "throughput_pts_per_sec": 10898567.194604784,
+          "eval_time_sec": 0.0033544000034453347,
+          "fit_time_sec": 0.23654870000609662,
+          "throughput_pts_per_sec": 10861853.077324493,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -869,9 +911,9 @@
               }
             }
           },
-          "eval_time_sec": 0.017895599998155376,
-          "fit_time_sec": 0.26634999999805586,
-          "throughput_pts_per_sec": 2035975.3237530794,
+          "eval_time_sec": 0.017113800000515766,
+          "fit_time_sec": 0.3158733000018401,
+          "throughput_pts_per_sec": 2128983.6271840236,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -967,9 +1009,9 @@
               }
             }
           },
-          "eval_time_sec": 0.02179439999963506,
-          "fit_time_sec": 1.0213741000006848,
-          "throughput_pts_per_sec": 1671759.718120714,
+          "eval_time_sec": 0.020678699991549365,
+          "fit_time_sec": 1.1031137000099989,
+          "throughput_pts_per_sec": 1761957.957458141,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -1065,16 +1107,16 @@
               }
             }
           },
-          "eval_time_sec": 0.1344652000007045,
-          "fit_time_sec": 106.23824039999818,
-          "throughput_pts_per_sec": 270962.30102516565,
+          "eval_time_sec": 0.13294389999646228,
+          "fit_time_sec": 106.61366279999493,
+          "throughput_pts_per_sec": 274062.9694252204,
           "memory_breakdown": {
-            "code_bytes": 6332,
+            "code_bytes": 12550,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 2147922,
+            "model_instance_bytes": 2148272,
             "grid_lookup_bytes": 0,
-            "total_bytes": 75583191,
-            "total_mb": 72.08174800872803
+            "total_bytes": 75589759,
+            "total_mb": 72.08801174163818
           }
         },
         {
@@ -1163,9 +1205,9 @@
               }
             }
           },
-          "eval_time_sec": 1.4746611999980814,
-          "fit_time_sec": 1.3352828000024601,
-          "throughput_pts_per_sec": 24707.370072561345,
+          "eval_time_sec": 1.5712036000040825,
+          "fit_time_sec": 1.315572899999097,
+          "throughput_pts_per_sec": 23189.22894518911,
           "memory_breakdown": {
             "code_bytes": 6111,
             "dependencies_bytes": 123489234,
@@ -1261,9 +1303,9 @@
               }
             }
           },
-          "eval_time_sec": 2.5607286999984353,
-          "fit_time_sec": 0.006937800000741845,
-          "throughput_pts_per_sec": 14228.37179121016,
+          "eval_time_sec": 2.6996056999923894,
+          "fit_time_sec": 0.009183299989672378,
+          "throughput_pts_per_sec": 13496.415421001191,
           "memory_breakdown": {
             "code_bytes": 6111,
             "dependencies_bytes": 123489234,
@@ -1271,6 +1313,104 @@
             "grid_lookup_bytes": 0,
             "total_bytes": 126527602,
             "total_mb": 120.66612434387207
+          }
+        },
+        {
+          "name": "PyTorch ResNet + Cyclic CellPos (4x4)",
+          "source_experiment": "torch_mlp_regressor",
+          "summary": {
+            "count": 36435,
+            "total_count": 36435,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.0028428588928811997,
+            "std_2d_m": 0.0027665276394247484,
+            "rmse_2d_m": 0.003966802473596939,
+            "min_2d_m": 7.192242026653337e-06,
+            "p50_2d_m": 0.002270565287930851,
+            "p90_2d_m": 0.005078039776964898,
+            "p95_2d_m": 0.006883652853132347,
+            "p99_2d_m": 0.013198958219746775,
+            "p99_9_2d_m": 0.021223815375606005,
+            "max_2d_m": 0.21830614181925662,
+            "bias_n_m": -7.206240789730959e-05,
+            "bias_e_m": 3.303176072604067e-05,
+            "rmse_n_m": 0.003021269740223968,
+            "rmse_e_m": 0.002570496259740867,
+            "pass_rates_pct": {
+              "lt_1mm": 13.874022231370933,
+              "lt_1cm": 97.63139838067792,
+              "lt_5cm": 99.99176615891314,
+              "lt_10cm": 99.99451077260876,
+              "lt_1m": 100.0
+            },
+            "by_point_type": {
+              "nodes": {
+                "count": 2222,
+                "total_count": 2222,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.003254301642303494,
+                "std_2d_m": 0.003146503484651811,
+                "rmse_2d_m": 0.004526694528905745,
+                "min_2d_m": 7.920569225845748e-05,
+                "p50_2d_m": 0.002441797619834897,
+                "p90_2d_m": 0.0061560482536999915,
+                "p95_2d_m": 0.00906522783401549,
+                "p99_2d_m": 0.0165680416076346,
+                "p99_9_2d_m": 0.027529971897985513,
+                "max_2d_m": 0.030045955403347795,
+                "bias_n_m": -0.0001496447802564667,
+                "bias_e_m": 6.610313354877871e-06,
+                "rmse_n_m": 0.0033850590550738393,
+                "rmse_e_m": 0.0030053849257104847,
+                "pass_rates_pct": {
+                  "lt_1mm": 12.376237623762377,
+                  "lt_1cm": 95.45454545454545,
+                  "lt_5cm": 100.0,
+                  "lt_10cm": 100.0,
+                  "lt_1m": 100.0
+                }
+              },
+              "interior": {
+                "count": 34213,
+                "total_count": 34213,
+                "unmatched_count": 0,
+                "coverage_pct": 100.0,
+                "mean_2d_m": 0.002816137301988371,
+                "std_2d_m": 0.002737890667992848,
+                "rmse_2d_m": 0.0039276805640902955,
+                "min_2d_m": 7.192242026653337e-06,
+                "p50_2d_m": 0.0022614680620279748,
+                "p90_2d_m": 0.005024454554645376,
+                "p95_2d_m": 0.006778311007833498,
+                "p99_2d_m": 0.012866799026469195,
+                "p99_9_2d_m": 0.020478456229808525,
+                "max_2d_m": 0.21830614181925662,
+                "bias_n_m": -6.702373746846538e-05,
+                "bias_e_m": 3.4747729979211204e-05,
+                "rmse_n_m": 0.0029961159048122604,
+                "rmse_e_m": 0.0025396779517221618,
+                "pass_rates_pct": {
+                  "lt_1mm": 13.971297460029813,
+                  "lt_1cm": 97.77277643001199,
+                  "lt_5cm": 99.99123140326776,
+                  "lt_10cm": 99.99415426884518,
+                  "lt_1m": 100.0
+                }
+              }
+            }
+          },
+          "eval_time_sec": 0.2701779999915743,
+          "fit_time_sec": 115.05665159999626,
+          "throughput_pts_per_sec": 134855.53968545274,
+          "memory_breakdown": {
+            "code_bytes": 17815,
+            "dependencies_bytes": 4280113426,
+            "model_instance_bytes": 2321091,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 4282452332,
+            "total_mb": 4084.064800262451
           }
         }
       ]
@@ -1309,9 +1449,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.019705499998963205,
-          "fit_time_sec": 0.0013988999999128282,
-          "throughput_pts_per_sec": 507472.5330758491,
+          "eval_time_sec": 0.02150180000171531,
+          "fit_time_sec": 0.004562000001897104,
+          "throughput_pts_per_sec": 465077.34232493315,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -1351,9 +1491,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.03195310000228346,
-          "fit_time_sec": 0.001166699999885168,
-          "throughput_pts_per_sec": 312958.680043106,
+          "eval_time_sec": 0.03484300000127405,
+          "fit_time_sec": 0.0015221999929053709,
+          "throughput_pts_per_sec": 287001.6932994962,
           "memory_breakdown": {
             "code_bytes": 3075,
             "dependencies_bytes": 41029584,
@@ -1393,9 +1533,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0006599000007554423,
-          "fit_time_sec": 0.004215400000248337,
-          "throughput_pts_per_sec": 15153811.166164828,
+          "eval_time_sec": 0.000676499999826774,
+          "fit_time_sec": 0.008186999999452382,
+          "throughput_pts_per_sec": 14781966.005263297,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -1435,9 +1575,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0006489000006695278,
-          "fit_time_sec": 0.2098608999986027,
-          "throughput_pts_per_sec": 15410695.006444924,
+          "eval_time_sec": 0.0006790999905206263,
+          "fit_time_sec": 0.23654870000609662,
+          "throughput_pts_per_sec": 14725372.02118584,
           "memory_breakdown": {
             "code_bytes": 4184,
             "dependencies_bytes": 41029584,
@@ -1477,9 +1617,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.004273899998224806,
-          "fit_time_sec": 0.26634999999805586,
-          "throughput_pts_per_sec": 2339783.337034926,
+          "eval_time_sec": 0.004551799996988848,
+          "fit_time_sec": 0.3158733000018401,
+          "throughput_pts_per_sec": 2196933.082871677,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -1519,9 +1659,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.005026499999075895,
-          "fit_time_sec": 1.0213741000006848,
-          "throughput_pts_per_sec": 1989455.8841815311,
+          "eval_time_sec": 0.005446099996333942,
+          "fit_time_sec": 1.1031137000099989,
+          "throughput_pts_per_sec": 1836176.3476123335,
           "memory_breakdown": {
             "code_bytes": 12444,
             "dependencies_bytes": 0,
@@ -1561,16 +1701,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0364953999996942,
-          "fit_time_sec": 106.23824039999818,
-          "throughput_pts_per_sec": 274007.13514809514,
+          "eval_time_sec": 0.03515779999725055,
+          "fit_time_sec": 106.61366279999493,
+          "throughput_pts_per_sec": 284431.90418006905,
           "memory_breakdown": {
-            "code_bytes": 6332,
+            "code_bytes": 12550,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 2147922,
+            "model_instance_bytes": 2148272,
             "grid_lookup_bytes": 0,
-            "total_bytes": 75583191,
-            "total_mb": 72.08174800872803
+            "total_bytes": 75589759,
+            "total_mb": 72.08801174163818
           }
         },
         {
@@ -1603,9 +1743,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.39689480000015465,
-          "fit_time_sec": 1.3352828000024601,
-          "throughput_pts_per_sec": 25195.593391488383,
+          "eval_time_sec": 0.40679090000048745,
+          "fit_time_sec": 1.315572899999097,
+          "throughput_pts_per_sec": 24582.65413505567,
           "memory_breakdown": {
             "code_bytes": 6111,
             "dependencies_bytes": 123489234,
@@ -1645,9 +1785,9 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.2098262999970757,
-          "fit_time_sec": 0.006937800000741845,
-          "throughput_pts_per_sec": 47658.4679810842,
+          "eval_time_sec": 0.23733639999409206,
+          "fit_time_sec": 0.009183299989672378,
+          "throughput_pts_per_sec": 42134.28702992431,
           "memory_breakdown": {
             "code_bytes": 6111,
             "dependencies_bytes": 123489234,
@@ -1655,6 +1795,48 @@
             "grid_lookup_bytes": 0,
             "total_bytes": 126527602,
             "total_mb": 120.66612434387207
+          }
+        },
+        {
+          "name": "PyTorch ResNet + Cyclic CellPos (4x4)",
+          "source_experiment": "torch_mlp_regressor",
+          "summary": {
+            "count": 10000,
+            "total_count": 10000,
+            "unmatched_count": 0,
+            "coverage_pct": 100.0,
+            "mean_2d_m": 0.0028865934630064247,
+            "std_2d_m": 0.0017269404122415687,
+            "rmse_2d_m": 0.0033637397354885383,
+            "min_2d_m": 4.125392561558468e-05,
+            "p50_2d_m": 0.002546808901289551,
+            "p90_2d_m": 0.005490889857586589,
+            "p95_2d_m": 0.006530271285318559,
+            "p99_2d_m": 0.008029779114251073,
+            "p99_9_2d_m": 0.008839107133549353,
+            "max_2d_m": 0.009197684193806985,
+            "bias_n_m": -0.0001457446035007222,
+            "bias_e_m": 0.0003549084302179965,
+            "rmse_n_m": 0.001866801177079403,
+            "rmse_e_m": 0.002798177687953261,
+            "pass_rates_pct": {
+              "lt_1mm": 9.33,
+              "lt_1cm": 100.0,
+              "lt_5cm": 100.0,
+              "lt_10cm": 100.0,
+              "lt_1m": 100.0
+            }
+          },
+          "eval_time_sec": 0.02496110000356566,
+          "fit_time_sec": 115.05665159999626,
+          "throughput_pts_per_sec": 400623.3699064349,
+          "memory_breakdown": {
+            "code_bytes": 17815,
+            "dependencies_bytes": 4280113426,
+            "model_instance_bytes": 2321091,
+            "grid_lookup_bytes": 0,
+            "total_bytes": 4282452332,
+            "total_mb": 4084.064800262451
           }
         }
       ]

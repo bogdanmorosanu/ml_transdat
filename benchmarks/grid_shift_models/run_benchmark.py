@@ -11,6 +11,7 @@ from experiments.decision_tree_regressor.run_unit import (
 from experiments.knn_spatial_regressor.run_unit import KnnSpatialRegressorUnit
 from experiments.mlp_spatial_regressor.run_unit import MLPSpatialRegressorUnit
 from experiments.rbf_surface_regressor.run_unit import RBFSurfaceRegressorUnit
+from experiments.torch_mlp_regressor.run_unit import TorchMLPRegressorUnit
 from src.core.base_benchmark import (
     BenchmarkModelSpec,
     BenchmarkSuite,
@@ -33,7 +34,7 @@ class GridShiftBenchmarkSuite(BenchmarkSuite):
     def suite_description(self) -> str:
         return (
             "Compares validated champions across KNN, Decision Trees, Adaptive Quadtrees, "
-            "Fourier MLP, and Thin Plate Splines with exact source-experiment hyperparameters."
+            "Fourier MLP, PyTorch ResNet, and Thin Plate Splines with exact source-experiment hyperparameters."
         )
 
     def get_model_specs(self) -> list[BenchmarkModelSpec]:
@@ -62,6 +63,11 @@ class GridShiftBenchmarkSuite(BenchmarkSuite):
                 RBFSurfaceRegressorUnit,
                 suite=self.suite_name,
                 unit_dir=Path("experiments/rbf_surface_regressor"),
+            ),
+            *specs_from_unit(
+                TorchMLPRegressorUnit,
+                suite=self.suite_name,
+                unit_dir=Path("experiments/torch_mlp_regressor"),
             ),
         ]
 

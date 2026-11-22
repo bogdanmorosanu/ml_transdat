@@ -21,6 +21,7 @@ from src.models.polynomial_surface import PolynomialSurfaceRegressor
 from src.models.pyproj_transformer import PyprojEpsg3844Transformer
 from src.models.quadtree_regressor import AdaptiveQuadtreeRegressor
 from src.models.rbf_surface import RBFSurfaceRegressor
+from src.models.torch_mlp import TorchMLPGridShiftModel, TorchMLPNet
 
 __all__ = [
     "AdaptiveQuadtreeRegressor",
@@ -38,6 +39,8 @@ __all__ = [
     "PyprojEpsg3844Transformer",
     "RBFSurfaceRegressor",
     "ResidualCoordinateTransformer",
+    "TorchMLPGridShiftModel",
+    "TorchMLPNet",
     "TwoStepHelmert2DTransformer",
     "fit_helmert2d",
 ]
