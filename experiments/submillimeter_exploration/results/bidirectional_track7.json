@@ -1,0 +1,24 @@
+[
+  {
+    "model": "Track7_T7_bilinear_plus_featgrid_8x8",
+    "direction": "etrs89_to_st70",
+    "dataset": "ro_corridor_snw",
+    "mean_2d_mm": 0.7068,
+    "rmse_2d_mm": 0.8436,
+    "p95_2d_mm": 1.5892,
+    "max_2d_mm": 4.4339,
+    "pass_lt_1mm_pct": 78.28,
+    "pass_lt_1cm_pct": 100.0
+  },
+  {
+    "model": "Track7_T7_bilinear_plus_featgrid_8x8",
+    "direction": "st70_to_etrs89",
+    "dataset": "ro_corridor_snw",
+    "mean_2d_mm": 0.707,
+    "rmse_2d_mm": 0.8438,
+    "p95_2d_mm": 1.5896,
+    "max_2d_mm": 4.4456,
+    "pass_lt_1mm_pct": 78.3,
+    "pass_lt_1cm_pct": 100.0
+  }
+]

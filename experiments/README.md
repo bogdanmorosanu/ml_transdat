@@ -24,6 +24,7 @@ This directory contains modular, self-contained scientific experiments evaluatin
 | [`cell_neighbor_features/`](cell_neighbor_features/) | `analysis` | **3×3 Grid Cell Neighbor Feature Extraction**: Extracts 40 continuous one-sided corner slopes and diagonal twists from the 3×3 `.spg` neighborhood (`11 km` grid). | `Validated` | Extracts 2,297 interior cells (`0` NaNs) to `data/features/cell_neighbor_features.parquet`; provides $O(1)$ `CellNeighborFeatureExtractor` for downstream models. |
 | [`mlp_neighbor_features/`](mlp_neighbor_features/) | `grid_shift` | **Fourier MLP with 3×3 Neighbor Features & Center Distance**: Controlled ablation testing 32 slopes, 40 slopes+twists, and continuous `[0, 1]` midpoint distance on `mlp_fourier_4x4`. | `Dead End` | Adding neighbor slopes/twists or symmetric midpoint distance degrades RMSE (`13.0` $\to$ `13.7–15.5 mm` uniform, `32.5` $\to$ `42.0–47.3 mm` adaptive); `center_dist` helps 40-feature models (`51.4` $\to$ `47.0 mm`) but does not beat baseline. |
 | [`torch_mlp_regressor/`](torch_mlp_regressor/) | `grid_shift` | **Deep PyTorch Residual Neural Network**: Evaluates PyTorch ResNets (`ReLU`, `SiLU`, `GELU`), smooth cyclic `(u, v)` cell position, and raw/Hermite-weighted `3×3` neighbor features on `RO_GRID_4X4`. | `Validated` | PyTorch ResNet (`ReLU`) cuts uniform RMSE from `13.0` $\to$ `7.2 mm`; adding cyclic `(u, v)` improves to **`6.8 mm`** (`95.6% < 1 cm`, `71.3% < 1 cm` adaptive). Neighbor slopes/twists (even Hermite-weighted) hurt adaptive RMSE/Max and are not promoted. |
+| [`submillimeter_exploration/`](submillimeter_exploration/) | `grid_shift` | **Multi-Track Sub-Millimeter Exploration**: Screens 7 improvement tracks (two-stage residuals, adaptive datasets, harmonics, Huber/L-BFGS, learnable 2D feature grids, SIREN/Matérn/HistGBR, and bidirectional verification). | `Validated` | `T7_bilinear_plus_featgrid_8x8` reaches **`0.77 mm`** uniform mean / **`0.84 mm`** corridor RMSE (`78.3% < 1 mm`, `0.66 MB`); zero-lookup `T4_data_adaptive_hybrid` cuts adaptive RMSE by 94% (`44.18` $\to$ `2.59 mm`). |
 
 ---
 
@@ -89,4 +90,7 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.mlp_neighbor_features.ru
 
 # 14. Deep PyTorch Residual Neural Network Spatial Regressor (grid_shift)
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.torch_mlp_regressor.run_unit
+
+# 15. Multi-Track Sub-Millimeter Exploration (grid_shift)
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.submillimeter_exploration.run_unit
 ```

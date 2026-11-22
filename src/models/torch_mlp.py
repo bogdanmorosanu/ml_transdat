@@ -3,12 +3,13 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 import torch
-import torch.nn as nn
+from torch import nn
 from torch.utils.data import DataLoader, TensorDataset
 
 from src.models.base import BaseGridShiftModel
@@ -16,27 +17,37 @@ from src.models.base import BaseGridShiftModel
 logger = logging.getLogger(__name__)
 
 
+class SineActivation(nn.Module):
+    """SIREN periodic sine activation with configurable frequency scaling ``omega_0``."""
+
+    def __init__(self, omega_0: float = 30.0) -> None:
+        super().__init__()
+        self.omega_0 = float(omega_0)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return torch.sin(self.omega_0 * x)
+
+
 class ResidualBlock(nn.Module):
-    """Residual dense block with LayerNorm and configurable smooth activation."""
+    """Residual dense block with optional LayerNorm and configurable activation."""
 
     def __init__(
         self,
         hidden_dim: int,
         activation_fn: Callable[[], nn.Module] = nn.SiLU,
         dropout: float = 0.0,
+        use_layernorm: bool = True,
     ) -> None:
         super().__init__()
-        layers: list[nn.Module] = [
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
-            activation_fn(),
-        ]
+        layers: list[nn.Module] = [nn.Linear(hidden_dim, hidden_dim)]
+        if use_layernorm:
+            layers.append(nn.LayerNorm(hidden_dim))
+        layers.append(activation_fn())
         if dropout > 0.0:
             layers.append(nn.Dropout(dropout))
-        layers.extend([
-            nn.Linear(hidden_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
-        ])
+        layers.append(nn.Linear(hidden_dim, hidden_dim))
+        if use_layernorm:
+            layers.append(nn.LayerNorm(hidden_dim))
         self.block = nn.Sequential(*layers)
         self.act = activation_fn()
 
@@ -55,32 +66,69 @@ class TorchMLPNet(nn.Module):
         num_res_blocks: int = 3,
         activation: str = "silu",
         dropout: float = 0.0,
+        siren_omega_0: float = 30.0,
     ) -> None:
         super().__init__()
+        act_name = activation.lower()
         act_map: dict[str, Callable[[], nn.Module]] = {
             "relu": nn.ReLU,
             "silu": nn.SiLU,
             "gelu": nn.GELU,
             "tanh": nn.Tanh,
             "mish": nn.Mish,
+            "siren": lambda: SineActivation(omega_0=siren_omega_0),
         }
-        if activation.lower() not in act_map:
-            raise ValueError(f"Unsupported activation '{activation}'. Choose from {list(act_map.keys())}")
-        
-        act_fn = act_map[activation.lower()]
+        if act_name not in act_map:
+            raise ValueError(
+                f"Unsupported activation '{activation}'. Choose from {list(act_map.keys())}"
+            )
 
-        self.input_proj = nn.Sequential(
-            nn.Linear(in_dim, hidden_dim),
-            nn.LayerNorm(hidden_dim),
-            act_fn(),
-        )
+        act_fn = act_map[act_name]
+        is_siren = act_name == "siren"
+        use_norm = not is_siren
+
+        proj_layers: list[nn.Module] = [nn.Linear(in_dim, hidden_dim)]
+        if use_norm:
+            proj_layers.append(nn.LayerNorm(hidden_dim))
+        proj_layers.append(act_fn())
+        self.input_proj = nn.Sequential(*proj_layers)
 
         blocks: list[nn.Module] = []
         for _ in range(num_res_blocks):
-            blocks.append(ResidualBlock(hidden_dim, activation_fn=act_fn, dropout=dropout))
+            blocks.append(
+                ResidualBlock(
+                    hidden_dim,
+                    activation_fn=act_fn,
+                    dropout=dropout,
+                    use_layernorm=use_norm,
+                )
+            )
         self.res_blocks = nn.Sequential(*blocks)
 
         self.head = nn.Linear(hidden_dim, out_dim)
+
+        if is_siren:
+            self._init_siren_weights(siren_omega_0)
+
+    def _init_siren_weights(self, omega_0: float) -> None:
+        """Apply principled SIREN uniform weight initialization (Sitzmann et al.)."""
+        with torch.no_grad():
+            first_linear = self.input_proj[0]
+            if isinstance(first_linear, nn.Linear):
+                bound = 1.0 / first_linear.in_features
+                first_linear.weight.uniform_(-bound, bound)
+                if first_linear.bias is not None:
+                    first_linear.bias.zero_()
+            for module in self.res_blocks.modules():
+                if isinstance(module, nn.Linear):
+                    bound = float(np.sqrt(6.0 / module.in_features)) / omega_0
+                    module.weight.uniform_(-bound, bound)
+                    if module.bias is not None:
+                        module.bias.zero_()
+            bound_head = float(np.sqrt(6.0 / self.head.in_features)) / omega_0
+            self.head.weight.uniform_(-bound_head, bound_head)
+            if self.head.bias is not None:
+                self.head.bias.zero_()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         h = self.input_proj(x)
@@ -127,6 +175,12 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
         use_cell_center_distance: bool = False,
         use_cyclic_cell_pos: bool = False,
         use_hermite_weights: bool = False,
+        cyclic_cell_harmonics: int = 1,
+        fourier_scales: tuple[float, ...] | None = None,
+        val_fraction: float = 0.1,
+        loss_type: str = "mse",
+        lbfgs_steps: int = 0,
+        siren_omega_0: float = 30.0,
     ) -> None:
         super().__init__()
         self.hidden_dim = int(hidden_dim)
@@ -136,6 +190,9 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
         self.normalize_inputs = bool(normalize_inputs)
         self.use_fourier_features = bool(use_fourier_features)
         self.fourier_scale = float(fourier_scale)
+        self.fourier_scales = (
+            tuple(float(s) for s in fourier_scales) if fourier_scales is not None else None
+        )
         self.num_fourier_frequencies = int(num_fourier_frequencies)
         self.batch_size = int(batch_size)
         self.lr = float(lr)
@@ -144,6 +201,11 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
         self.patience = int(patience)
         self.lr_scheduler = str(lr_scheduler).lower()
         self.random_state = int(random_state)
+        self.cyclic_cell_harmonics = int(cyclic_cell_harmonics)
+        self.val_fraction = float(val_fraction)
+        self.loss_type = str(loss_type).lower()
+        self.lbfgs_steps = int(lbfgs_steps)
+        self.siren_omega_0 = float(siren_omega_0)
 
         # Device selection: prefer CUDA if available
         if device is None:
@@ -303,14 +365,18 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
 
         if self.use_cyclic_cell_pos:
             u, v = self._compute_cell_uv(coords)
-            cyclic_pos = np.column_stack(
-                [
-                    np.sin(2.0 * np.pi * u),
-                    np.cos(2.0 * np.pi * u),
-                    np.sin(2.0 * np.pi * v),
-                    np.cos(2.0 * np.pi * v),
-                ]
-            )
+            cyclic_cols: list[np.ndarray] = []
+            for k in range(1, self.cyclic_cell_harmonics + 1):
+                ang_u = 2.0 * np.pi * k * u
+                ang_v = 2.0 * np.pi * k * v
+                cyclic_cols.extend(
+                    [np.sin(ang_u), np.cos(ang_u), np.sin(ang_v), np.cos(ang_v)]
+                )
+            if self.cyclic_cell_harmonics > 1:
+                su, cu = np.sin(2.0 * np.pi * u), np.cos(2.0 * np.pi * u)
+                sv, cv = np.sin(2.0 * np.pi * v), np.cos(2.0 * np.pi * v)
+                cyclic_cols.extend([su * sv, su * cv, cu * sv, cu * cv])
+            cyclic_pos = np.column_stack(cyclic_cols)
             x_spatial = np.concatenate([x_spatial, cyclic_pos], axis=1)
 
         return x_spatial
@@ -329,9 +395,20 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
 
         if self.use_fourier_features:
             rng = np.random.RandomState(self.random_state)
-            self._fourier_basis = (
-                rng.randn(2, self.num_fourier_frequencies) * self.fourier_scale
-            )
+            if self.fourier_scales is not None and len(self.fourier_scales) > 0:
+                n_bands = len(self.fourier_scales)
+                base_n = self.num_fourier_frequencies // n_bands
+                rem = self.num_fourier_frequencies % n_bands
+                bands: list[np.ndarray] = []
+                for idx, sc in enumerate(self.fourier_scales):
+                    n_k = base_n + (1 if idx < rem else 0)
+                    if n_k > 0:
+                        bands.append(rng.randn(2, n_k) * sc)
+                self._fourier_basis = np.hstack(bands)
+            else:
+                self._fourier_basis = (
+                    rng.randn(2, self.num_fourier_frequencies) * self.fourier_scale
+                )
 
         if self.use_neighbor_features and self.scale_neighbor_features:
             raw_neighbor = self._extract_neighbor_features(coords)
@@ -351,21 +428,29 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
             num_res_blocks=self.num_res_blocks,
             activation=self.activation,
             dropout=self.dropout,
+            siren_omega_0=self.siren_omega_0,
         ).to(self.device)
 
-        # Train/validation split (90% train, 10% val for early stopping)
+        # Train/validation split (or 100% grid fit when val_fraction <= 0)
         n_samples = len(x_feats)
-        perm = np.random.RandomState(self.random_state).permutation(n_samples)
-        val_size = max(int(0.1 * n_samples), 1)
-        val_idx = perm[:val_size]
-        train_idx = perm[val_size:]
+        if self.val_fraction > 0.0 and n_samples >= 10:
+            perm = np.random.RandomState(self.random_state).permutation(n_samples)
+            val_size = max(int(self.val_fraction * n_samples), 1)
+            val_idx = perm[:val_size]
+            train_idx = perm[val_size:]
+            val_x = torch.from_numpy(x_feats[val_idx]).to(self.device)
+            val_y = torch.from_numpy(y_targets[val_idx]).to(self.device)
+        else:
+            train_idx = np.arange(n_samples)
+            val_x = None
+            val_y = None
 
+        train_x_np = x_feats[train_idx]
+        train_y_np = y_targets[train_idx]
         train_dataset = TensorDataset(
-            torch.from_numpy(x_feats[train_idx]),
-            torch.from_numpy(y_targets[train_idx]),
+            torch.from_numpy(train_x_np),
+            torch.from_numpy(train_y_np),
         )
-        val_x = torch.from_numpy(x_feats[val_idx]).to(self.device)
-        val_y = torch.from_numpy(y_targets[val_idx]).to(self.device)
 
         loader = DataLoader(
             train_dataset,
@@ -389,7 +474,14 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
                 optimizer, mode="min", factor=0.5, patience=5, min_lr=1e-6
             )
 
-        criterion = nn.MSELoss()
+        if self.loss_type == "mse":
+            criterion: Any = nn.MSELoss()
+        elif self.loss_type == "huber":
+            criterion = nn.SmoothL1Loss(beta=0.005)
+        elif self.loss_type == "charbonnier":
+            criterion = lambda p, y: torch.mean(torch.sqrt((p - y) ** 2 + 1e-8) - 1e-4)
+        else:
+            raise ValueError(f"Unsupported loss_type '{self.loss_type}'.")
 
         best_val_loss = float("inf")
         best_state = None
@@ -397,6 +489,8 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
 
         for epoch in range(1, self.max_epochs + 1):
             self.net.train()
+            epoch_loss = 0.0
+            n_batches = 0
             for bx, by in loader:
                 bx, by = bx.to(self.device), by.to(self.device)
                 optimizer.zero_grad()
@@ -404,12 +498,17 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
                 loss = criterion(pred, by)
                 loss.backward()
                 optimizer.step()
+                epoch_loss += float(loss.item())
+                n_batches += 1
 
-            # Validation pass
-            self.net.eval()
-            with torch.no_grad():
-                val_pred = self.net(val_x)
-                val_loss = float(criterion(val_pred, val_y).item())
+            # Validation pass (or training epoch loss when val_fraction <= 0)
+            if val_x is not None and val_y is not None:
+                self.net.eval()
+                with torch.no_grad():
+                    val_pred = self.net(val_x)
+                    val_loss = float(criterion(val_pred, val_y).item())
+            else:
+                val_loss = epoch_loss / max(n_batches, 1)
 
             if self.lr_scheduler == "cosine":
                 scheduler.step()
@@ -429,6 +528,37 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
         # Load best weights
         if best_state is not None:
             self.net.load_state_dict({k: v.to(self.device) for k, v in best_state.items()})
+
+        if self.lbfgs_steps > 0:
+            full_x = torch.from_numpy(train_x_np).to(self.device)
+            full_y = torch.from_numpy(train_y_np).to(self.device)
+            self.net.eval()
+            with torch.no_grad():
+                pre_loss = float(criterion(self.net(full_x), full_y).item())
+            pre_state = {k: v.cpu().clone() for k, v in self.net.state_dict().items()}
+            lbfgs = torch.optim.LBFGS(
+                self.net.parameters(),
+                lr=0.5,
+                max_iter=self.lbfgs_steps,
+                history_size=50,
+                line_search_fn="strong_wolfe",
+            )
+            self.net.train()
+
+            def _lbfgs_closure() -> torch.Tensor:
+                lbfgs.zero_grad()
+                out = self.net(full_x)
+                l_val = criterion(out, full_y)
+                l_val.backward()
+                return l_val
+
+            lbfgs.step(_lbfgs_closure)
+            self.net.eval()
+            with torch.no_grad():
+                post_loss = float(criterion(self.net(full_x), full_y).item())
+            if not np.isfinite(post_loss) or post_loss > pre_loss:
+                self.net.load_state_dict({k: v.to(self.device) for k, v in pre_state.items()})
+
         self.net.eval()
 
     def _predict_impl(self, coords: np.ndarray) -> np.ndarray:

@@ -17,7 +17,9 @@ from src.data.samplers import (
     DEFAULT_SUBGRID_OFFSETS_4X4,
     DEFAULT_SUBGRID_OFFSETS_8X8,
     DEFAULT_SUBGRID_OFFSETS_16X16,
+    generate_adaptive_hybrid_train_df,
     generate_adaptive_midpoints_df,
+    generate_border_enriched_4x4_df,
     generate_densified_grid_df,
     generate_single_cell_workload_df,
     generate_spg_nodes_df,
@@ -50,6 +52,8 @@ class GridId(str, Enum):
     RO_TEST_UNIFORM_16X16 = "ro_test_uniform_16x16"
     RO_TEST_ADAPTIVE_3MM_MID = "ro_test_adaptive_3mm_mid"
     RO_TEST_ADAPTIVE_1MM_MID = "ro_test_adaptive_1mm_mid"
+    RO_TRAIN_ADAPTIVE_HYBRID = "ro_train_adaptive_hybrid"
+    RO_TRAIN_BORDER_ENRICHED_4X4 = "ro_train_border_enriched_4x4"
     CUSTOM = "custom"
 
 
@@ -152,6 +156,12 @@ _GRID_REGISTRY: dict[GridId, _GridSpec] = {
         lazy_chunk_generator=lambda b: iter_adaptive_midpoint_chunks(
             tier="1mm", batch_size=b
         ),
+    ),
+    GridId.RO_TRAIN_ADAPTIVE_HYBRID: _GridSpec(
+        generator=generate_adaptive_hybrid_train_df,
+    ),
+    GridId.RO_TRAIN_BORDER_ENRICHED_4X4: _GridSpec(
+        generator=generate_border_enriched_4x4_df,
     ),
 }
 

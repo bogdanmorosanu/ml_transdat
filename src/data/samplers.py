@@ -551,6 +551,88 @@ def iter_stratified_continuous_chunks(
         )
 
 
+def generate_adaptive_hybrid_train_df(
+    engine: TransRO | None = None,
+) -> pd.DataFrame:
+    """Build a curvature-weighted training set combining ``RO_GRID_4X4`` with off-dyadic ``ADAPTIVE_1CM`` probes.
+
+    Samples ``(0.19, 0.31)`` and ``(0.69, 0.81)`` inside ``adaptive_1cm_dn.parquet`` leaves
+    so probes never land on dyadic ``(k / 2^d)`` midpoints used by ``RO_TEST_ADAPTIVE_3MM_MID``.
+    """
+    active_engine = engine if engine is not None else TransRO()
+    grid2d = active_engine._t_gr2d
+    base_df = generate_densified_grid_df(
+        DEFAULT_SUBGRID_OFFSETS_4X4, engine=active_engine, include_shifts=True
+    )
+
+    path = Path("data/grids/adaptive/adaptive_1cm_dn.parquet")
+    if not path.is_file():
+        raise FileNotFoundError(f"Adaptive quadtree file not found: {path}")
+    df_leaf = pd.read_parquet(path)
+    n_min = df_leaf["n_min"].to_numpy(dtype=np.float64)
+    n_max = df_leaf["n_max"].to_numpy(dtype=np.float64)
+    e_min = df_leaf["e_min"].to_numpy(dtype=np.float64)
+    e_max = df_leaf["e_max"].to_numpy(dtype=np.float64)
+
+    n_probes = np.concatenate([n_min + 0.19 * (n_max - n_min), n_min + 0.69 * (n_max - n_min)])
+    e_probes = np.concatenate([e_min + 0.31 * (e_max - e_min), e_min + 0.81 * (e_max - e_min)])
+    dn_list, de_list = grid2d.interp(n_probes.tolist(), e_probes.tolist())
+
+    adaptive_df = pd.DataFrame(
+        {
+            "st70_n": n_probes,
+            "st70_e": e_probes,
+            "st70_h": np.zeros(len(n_probes), dtype=np.float64),
+            "shift_dn_m": np.asarray(dn_list, dtype=np.float64),
+            "shift_de_m": np.asarray(de_list, dtype=np.float64),
+        }
+    )
+    cols = ["st70_n", "st70_e", "st70_h", "shift_dn_m", "shift_de_m"]
+    combined = pd.concat([base_df[cols], adaptive_df[cols]], ignore_index=True)
+    combined["_rn"] = np.round(combined["st70_n"], 3)
+    combined["_re"] = np.round(combined["st70_e"], 3)
+    combined = combined.drop_duplicates(subset=["_rn", "_re"]).drop(columns=["_rn", "_re"])
+    return combined.reset_index(drop=True)
+
+
+def generate_border_enriched_4x4_df(
+    engine: TransRO | None = None,
+) -> pd.DataFrame:
+    """Augment ``RO_GRID_4X4`` with near-border probes ``u, v in {0.03, 0.97}`` inside valid SPG cells."""
+    active_engine = engine if engine is not None else TransRO()
+    grid2d = active_engine._t_gr2d
+    base_df = generate_densified_grid_df(
+        DEFAULT_SUBGRID_OFFSETS_4X4, engine=active_engine, include_shifts=True
+    )
+    valid_cells = get_valid_spg_cells(active_engine)
+
+    n_probes: list[float] = []
+    e_probes: list[float] = []
+    mid_offsets = (0.15, 0.50, 0.85)
+    edge_offsets = (0.03, 0.97)
+    for r, c in valid_cells:
+        for edge in edge_offsets:
+            for mid in mid_offsets:
+                n_probes.append(float(grid2d.n_min + (r + edge) * grid2d.n_step))
+                e_probes.append(float(grid2d.e_min + (c + mid) * grid2d.e_step))
+                n_probes.append(float(grid2d.n_min + (r + mid) * grid2d.n_step))
+                e_probes.append(float(grid2d.e_min + (c + edge) * grid2d.e_step))
+
+    dn_list, de_list = grid2d.interp(n_probes, e_probes)
+    border_df = pd.DataFrame(
+        {
+            "st70_n": np.asarray(n_probes, dtype=np.float64),
+            "st70_e": np.asarray(e_probes, dtype=np.float64),
+            "st70_h": np.zeros(len(n_probes), dtype=np.float64),
+            "shift_dn_m": np.asarray(dn_list, dtype=np.float64),
+            "shift_de_m": np.asarray(de_list, dtype=np.float64),
+        }
+    )
+    cols = ["st70_n", "st70_e", "st70_h", "shift_dn_m", "shift_de_m"]
+    combined = pd.concat([base_df[cols], border_df[cols]], ignore_index=True)
+    return combined.reset_index(drop=True)
+
+
 def generate_adaptive_midpoints_df(
     tier: str = "3mm",
     parquet_path: Path | str | None = None,
