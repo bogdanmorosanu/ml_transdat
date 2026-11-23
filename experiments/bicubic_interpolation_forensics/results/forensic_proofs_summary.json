@@ -1,0 +1,10 @@
+{
+  "proof_1_16x16_matrix_match": true,
+  "proof_2_swapped_parabola_identity": true,
+  "proof_3_fourth_diff_slope_break": true,
+  "proof_4_empirical_spg_row10_col16": {
+    "pos_gap_m": 1.4220248963914273e-06,
+    "numerical_slope_break_m_per_step": -0.011836,
+    "theoretical_slope_break_m_per_step": -0.011837
+  }
+}

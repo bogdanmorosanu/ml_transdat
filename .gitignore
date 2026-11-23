@@ -54,3 +54,6 @@ scratch/*
 !scratch/README.md
 temp/
 tmp/
+
+# Reference PDFs / external articles
+articles/

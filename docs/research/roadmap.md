@@ -24,6 +24,7 @@ flowchart TD
     CNF["cell_neighbor_features<br><b>Status: Validated</b><br>40 continuous 3x3 corner slopes & twists on 2,297 interior 11km cells"]
     MNF["mlp_neighbor_features<br><b>Status: Dead End</b><br>3x3 slopes/twists & center_dist degrade Fourier MLP (13.0 -> 13.7-15.5mm uniform, 32.5 -> 42.0-47.3mm adaptive)"]
     BBA["bicubic_boundary_analysis<br><b>Status: Validated</b><br>Proves C1 slope kinks match official TransDatRO specification; groups 7 extreme boundary scenarios"]
+    BIF["bicubic_interpolation_forensics<br><b>Status: Validated</b><br>Traces Wikipedia + 1-sided stencil origins; ranks Top 3 11km schemes & proves 5.6x-11.5x ML kink penalty"]
     TMLP["torch_mlp_regressor<br><b>Status: Validated</b><br>Deep PyTorch ResNet: 6.8mm uniform RMSE with cyclic (u, v) cell coordinates"]
     SME["submillimeter_exploration<br><b>Status: Validated</b><br>T7 Bilinear + FeatGrid reaches 0.77mm uniform mean / 0.84mm bidirectional RMSE; T4 data-adaptive ResNet cuts stress RMSE 94%"]
     ML["Next: Sub-Millimeter Production Architecture<br><b>Status: Exploring</b><br>Goal: Sub-millimeter production deployment and unified benchmark promotion"]
@@ -53,6 +54,8 @@ flowchart TD
     BBA -->|"explains boundary kink limits for"| RBF
     BBA -->|"explains boundary kink limits for"| TMLP
     BBA -->|"explains boundary kink limits for"| SME
+    BBA -->|"deep-dives origins & 11km alternatives in"| BIF
+    BIF -->|"quantifies 5.6x-11.5x kink penalty for"| ML
     TMLP -->|"spawns 7-track screening"| SME
 ```
 
@@ -83,6 +86,8 @@ flowchart TD
 | `cell_neighbor_features` | `mlp_neighbor_features` | `feeds 3x3 neighbor priors into` | Supplies the 40 continuous corner slopes/twists and `[0, 1]` midpoint distance for controlled Fourier MLP ablation (`Dead End` via additive concatenation). |
 | `spg_grid_analysis` | `bicubic_boundary_analysis` | `mathematically audits boundary continuity` | Audits whether 1D transect slope breaks at 11 km cell boundaries are code bugs or intrinsic to the official TransDatRO standard (they match the published specification verbatim). |
 | `bicubic_boundary_analysis` | `Continuous ML Models` | `explains boundary kink limits` | Proves that because official ground truth contains $C^1$ creases at every 11 km border, global continuous models naturally smooth over them; capturing sub-millimeter detail requires localized feature grids or cell priors. |
+| `bicubic_boundary_analysis` | `bicubic_interpolation_forensics` | `deep-dives origins & 11km alternatives in` | Audits all 4 ANCPI papers, traces Wikipedia + 1-sided edge-stencil origins, and benchmarks 6 alternative 11 km schemes (`Catmull-Rom`, `PCHIP`, `Natural Spline C²`). |
+| `bicubic_interpolation_forensics` | `ML Production Architecture` | `quantifies 5.6x-11.5x kink penalty` | Proves `TransDatRO`'s $C^1$ kinks impose a `7.674 mm` vs `0.667–1.364 mm` smooth-ML error penalty, mandating cell-aware / `(u, v)` architectures for sub-mm replication. |
 | `mlp_spatial_regressor` | `torch_mlp_regressor` | `advances to PyTorch ResNets` | Replaces single feedforward MLP with deep PyTorch ResNets and cyclic local cell coordinates, cutting uniform RMSE from 13.0 mm to 6.8 mm. |
 | `torch_mlp_regressor` | `submillimeter_exploration` | `spawns 7-track screening` | Prompts structured multi-track exploration to break the sub-millimeter continuous ceiling. |
 
@@ -108,3 +113,4 @@ flowchart TD
 | [`torch_mlp_regressor`](torch_mlp_regressor.md) | `Validated` | Deep PyTorch residual neural network with cyclic `(u, v)` local cell coordinates; achieves `6.8 mm` uniform RMSE and `95.6% < 1 cm`. | [`experiments/torch_mlp_regressor/report.md`](../../experiments/torch_mlp_regressor/report.md) |
 | [`submillimeter_exploration`](submillimeter_exploration.md) | `Validated` | Multi-track sub-millimeter exploration; `T7_bilinear_plus_featgrid_8x8` achieves `0.77 mm` uniform mean / `0.84 mm` bidirectional RMSE; `T4` data-adaptive ResNet collapses adaptive stress RMSE by 94% to `2.59 mm`. | [`experiments/submillimeter_exploration/report.md`](../../experiments/submillimeter_exploration/report.md) |
 | [`bicubic_boundary_analysis`](bicubic_boundary_analysis.md) | `Validated` | Proves `pytransdat` `Grid.BiInterp` matches published `TransDatRO` one-sided 3-point finite-difference formulas verbatim; $C^1$ slope kinks at 11 km borders are inherent to the specification. Establishes a 7-scenario taxonomy across 5-cell extended windows with true vertical-axis scaling. | [`experiments/bicubic_boundary_analysis/report.md`](../../experiments/bicubic_boundary_analysis/report.md) | [`pytransdat/trans_grid.py`](../../pytransdat/trans_grid.py) |
+| [`bicubic_interpolation_forensics`](bicubic_interpolation_forensics.md) | `Validated` | Full forensic audit of 4 ANCPI PDFs (`2.22e-15 m` parity), Wikipedia + 1-sided edge-stencil origin, Top-3 $11\,\text{km}$ alternatives (`Catmull-Rom C¹`, `PCHIP C¹`, `Natural Spline C²`), and `5.6x–11.5x` smooth-ML learnability penalty proof. | [`experiments/bicubic_interpolation_forensics/report.md`](../../experiments/bicubic_interpolation_forensics/report.md) | [`src/models/grid_bicubic_variants.py`](../../src/models/grid_bicubic_variants.py) |

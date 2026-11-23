@@ -12,6 +12,10 @@ from src.models.composite_shift import (
     CompositeResidualShiftModel,
 )
 from src.models.decision_tree_regressor import DecisionTreeSpatialRegressor
+from src.models.grid_bicubic_variants import (
+    BicubicScheme,
+    ParameterizedBicubicGridShiftModel,
+)
 from src.models.helmert2d import (
     FittedHelmert2D,
     Helmert2DConformalShiftModel,
@@ -34,6 +38,7 @@ __all__ = [
     "BaseCoordinateTransformer",
     "BaseGridShiftModel",
     "BaseSpatialModel",
+    "BicubicScheme",
     "CellBilinearShiftModel",
     "CompositeResidualShiftModel",
     "DecisionTreeSpatialRegressor",
@@ -45,6 +50,7 @@ __all__ = [
     "MLPGridShiftModel",
     "MemoryBreakdown",
     "NeuralFeatureGridShiftModel",
+    "ParameterizedBicubicGridShiftModel",
     "PolynomialSurfaceRegressor",
     "PyprojEpsg3844Transformer",
     "RBFSurfaceRegressor",

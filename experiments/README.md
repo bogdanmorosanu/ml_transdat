@@ -26,6 +26,7 @@ This directory contains modular, self-contained scientific experiments evaluatin
 | [`torch_mlp_regressor/`](torch_mlp_regressor/) | `grid_shift` | **Deep PyTorch Residual Neural Network**: Evaluates PyTorch ResNets (`ReLU`, `SiLU`, `GELU`), smooth cyclic `(u, v)` cell position, and raw/Hermite-weighted `3×3` neighbor features on `RO_GRID_4X4`. | `Validated` | PyTorch ResNet (`ReLU`) cuts uniform RMSE from `13.0` $\to$ `7.2 mm`; adding cyclic `(u, v)` improves to **`6.8 mm`** (`95.6% < 1 cm`, `71.3% < 1 cm` adaptive). Neighbor slopes/twists (even Hermite-weighted) hurt adaptive RMSE/Max and are not promoted. |
 | [`submillimeter_exploration/`](submillimeter_exploration/) | `grid_shift` | **Multi-Track Sub-Millimeter Exploration**: Screens 7 improvement tracks (two-stage residuals, adaptive datasets, harmonics, Huber/L-BFGS, learnable 2D feature grids, SIREN/Matérn/HistGBR, and bidirectional verification). | `Validated` | `T7_bilinear_plus_featgrid_8x8` reaches **`0.77 mm`** uniform mean / **`0.84 mm`** corridor RMSE (`78.3% < 1 mm`, `0.66 MB`); zero-lookup `T4_data_adaptive_hybrid` cuts adaptive RMSE by 94% (`44.18` $\to$ `2.59 mm`). |
 | [`bicubic_boundary_analysis/`](bicubic_boundary_analysis/) | `analysis` | **Bicubic Cell Boundary Extension Analysis**: Visualizes `pytransdat` `Grid.BiInterp` polynomials extended across neighboring cells (`[-1, 2]` / `[-2, 3]`), Hermite tangents, and grouped extreme scenarios suite (Gradient/Linear & Curvature/Kinks), cross-verified against Avramiuc et al. (2009). | `Validated` | Confirmed `Grid.BiInterp` matches published `TransDatRO` one-sided 3-point finite-difference formulas verbatim; $C^1$ slope kinks at 11 km borders are inherent to the specification. Grouped 7 extreme scenarios with true vertical-axis scaling. |
+| [`bicubic_interpolation_forensics/`](bicubic_interpolation_forensics/) | `analysis` | **Bicubic Interpolation Forensics & 11 km Alternatives**: Audits all 4 ANCPI/published PDFs, proves 100% code parity (`2.22e-15 m`), traces Wikipedia + 1-sided edge-stencil origins, and evaluates 6 alternative 11 km interpolators & Top-3 candidates (`Catmull-Rom`, `PCHIP`, `Natural Spline C²`). | `Validated` | Proved `TransDatRO`'s $C^1$ kinks (up to `1.071 m/step`) cause a `5.6x–11.5x` smooth-ML learnability penalty (`7.674 mm` TPS-RBF RMSE vs. `1.364 mm` Catmull-Rom & `0.667 mm` Natural Spline). Ranked Top 3 smooth replacements. |
 
 ---
 
@@ -94,6 +95,9 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.torch_mlp_regressor.run_
 
 # 15. Multi-Track Sub-Millimeter Exploration (grid_shift)
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.submillimeter_exploration.run_unit
-# 15. Bicubic Cell Boundary Extension Analysis (analysis)
+# 16. Bicubic Cell Boundary Extension Analysis (analysis)
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.bicubic_boundary_analysis.run_unit
+
+# 17. Bicubic Interpolation Forensics & 11 km Alternatives (analysis)
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.bicubic_interpolation_forensics.run_unit
 ```
