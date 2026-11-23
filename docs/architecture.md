@@ -23,12 +23,12 @@ flowchart LR
 | Directory | Responsibility | What Belongs Here |
 | :--- | :--- | :--- |
 | `src/data/` | Data & Grid Access | `GridId`, `GridDataset`, `GridManager`, `get_default_grid_manager`, lazy samplers, on-the-fly grid generators |
-| `src/geometry/` | Cell Geometry & Features | `CellPlane`, `CellPlane2D`, `extract_grid_cell_planes`, `ShapeCategory`, `CellShapeFeatureExtractor` |
-| `src/models/` | Transformation & ML Models | `BaseSpatialModel`, `BaseGridShiftModel`, `BaseCoordinateTransformer`, `ResidualCoordinateTransformer`, concrete estimators (`KNNSpatialRegressor`, `DecisionTreeSpatialRegressor`, `AdaptiveQuadtreeRegressor`, `MLPGridShiftModel`, `TorchMLPGridShiftModel`, `NeuralFeatureGridShiftModel`, `CellBilinearShiftModel`, `ParameterizedBicubicGridShiftModel`, `CompositeResidualShiftModel`, `HistGBRGridShiftModel`, `PolynomialSurfaceRegressor`, `RBFSurfaceRegressor`, `Helmert2DConformalShiftModel`, `TwoStepHelmert2DTransformer`, `PyprojEpsg3844Transformer`) |
-| `src/evaluation/` | Metrics & Benchmarking | `MetricType`, `MetricMeta`, `MetricGroup`, `EvaluationResult`, `ModelEvaluator` (`evaluate_models`, `tabulate_results`, `compare_models`), `NaN`-safe scorecards & Markdown formatters |
-| `src/viz/` | Declarative Visualization | `PlotType`, `PlotGroup`, `PlotDispatcher`, matplotlib plotting functions (`plot_model_comparison`, `plot_memory_breakdown_stacked`, `plot_speed_workloads`, `plot_surface_comparison_grids`) |
-| `src/core/` | Experiment & Benchmark Lifecycle | `ResearchUnit`, `ExperimentType`, `TransformationExperimentUnit`, `GridShiftExperimentUnit`, `AnalysisExperimentUnit`, `ExperimentModelSpec`, `BenchmarkSuite`, `BenchmarkModelSpec`, `specs_from_unit` |
-| `experiments/<slug>/` | Micro Research Units | Thin declarative `run_unit.py`, `report.md`, `unit_brief.json` (v2), `results/`, `plots/` |
+| `src/geometry/` | Cell Geometry & Features | `CellPlane`, `CellPlane2D`, `extract_grid_cell_planes`, `ShapeCategory`, `CellShapeFeatureExtractor`, `compute_spg_cell_uv`, `encode_cyclic_cell_uv` |
+| `src/models/` | Transformation & ML Models | `BaseSpatialModel`, `BaseGridShiftModel`, `BaseCoordinateTransformer`, `ResidualCoordinateTransformer`, `_torch_trainer` (`train_torch_regressor`), `load_embedded_spg_helmert_params`, concrete estimators (`KNNSpatialRegressor`, `DecisionTreeSpatialRegressor`, `AdaptiveQuadtreeRegressor`, `MLPGridShiftModel`, `TorchMLPGridShiftModel`, `NeuralFeatureGridShiftModel`, `CellBilinearShiftModel`, `ParameterizedBicubicGridShiftModel`, `CompositeResidualShiftModel`, `HistGBRGridShiftModel`, `PolynomialSurfaceRegressor`, `RBFSurfaceRegressor`, `Helmert2DConformalShiftModel`, `TwoStepHelmert2DTransformer`, `PyprojEpsg3844Transformer`) |
+| `src/evaluation/` | Metrics & Benchmarking | `MetricType`, `MetricMeta`, `MetricGroup`, `EvaluationResult`, `ModelEvaluator` (`evaluate_models`, `tabulate_results`, `tabulate_delta_vs_baseline`, `compare_models`), `NaN`-safe scorecards & Markdown formatters |
+| `src/viz/` | Declarative Visualization | `PlotType`, `PlotGroup`, `PlotDispatcher` (`render_grouped` 1-row-per-model figures), matplotlib plotting functions (`plot_spatial_error_rows`, `plot_hist_ecdf_rows`, `plot_signed_scatter_rows`, `plot_subcell_heatmap_rows`, `plot_vector_quiver_rows`, `plot_multi_dataset_comparison`, `plot_model_comparison`, `plot_memory_breakdown_stacked`, `plot_speed_workloads`, `plot_surface_comparison_grids`) |
+| `src/core/` | Experiment & Benchmark Lifecycle | `ResearchUnit`, `ExperimentType`, `TransformationExperimentUnit`, `TransformationModelSpec`, `GridShiftExperimentUnit`, `AnalysisExperimentUnit`, `ExperimentModelSpec`, `BenchmarkSuite`, `BenchmarkModelSpec`, `specs_from_unit` |
+| `experiments/<slug>/` | Micro Research Units | Thin declarative `run_unit.py`, `report.md`, `unit_brief.json` (v2), `results/`, `plots/` (unified 1-row-per-model PNGs), gitignored `models/` (`.pkl` checkpoints) |
 | `benchmarks/<suite>/` | Macro Cross-Model Suites | `BenchmarkSuite` subclass `run_benchmark.py`, `summary_scorecard.md`, comparative `plots/`, `results/` |
 | `data/features/` | Shared Feature Tables | Canonical feature datasets (`cell_planes.parquet`, `cell_shape_metrics.parquet`) exported by `analysis` units |
 
@@ -60,7 +60,8 @@ Uses the **Template Method** pattern:
   - `_fit_impl(self, coords: np.ndarray, shifts: np.ndarray) -> None`
   - `_predict_impl(self, coords: np.ndarray) -> np.ndarray`
   - Optional `_runtime_dependencies()` and `_grid_lookup_bytes()`
-- The base class provides `fit(coords, shifts)`, `fit_stream(chunks)`, `predict(coords)`, `assess(dataset_or_coords, true_shifts)` (using `GridId.CUSTOM` for raw arrays), `report(eval_result)`, and `plot(eval_result, out_dir, plots=...)`.
+- The base class provides `fit(coords, shifts)`, `fit_stream(chunks)`, `predict(coords)`, `compute_sync_fingerprint(train_grid)`, `save_checkpoint(path, train_grid)`, `load_or_fit(..., cache_path=...)`, `assess(dataset_or_coords, true_shifts)` (using `GridId.CUSTOM` for raw arrays), `report(eval_result)`, and `plot(eval_result, out_dir, plots=...)`.
+- **Fingerprint-Synced Model Persistence**: By default (`ExperimentModelSpec.persist_model = True`), fitted models are persisted to gitignored `experiments/<slug>/models/<spec_name>.pkl` with a SHA-256 fingerprint covering source code (`inspect.getsourcefile`, recursive for composite models), constructor hyperparameters, and `train_grid`. Both `GridShiftExperimentUnit` and `BenchmarkSuite` (via `specs_from_unit`) reuse valid `.pkl` checkpoints or automatically retrain and update them whenever model code or hyperparameters change.
 - [`AdaptiveQuadtreeRegressor`](../src/models/quadtree_regressor.py) uses a depth-bucketed lattice `np.searchsorted` index for $O(D \log N)$ vectorized lookup.
 
 ### 3.3 `BaseCoordinateTransformer` & `ResidualCoordinateTransformer`
@@ -83,8 +84,8 @@ Uses the **Template Method** pattern:
 ## 5. Declarative Visualization Layer (`src/viz/`)
 
 - **Constants (`PlotType` & `PlotGroup`)**: Defined in [`src/viz/registry.py`](../src/viz/registry.py).
-- **Dispatcher (`PlotDispatcher`)**: Uses a handler registry and raises explicit `ValueError` for unsupported `PlotType`s or missing context (`transect_models`).
-- **Cross-Model Plots**: `plot_model_comparison(..., precision_unit="mm")`, `plot_speed_workloads(...)`, and 2-panel `plot_memory_breakdown_stacked(...)` (Model+Lookup vs. Full Deployment incl. Dependencies) in [`src/viz/plots.py`](../src/viz/plots.py).
+- **Dispatcher (`PlotDispatcher`)**: `PlotDispatcher.render_grouped(...)` groups evaluation results by `(dataset_id, direction, plot_type)` into **one unified PNG per `PlotType`** (`{dataset_id}_{direction}_{plot_type}.png`) where **each model occupies its own row** (`plot_spatial_error_rows`, `plot_hist_ecdf_rows`, `plot_signed_scatter_rows`, `plot_subcell_heatmap_rows`, `plot_vector_quiver_rows`).
+- **Cross-Model & Cross-Dataset Plots**: `plot_model_comparison(..., precision_unit="mm")`, `plot_multi_dataset_comparison(...)` (zero-re-inference grouped bars), `plot_speed_workloads(...)`, and 2-panel `plot_memory_breakdown_stacked(...)` in [`src/viz/plots.py`](../src/viz/plots.py).
 
 ---
 

@@ -47,7 +47,7 @@ class TorchMLPRegressorUnit(GridShiftExperimentUnit):
                     GridId.RO_TEST_UNIFORM_4X4,
                     GridId.RO_TEST_ADAPTIVE_3MM_MID,
                 ],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
             ),
             # 2. Stage 2 Champion: +4 Smooth Cyclic (u, v) Cell Position (134 inputs, grid-free)
@@ -101,7 +101,7 @@ class TorchMLPRegressorUnit(GridShiftExperimentUnit):
                     GridId.RO_TEST_UNIFORM_4X4,
                     GridId.RO_TEST_ADAPTIVE_3MM_MID,
                 ],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
             ),
         ]

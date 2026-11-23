@@ -3,7 +3,7 @@
   "slug": "bicubic_boundary_analysis",
   "experiment_type": "analysis",
   "status": "completed",
-  "runtime_s": 8.5,
+  "runtime_s": 3.593,
   "key_metrics": {
     "transect_length_km": 198.0,
     "transect_cells": 18,
@@ -21,6 +21,7 @@
     }
   },
   "artifacts": {
+    "report": "report.md",
     "plots": [
       "bicubic_cell_boundary_extension.png",
       "extreme_scenarios_gradient_and_linear.png",
@@ -31,6 +32,6 @@
   "benchmark_candidates": [],
   "extra": {
     "primary_source": "Avramiuc, Dragomir, & Rus (2009), RevCAD, p. 112",
-    "verdict": "Confirmed pytransdat Grid.BiInterp matches published TransDatRO one-sided 3-point finite-difference formulas verbatim. Grouped extreme scenarios cleanly into Gradient/Linear (3-panel) and Curvature/Kinks (4-panel) with true vertical-axis scaling, ensuring that subtle features like S-shapes, bowls, domes, and kinks are magnified and clearly visible."
+    "verdict": "Confirmed pytransdat Grid.BiInterp matches published TransDatRO one-sided 3-point finite-difference formulas verbatim. Grouped extreme scenarios cleanly into Gradient/Linear (3-panel) and Curvature/Kinks (4-panel) with true vertical-axis scaling."
   }
 }

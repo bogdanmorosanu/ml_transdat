@@ -267,6 +267,12 @@ class MLPGridShiftModel(BaseGridShiftModel):
         """MLP is a parametric neural network; it has zero external lookup tables."""
         return 0
 
+    def __getstate__(self) -> dict[str, Any]:
+        state = self.__dict__.copy()
+        state["_shape_extractor"] = None
+        state["_neighbor_extractor"] = None
+        return state
+
     @property
     def total_parameters(self) -> int:
         """Calculate total number of trainable weights and biases in the network."""

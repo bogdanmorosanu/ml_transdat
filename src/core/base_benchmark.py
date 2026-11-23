@@ -32,6 +32,7 @@ class BenchmarkModelSpec:
     model: BaseGridShiftModel
     train_grid: GridId | str | None = None
     source_experiment: str | None = None
+    cache_path: Path | None = None
 
 
 def specs_from_unit(
@@ -42,19 +43,26 @@ def specs_from_unit(
     """Pull benchmark-candidate models directly from a :class:`GridShiftExperimentUnit`.
 
     Guarantees exact hyperparameter and training-grid parity between the source
-    experiment and the benchmark suite.
+    experiment and the benchmark suite, and links to persisted ``.pkl`` checkpoints
+    when ``persist_model=True``.
     """
     probe_dir = unit_dir or Path("experiments") / "__probe__"
     unit = unit_cls(probe_dir)
     out: list[BenchmarkModelSpec] = []
     for spec in unit.get_model_specs():
         if spec.benchmark_candidate and spec.benchmark_suite == suite:
+            cache_path = (
+                spec.model_cache_path(probe_dir)
+                if (unit_dir is not None and spec.persist_model and spec.train_grid is not None)
+                else None
+            )
             out.append(
                 BenchmarkModelSpec(
                     name=spec.benchmark_label or spec.name,
                     model=spec.model,
                     train_grid=spec.train_grid,
                     source_experiment=unit.slug,
+                    cache_path=cache_path,
                 )
             )
     return out
@@ -109,8 +117,8 @@ class BenchmarkSuite(abc.ABC):
     def get_model_specs(self) -> list[BenchmarkModelSpec]:
         """Return ordered list of :class:`BenchmarkModelSpec` entries to benchmark."""
 
-    def run(self) -> dict[str, object]:
-        """Fit unfitted models, evaluate all workloads once, and write 3-view artifacts."""
+    def run(self, force_retrain: bool = False) -> dict[str, object]:
+        """Fit or load synced models, evaluate all workloads once, and write 3-view artifacts."""
         t0 = time.perf_counter()
         print(f"=== Starting Benchmark Suite: {self.suite_name} ===")
 
@@ -121,6 +129,12 @@ class BenchmarkSuite(abc.ABC):
         models: list[tuple[str, BaseGridShiftModel]] = []
         provenance: dict[str, str | None] = {}
 
+        def _load_train_arrays(tg: GridId | str) -> tuple[object, object]:
+            if tg not in train_cache:
+                train_cache[tg] = self.grid_manager.get(tg)
+            ds = train_cache[tg]
+            return ds.coords, ds.true_shifts
+
         for spec in specs:
             model = spec.model
             if not model.is_fitted:
@@ -128,13 +142,17 @@ class BenchmarkSuite(abc.ABC):
                     raise ValueError(
                         f"Benchmark model '{spec.name}' is not fitted and has no train_grid."
                     )
-                if spec.train_grid not in train_cache:
-                    train_cache[spec.train_grid] = self.grid_manager.get(spec.train_grid)
-                train_ds = train_cache[spec.train_grid]
-                model.fit(train_ds.coords, train_ds.true_shifts)
-                print(
-                    f"Fitted '{spec.name}' on {train_ds.grid_id.value} "
-                    f"in {model.fit_time_sec:.3f}s"
+                train_grid_str = (
+                    spec.train_grid.value
+                    if isinstance(spec.train_grid, GridId)
+                    else str(spec.train_grid)
+                )
+                model.load_or_fit(
+                    lambda tg=spec.train_grid: _load_train_arrays(tg),  # type: ignore[arg-type, return-value]
+                    cache_path=spec.cache_path,
+                    train_grid=train_grid_str,
+                    force_retrain=force_retrain,
+                    label=spec.name,
                 )
             models.append((spec.name, model))
             provenance[spec.name] = spec.source_experiment

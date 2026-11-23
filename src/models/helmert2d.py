@@ -10,11 +10,30 @@ from typing import Any
 import numpy as np
 
 from pytransdat.proj_stereo import StereoProj
+from pytransdat.spg_reader import SpgReader
 from src.models.base import BaseCoordinateTransformer, BaseGridShiftModel
 
 ARCSEC_PER_RAD: float = 180.0 * 3600.0 / math.pi
 CENTER_N_M: float = 500_000.0
 CENTER_E_M: float = 500_000.0
+
+
+def load_embedded_spg_helmert_params(spg_path: str | None = None) -> Helmert2DParams:
+    """Load the official embedded 4-parameter 2D Helmert constants from an ``.spg`` file.
+
+    :param spg_path: Optional path to ``.spg`` binary grid file.
+    :type spg_path: str | None
+    :return: Embedded :class:`Helmert2DParams` in ``st70 -> os`` convention.
+    :rtype: Helmert2DParams
+    """
+    reader = SpgReader(spg_path) if spg_path is not None else SpgReader()
+    return Helmert2DParams(
+        tn_m=float(reader.helmert_tn),
+        te_m=float(reader.helmert_te),
+        ppm=float(reader.helmert_ppm),
+        rot_rad=float(reader.helmert_rot_rad),
+        rot_arcsec=float(reader.helmert_rot_rad * ARCSEC_PER_RAD),
+    )
 
 
 @dataclass(frozen=True)

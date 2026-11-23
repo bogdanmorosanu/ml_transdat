@@ -67,12 +67,14 @@ Wrapping the winning shift model (`T7_bilinear_plus_featgrid_8x8`) inside `Resid
 
 ---
 
-## 5. Visual Diagnostics (`T7_bilinear_plus_featgrid_8x8`)
+## 5. Visual Diagnostics (Top-5 Track Champions)
 
-- [`plots/T7_bilinear_plus_featgrid_8x8_ro_test_uniform_4x4_grid_shift_2d_spatial_error.png`](plots/T7_bilinear_plus_featgrid_8x8_ro_test_uniform_4x4_grid_shift_2d_spatial_error.png)
-- [`plots/T7_bilinear_plus_featgrid_8x8_ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png`](plots/T7_bilinear_plus_featgrid_8x8_ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png)
-- [`plots/T7_bilinear_plus_featgrid_8x8_ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png`](plots/T7_bilinear_plus_featgrid_8x8_ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png)
-- [`plots/T7_bilinear_plus_featgrid_8x8_ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png`](plots/T7_bilinear_plus_featgrid_8x8_ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png)
+- [`plots/ro_test_uniform_4x4_grid_shift_2d_spatial_error.png`](plots/ro_test_uniform_4x4_grid_shift_2d_spatial_error.png)
+- [`plots/ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png`](plots/ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png)
+- [`plots/ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png`](plots/ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png)
+- [`plots/ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png`](plots/ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png)
+- [`plots/ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png`](plots/ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png)
+- [`plots/ro_corridor_snw_grid_shift_2d_spatial_error.png`](plots/ro_corridor_snw_grid_shift_2d_spatial_error.png)
 
 ---
 

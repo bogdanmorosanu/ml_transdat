@@ -3,7 +3,7 @@
   "slug": "torch_mlp_regressor",
   "experiment_type": "grid_shift",
   "status": "completed",
-  "runtime_s": 384.013,
+  "runtime_s": 19.104,
   "key_metrics": [
     {
       "model": "torch_res_relu_4x4",
@@ -15,10 +15,10 @@
       "p95_2d_mm": 11.101,
       "max_2d_mm": 310.7251,
       "pass_lt_1cm_pct": 92.96,
-      "total_size_mb": 4083.0066,
-      "fit_time_s": 124.9219,
-      "eval_time_s": 0.1777,
-      "throughput_pts_per_s": 206817.1
+      "total_size_mb": 4083.0084,
+      "fit_time_s": 122.8964,
+      "eval_time_s": 0.2303,
+      "throughput_pts_per_s": 159580.5
     },
     {
       "model": "torch_res_relu_4x4",
@@ -30,10 +30,10 @@
       "p95_2d_mm": 54.921,
       "max_2d_mm": 804.9297,
       "pass_lt_1cm_pct": 67.92,
-      "total_size_mb": 4083.0066,
-      "fit_time_s": 124.9219,
-      "eval_time_s": 0.8249,
-      "throughput_pts_per_s": 213793.3
+      "total_size_mb": 4083.0084,
+      "fit_time_s": 122.8964,
+      "eval_time_s": 0.4513,
+      "throughput_pts_per_s": 390776.3
     },
     {
       "model": "torch_res_relu_cellpos_4x4",
@@ -45,10 +45,10 @@
       "p95_2d_mm": 9.6557,
       "max_2d_mm": 294.5994,
       "pass_lt_1cm_pct": 95.55,
-      "total_size_mb": 4084.0648,
-      "fit_time_s": 126.1882,
-      "eval_time_s": 0.1456,
-      "throughput_pts_per_s": 252371.0
+      "total_size_mb": 4083.0123,
+      "fit_time_s": 118.1399,
+      "eval_time_s": 0.1245,
+      "throughput_pts_per_s": 295207.2
     },
     {
       "model": "torch_res_relu_cellpos_4x4",
@@ -60,10 +60,10 @@
       "p95_2d_mm": 59.3884,
       "max_2d_mm": 838.0128,
       "pass_lt_1cm_pct": 71.33,
-      "total_size_mb": 4084.0648,
-      "fit_time_s": 126.1882,
-      "eval_time_s": 0.6999,
-      "throughput_pts_per_s": 251966.0
+      "total_size_mb": 4083.0123,
+      "fit_time_s": 118.1399,
+      "eval_time_s": 0.5538,
+      "throughput_pts_per_s": 318422.2
     },
     {
       "model": "torch_res_relu_cellpos_hermite_slopes_4x4",
@@ -75,10 +75,10 @@
       "p95_2d_mm": 6.3365,
       "max_2d_mm": 411.7822,
       "pass_lt_1cm_pct": 98.63,
-      "total_size_mb": 4084.0965,
-      "fit_time_s": 124.202,
-      "eval_time_s": 0.1797,
-      "throughput_pts_per_s": 204466.5
+      "total_size_mb": 4083.0445,
+      "fit_time_s": 125.2914,
+      "eval_time_s": 0.1897,
+      "throughput_pts_per_s": 193775.6
     },
     {
       "model": "torch_res_relu_cellpos_hermite_slopes_4x4",
@@ -90,10 +90,10 @@
       "p95_2d_mm": 57.5121,
       "max_2d_mm": 939.418,
       "pass_lt_1cm_pct": 76.82,
-      "total_size_mb": 4084.0965,
-      "fit_time_s": 124.202,
-      "eval_time_s": 1.0279,
-      "throughput_pts_per_s": 171557.2
+      "total_size_mb": 4083.0445,
+      "fit_time_s": 125.2914,
+      "eval_time_s": 1.0502,
+      "throughput_pts_per_s": 167926.2
     }
   ],
   "artifacts": {
@@ -102,12 +102,12 @@
     "scorecard_json": "results/scorecard_summary.json",
     "scorecard_md": "results/summary_table.md",
     "plots": [
-      "torch_res_relu_cellpos_4x4_ro_test_uniform_4x4_grid_shift_2d_spatial_error.png",
-      "torch_res_relu_cellpos_4x4_ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png",
-      "torch_res_relu_cellpos_4x4_ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png",
-      "torch_res_relu_cellpos_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png",
-      "torch_res_relu_cellpos_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png",
-      "torch_res_relu_cellpos_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png"
+      "ro_test_uniform_4x4_grid_shift_2d_spatial_error.png",
+      "ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png",
+      "ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png",
+      "ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png",
+      "ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png",
+      "ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png"
     ]
   },
   "benchmark_candidates": [
@@ -140,7 +140,13 @@
         "scale_neighbor_features": true,
         "use_cell_center_distance": false,
         "use_cyclic_cell_pos": true,
-        "use_hermite_weights": false
+        "use_hermite_weights": false,
+        "cyclic_cell_harmonics": 1,
+        "fourier_scales": null,
+        "val_fraction": 0.1,
+        "loss_type": "mse",
+        "lbfgs_steps": 0,
+        "siren_omega_0": 30.0
       },
       "extra": {}
     }

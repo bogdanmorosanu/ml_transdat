@@ -21,7 +21,9 @@ D:\anaconda3\envs\ml_transdat\python.exe -m ruff format --check .
 *(If Ruff is not installed in the environment, skip external linting and inspect manually).*
 
 ### 2. Architectural Boundary Check (`experiments/GEMINI.md`)
-- Verify that `experiments/<slug>/` contains **only** orchestration (`run_unit.py`), reports, and outputs—no reusable model classes, fitting algorithms, samplers, metrics, or visualizers duplicated outside `src/`.
+- Verify that `experiments/<slug>/` contains **only** orchestration (`run_unit.py`), reports, outputs (`results/`, `plots/`), and gitignored `models/`—no reusable model classes, fitting algorithms, samplers, metrics, or visualizers duplicated outside `src/`.
+- Verify every `experiments/<slug>/run_unit.py` subclasses `GridShiftExperimentUnit`, `TransformationExperimentUnit`, or `AnalysisExperimentUnit`, and `after_run()` never re-runs `.predict()` on datasets already in `results`.
+- Verify `plots/` uses unified 1-row-per-model figures (`{dataset_id}_{direction}_{plot_type}.png`) with zero legacy per-model diagnostic PNGs.
 - Verify that all Python code follows [`.agents/rules/python-style.md`](../../rules/python-style.md) (type annotations, reST docstrings, no bare `except:`).
 
 ### 3. File Path & Invariant Safeguards

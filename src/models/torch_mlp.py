@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import logging
 from collections.abc import Callable
 from pathlib import Path
@@ -10,8 +11,9 @@ from typing import Any
 import numpy as np
 import torch
 from torch import nn
-from torch.utils.data import DataLoader, TensorDataset
 
+from src.geometry.cell_uv import compute_spg_cell_uv, encode_cyclic_cell_uv
+from src.models._torch_trainer import train_torch_regressor
 from src.models.base import BaseGridShiftModel
 
 logger = logging.getLogger(__name__)
@@ -254,15 +256,7 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
 
     def _compute_cell_uv(self, coords: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Return normalized intra-cell (u, v) in [0, 1) for Northing and Easting."""
-        self._ensure_neighbor_extractor()
-        ext = self._neighbor_extractor
-        n_arr = np.asarray(coords[:, 0], dtype=np.float64)
-        e_arr = np.asarray(coords[:, 1], dtype=np.float64)
-        r_idx = np.floor((n_arr - ext._origin_n) / ext.step_n)
-        c_idx = np.floor((e_arr - ext._origin_e) / ext.step_e)
-        u = (n_arr - (ext._origin_n + r_idx * ext.step_n)) / ext.step_n
-        v = (e_arr - (ext._origin_e + c_idx * ext.step_e)) / ext.step_e
-        return u, v
+        return compute_spg_cell_uv(coords)
 
     def _compute_hermite_weights(self, coords: np.ndarray) -> np.ndarray:
         """Compute 2D cubic Hermite basis weights aligned with selected neighbor columns."""
@@ -364,26 +358,17 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
             x_spatial = np.concatenate([x_spatial, center_dists], axis=1)
 
         if self.use_cyclic_cell_pos:
-            u, v = self._compute_cell_uv(coords)
-            cyclic_cols: list[np.ndarray] = []
-            for k in range(1, self.cyclic_cell_harmonics + 1):
-                ang_u = 2.0 * np.pi * k * u
-                ang_v = 2.0 * np.pi * k * v
-                cyclic_cols.extend(
-                    [np.sin(ang_u), np.cos(ang_u), np.sin(ang_v), np.cos(ang_v)]
-                )
-            if self.cyclic_cell_harmonics > 1:
-                su, cu = np.sin(2.0 * np.pi * u), np.cos(2.0 * np.pi * u)
-                sv, cv = np.sin(2.0 * np.pi * v), np.cos(2.0 * np.pi * v)
-                cyclic_cols.extend([su * sv, su * cv, cu * sv, cu * cv])
-            cyclic_pos = np.column_stack(cyclic_cols)
+            cyclic_pos = encode_cyclic_cell_uv(
+                coords,
+                harmonics=self.cyclic_cell_harmonics,
+                include_cross_terms=self.cyclic_cell_harmonics > 1,
+            )
             x_spatial = np.concatenate([x_spatial, cyclic_pos], axis=1)
 
         return x_spatial
 
     def _fit_impl(self, coords: np.ndarray, shifts: np.ndarray) -> None:
         """Train the deep PyTorch residual network on (coords, shifts)."""
-        # Set seeds
         torch.manual_seed(self.random_state)
         np.random.seed(self.random_state)
         if torch.cuda.is_available():
@@ -431,135 +416,39 @@ class TorchMLPGridShiftModel(BaseGridShiftModel):
             siren_omega_0=self.siren_omega_0,
         ).to(self.device)
 
-        # Train/validation split (or 100% grid fit when val_fraction <= 0)
-        n_samples = len(x_feats)
-        if self.val_fraction > 0.0 and n_samples >= 10:
-            perm = np.random.RandomState(self.random_state).permutation(n_samples)
-            val_size = max(int(self.val_fraction * n_samples), 1)
-            val_idx = perm[:val_size]
-            train_idx = perm[val_size:]
-            val_x = torch.from_numpy(x_feats[val_idx]).to(self.device)
-            val_y = torch.from_numpy(y_targets[val_idx]).to(self.device)
-        else:
-            train_idx = np.arange(n_samples)
-            val_x = None
-            val_y = None
-
-        train_x_np = x_feats[train_idx]
-        train_y_np = y_targets[train_idx]
-        train_dataset = TensorDataset(
-            torch.from_numpy(train_x_np),
-            torch.from_numpy(train_y_np),
-        )
-
-        loader = DataLoader(
-            train_dataset,
+        train_torch_regressor(
+            net=self.net,
+            forward_fn=self.net,
+            inputs=(x_feats,),
+            targets=y_targets,
             batch_size=self.batch_size,
-            shuffle=True,
-            drop_last=False,
-        )
-
-        optimizer = torch.optim.AdamW(
-            self.net.parameters(),
             lr=self.lr,
             weight_decay=self.weight_decay,
+            max_epochs=self.max_epochs,
+            patience=self.patience,
+            lr_scheduler=self.lr_scheduler,
+            val_fraction=self.val_fraction,
+            loss_type=self.loss_type,
+            lbfgs_steps=self.lbfgs_steps,
+            lbfgs_history_size=50,
+            device=self.device,
+            random_state=self.random_state,
         )
 
-        if self.lr_scheduler == "cosine":
-            scheduler: Any = torch.optim.lr_scheduler.CosineAnnealingLR(
-                optimizer, T_max=self.max_epochs, eta_min=1e-6
-            )
-        else:
-            scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-                optimizer, mode="min", factor=0.5, patience=5, min_lr=1e-6
-            )
+    def __getstate__(self) -> dict[str, Any]:
+        state = self.__dict__.copy()
+        state["_neighbor_extractor"] = None
+        if self.net is not None:
+            state["net"] = copy.deepcopy(self.net).cpu()
+        return state
 
-        if self.loss_type == "mse":
-            criterion: Any = nn.MSELoss()
-        elif self.loss_type == "huber":
-            criterion = nn.SmoothL1Loss(beta=0.005)
-        elif self.loss_type == "charbonnier":
-            criterion = lambda p, y: torch.mean(torch.sqrt((p - y) ** 2 + 1e-8) - 1e-4)
-        else:
-            raise ValueError(f"Unsupported loss_type '{self.loss_type}'.")
-
-        best_val_loss = float("inf")
-        best_state = None
-        no_improve_epochs = 0
-
-        for epoch in range(1, self.max_epochs + 1):
-            self.net.train()
-            epoch_loss = 0.0
-            n_batches = 0
-            for bx, by in loader:
-                bx, by = bx.to(self.device), by.to(self.device)
-                optimizer.zero_grad()
-                pred = self.net(bx)
-                loss = criterion(pred, by)
-                loss.backward()
-                optimizer.step()
-                epoch_loss += float(loss.item())
-                n_batches += 1
-
-            # Validation pass (or training epoch loss when val_fraction <= 0)
-            if val_x is not None and val_y is not None:
-                self.net.eval()
-                with torch.no_grad():
-                    val_pred = self.net(val_x)
-                    val_loss = float(criterion(val_pred, val_y).item())
-            else:
-                val_loss = epoch_loss / max(n_batches, 1)
-
-            if self.lr_scheduler == "cosine":
-                scheduler.step()
-            else:
-                scheduler.step(val_loss)
-
-            if val_loss < best_val_loss:
-                best_val_loss = val_loss
-                best_state = {k: v.cpu().clone() for k, v in self.net.state_dict().items()}
-                no_improve_epochs = 0
-            else:
-                no_improve_epochs += 1
-
-            if no_improve_epochs >= self.patience:
-                break
-
-        # Load best weights
-        if best_state is not None:
-            self.net.load_state_dict({k: v.to(self.device) for k, v in best_state.items()})
-
-        if self.lbfgs_steps > 0:
-            full_x = torch.from_numpy(train_x_np).to(self.device)
-            full_y = torch.from_numpy(train_y_np).to(self.device)
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        if self.device.startswith("cuda") and not torch.cuda.is_available():
+            self.device = "cpu"
+        if self.net is not None:
+            self.net = self.net.to(self.device)
             self.net.eval()
-            with torch.no_grad():
-                pre_loss = float(criterion(self.net(full_x), full_y).item())
-            pre_state = {k: v.cpu().clone() for k, v in self.net.state_dict().items()}
-            lbfgs = torch.optim.LBFGS(
-                self.net.parameters(),
-                lr=0.5,
-                max_iter=self.lbfgs_steps,
-                history_size=50,
-                line_search_fn="strong_wolfe",
-            )
-            self.net.train()
-
-            def _lbfgs_closure() -> torch.Tensor:
-                lbfgs.zero_grad()
-                out = self.net(full_x)
-                l_val = criterion(out, full_y)
-                l_val.backward()
-                return l_val
-
-            lbfgs.step(_lbfgs_closure)
-            self.net.eval()
-            with torch.no_grad():
-                post_loss = float(criterion(self.net(full_x), full_y).item())
-            if not np.isfinite(post_loss) or post_loss > pre_loss:
-                self.net.load_state_dict({k: v.to(self.device) for k, v in pre_state.items()})
-
-        self.net.eval()
 
     def _predict_impl(self, coords: np.ndarray) -> np.ndarray:
         """Predict shift_n and shift_e for given query coordinates."""

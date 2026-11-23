@@ -44,7 +44,7 @@ Combined magnitude $\sqrt{dN^2 + dE^2}$ showing the peak distortion zones:
 
 | Distribution (Hist & ECDF) | Signed Scatter ($dE$ vs $dN$) |
 |:---:|:---:|
-| ![Hist ECDF](plots/spg_grid_shifts_2d_bicubic_hist_ecdf.png) | ![Signed Scatter](plots/spg_grid_shifts_2d_bicubic_signed_scatter.png) |
+| ![Hist ECDF](plots/ro_grid_4x4_2d_bicubic_hist_ecdf.png) | ![Signed Scatter](plots/ro_grid_4x4_2d_bicubic_signed_scatter.png) |
 
 ---
 

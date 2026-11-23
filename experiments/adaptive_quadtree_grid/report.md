@@ -19,7 +19,7 @@ Generate compact, per-component ($\Delta N$, $\Delta E$) adaptive Quadtree grids
 ## 3. Visual Diagnostics & Artifacts
 - [`plots/tier_comparison.png`](plots/tier_comparison.png): Comparative log-scale error across all 4 tiers.
 - [`plots/quadtree_100km_tolerances.png`](plots/quadtree_100km_tolerances.png): Disaggregation visual on 100 km block.
-- [`plots/quadtree_1mm_ro_corridor_snw_grid_shift_2d_spatial_error.png`](plots/quadtree_1mm_ro_corridor_snw_grid_shift_2d_spatial_error.png) & [`plots/quadtree_1mm_ro_corridor_snw_grid_shift_2d_hist_ecdf.png`](plots/quadtree_1mm_ro_corridor_snw_grid_shift_2d_hist_ecdf.png).
+- [`plots/ro_corridor_snw_grid_shift_2d_spatial_error.png`](plots/ro_corridor_snw_grid_shift_2d_spatial_error.png) & [`plots/ro_corridor_snw_grid_shift_2d_hist_ecdf.png`](plots/ro_corridor_snw_grid_shift_2d_hist_ecdf.png): Unified 4-tier row-by-row diagnostic comparison (`2cm`, `1cm`, `3mm`, `1mm`).
 - Adaptive Parquet Grids: [`data/grids/adaptive/`](../../data/grids/adaptive/) (`2cm`, `1cm`, `3mm`, `1mm`).
 - Scorecards: [`results/scorecard.csv`](results/scorecard.csv), [`results/summary_table.md`](results/summary_table.md).
 

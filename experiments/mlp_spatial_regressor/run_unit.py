@@ -58,7 +58,7 @@ class MLPSpatialRegressorUnit(GridShiftExperimentUnit):
                     GridId.RO_TEST_UNIFORM_4X4,
                     GridId.RO_TEST_ADAPTIVE_3MM_MID,
                 ],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
             ),
             # 3. Fourier Feature MLP trained on 4x4 Densified Subgrid (~36.4k pts, 2.7 km)
@@ -82,7 +82,7 @@ class MLPSpatialRegressorUnit(GridShiftExperimentUnit):
                     GridId.RO_TEST_UNIFORM_4X4,
                     GridId.RO_TEST_ADAPTIVE_3MM_MID,
                 ],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
                 benchmark_candidate=True,
                 benchmark_suite="grid_shift_models",

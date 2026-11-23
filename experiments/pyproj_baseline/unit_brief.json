@@ -3,7 +3,7 @@
   "slug": "pyproj_baseline",
   "experiment_type": "transformation",
   "status": "completed",
-  "runtime_s": 4.64,
+  "runtime_s": 3.85,
   "key_metrics": [
     {
       "model": "pyproj_epsg3844",
@@ -17,8 +17,8 @@
       "pass_lt_1cm_pct": 0.09,
       "total_size_mb": 8.9287,
       "fit_time_s": 0.0,
-      "eval_time_s": 0.015,
-      "throughput_pts_per_s": 2425458.8
+      "eval_time_s": 0.0133,
+      "throughput_pts_per_s": 2730051.9
     },
     {
       "model": "pyproj_epsg3844",
@@ -32,8 +32,8 @@
       "pass_lt_1cm_pct": 0.09,
       "total_size_mb": 8.9287,
       "fit_time_s": 0.0,
-      "eval_time_s": 0.0302,
-      "throughput_pts_per_s": 1204506.6
+      "eval_time_s": 0.0265,
+      "throughput_pts_per_s": 1372574.9
     }
   ],
   "artifacts": {
@@ -42,14 +42,14 @@
     "scorecard_json": "results/scorecard_summary.json",
     "scorecard_md": "results/summary_table.md",
     "plots": [
-      "pyproj_epsg3844_ro_grid_4x4_etrs89_to_st70_spatial_error.png",
-      "pyproj_epsg3844_ro_grid_4x4_etrs89_to_st70_hist_ecdf.png",
-      "pyproj_epsg3844_ro_grid_4x4_etrs89_to_st70_signed_scatter.png",
-      "pyproj_epsg3844_ro_grid_4x4_etrs89_to_st70_subcell_heatmap.png",
-      "pyproj_epsg3844_ro_grid_4x4_st70_to_etrs89_spatial_error.png",
-      "pyproj_epsg3844_ro_grid_4x4_st70_to_etrs89_hist_ecdf.png",
-      "pyproj_epsg3844_ro_grid_4x4_st70_to_etrs89_signed_scatter.png",
-      "pyproj_epsg3844_ro_grid_4x4_st70_to_etrs89_subcell_heatmap.png"
+      "ro_grid_4x4_etrs89_to_st70_spatial_error.png",
+      "ro_grid_4x4_etrs89_to_st70_hist_ecdf.png",
+      "ro_grid_4x4_etrs89_to_st70_signed_scatter.png",
+      "ro_grid_4x4_etrs89_to_st70_subcell_heatmap.png",
+      "ro_grid_4x4_st70_to_etrs89_spatial_error.png",
+      "ro_grid_4x4_st70_to_etrs89_hist_ecdf.png",
+      "ro_grid_4x4_st70_to_etrs89_signed_scatter.png",
+      "ro_grid_4x4_st70_to_etrs89_subcell_heatmap.png"
     ]
   },
   "benchmark_candidates": [],

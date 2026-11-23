@@ -25,52 +25,52 @@ Precision evaluated on `ro_corridor_snw` (36,435 points). Compares validated cha
 
 | Model | Evaluation Time (s) | Throughput (pts/s) | Latency (µs/pt) | Fit Time (s) |
 | :--- | :---: | :---: | :---: | :---: |
-| KNN (K=4 IDW, 11km) | 0.0519 | 702,486.0 | 1.4235 | 0.0176 |
-| KNN (K=16 IDW, 11km) | 0.0732 | 497,430.6 | 2.0103 | 0.0010 |
-| Decision Tree (11km) | 0.0027 | 13,331,503.8 | 0.0750 | 0.0085 |
-| Decision Tree (8x8, pruned 1e-8) | 0.0033 | 11,031,215.0 | 0.0907 | 0.1914 |
-| Adaptive Quadtree (3mm tier) | 0.0144 | 2,524,510.7 | 0.3961 | 0.2403 |
-| Adaptive Quadtree (1mm tier) | 0.0208 | 1,750,908.3 | 0.5711 | 0.8741 |
-| Fourier MLP (4x4, 2.7km) | 0.1304 | 279,312.7 | 3.5802 | 101.1036 |
-| Thin Plate Spline (11km) | 1.4363 | 25,366.7 | 39.4218 | 1.2652 |
-| Thin Plate Spline (4x4, 2.7km) | 2.2785 | 15,990.6 | 62.5367 | 0.0232 |
-| PyTorch ResNet + Cyclic CellPos (4x4) | 0.2483 | 146,756.6 | 6.8140 | 126.0570 |
-| PyTorch ResNet + Cyclic CellPos (Adaptive Hybrid) | 0.2219 | 164,199.1 | 6.0902 | 340.2506 |
-| Bilinear + Neural Feature Grid (8x8) | 0.0250 | 1,458,718.7 | 0.6855 | 294.5727 |
+| KNN (K=4 IDW, 11km) | 0.0371 | 981,623.0 | 1.0187 | 0.0011 |
+| KNN (K=16 IDW, 11km) | 0.0775 | 470,249.8 | 2.1265 | 0.0011 |
+| Decision Tree (11km) | 0.0046 | 7,958,715.6 | 0.1256 | 0.0078 |
+| Decision Tree (8x8, pruned 1e-8) | 0.0027 | 13,668,592.5 | 0.0732 | 0.1999 |
+| Adaptive Quadtree (3mm tier) | 0.0133 | 2,745,480.7 | 0.3642 | 0.3625 |
+| Adaptive Quadtree (1mm tier) | 0.0176 | 2,064,446.3 | 0.4844 | 1.1004 |
+| Fourier MLP (4x4, 2.7km) | 0.1824 | 199,739.4 | 5.0065 | 103.2459 |
+| Thin Plate Spline (11km) | 1.9109 | 19,066.7 | 52.4475 | 1.2529 |
+| Thin Plate Spline (4x4, 2.7km) | 3.2135 | 11,338.1 | 88.1984 | 0.0086 |
+| PyTorch ResNet + Cyclic CellPos (4x4) | 0.3975 | 91,665.0 | 10.9093 | 118.1399 |
+| PyTorch ResNet + Cyclic CellPos (Adaptive Hybrid) | 0.2831 | 128,698.9 | 7.7701 | 343.2767 |
+| Bilinear + Neural Feature Grid (8x8) | 0.0371 | 981,073.2 | 1.0193 | 310.9969 |
 
 ### Workload: `uniform_4x4` (`ro_grid_4x4`, 36,435 pts)
 
 | Model | Evaluation Time (s) | Throughput (pts/s) | Latency (µs/pt) | Fit Time (s) |
 | :--- | :---: | :---: | :---: | :---: |
-| KNN (K=4 IDW, 11km) | 0.0408 | 892,714.9 | 1.1202 | 0.0176 |
-| KNN (K=16 IDW, 11km) | 0.0822 | 443,445.6 | 2.2551 | 0.0010 |
-| Decision Tree (11km) | 0.0025 | 14,303,941.6 | 0.0699 | 0.0085 |
-| Decision Tree (8x8, pruned 1e-8) | 0.0036 | 10,109,881.0 | 0.0989 | 0.1914 |
-| Adaptive Quadtree (3mm tier) | 0.0173 | 2,108,262.9 | 0.4768 | 0.2403 |
-| Adaptive Quadtree (1mm tier) | 0.0210 | 1,733,093.6 | 0.5801 | 0.8741 |
-| Fourier MLP (4x4, 2.7km) | 0.1477 | 246,630.2 | 4.0547 | 101.1036 |
-| Thin Plate Spline (11km) | 1.4995 | 24,298.2 | 41.1554 | 1.2652 |
-| Thin Plate Spline (4x4, 2.7km) | 2.6934 | 13,527.5 | 73.9234 | 0.0232 |
-| PyTorch ResNet + Cyclic CellPos (4x4) | 0.2275 | 160,177.9 | 6.2431 | 126.0570 |
-| PyTorch ResNet + Cyclic CellPos (Adaptive Hybrid) | 0.2314 | 157,458.5 | 6.3509 | 340.2506 |
-| Bilinear + Neural Feature Grid (8x8) | 0.0112 | 3,243,452.6 | 0.3083 | 294.5727 |
+| KNN (K=4 IDW, 11km) | 0.0705 | 517,141.5 | 1.9337 | 0.0011 |
+| KNN (K=16 IDW, 11km) | 0.1138 | 320,123.4 | 3.1238 | 0.0011 |
+| Decision Tree (11km) | 0.0028 | 13,124,527.2 | 0.0762 | 0.0078 |
+| Decision Tree (8x8, pruned 1e-8) | 0.0039 | 9,419,596.7 | 0.1062 | 0.1999 |
+| Adaptive Quadtree (3mm tier) | 0.0293 | 1,241,820.0 | 0.8095 | 0.3625 |
+| Adaptive Quadtree (1mm tier) | 0.0208 | 1,752,921.5 | 0.5735 | 1.1004 |
+| Fourier MLP (4x4, 2.7km) | 0.1607 | 226,724.6 | 4.4106 | 103.2459 |
+| Thin Plate Spline (11km) | 1.8442 | 19,756.2 | 50.6170 | 1.2529 |
+| Thin Plate Spline (4x4, 2.7km) | 3.6233 | 10,055.7 | 99.4465 | 0.0086 |
+| PyTorch ResNet + Cyclic CellPos (4x4) | 0.2423 | 150,365.2 | 6.6505 | 118.1399 |
+| PyTorch ResNet + Cyclic CellPos (Adaptive Hybrid) | 0.2778 | 131,136.3 | 7.6257 | 343.2767 |
+| Bilinear + Neural Feature Grid (8x8) | 0.0118 | 3,088,025.9 | 0.3238 | 310.9969 |
 
 ### Workload: `single_cell_10k` (`single_cell_10k`, 10,000 pts)
 
 | Model | Evaluation Time (s) | Throughput (pts/s) | Latency (µs/pt) | Fit Time (s) |
 | :--- | :---: | :---: | :---: | :---: |
-| KNN (K=4 IDW, 11km) | 0.0204 | 489,524.2 | 2.0428 | 0.0176 |
-| KNN (K=16 IDW, 11km) | 0.0348 | 287,188.0 | 3.4820 | 0.0010 |
-| Decision Tree (11km) | 0.0009 | 11,621,150.4 | 0.0861 | 0.0085 |
-| Decision Tree (8x8, pruned 1e-8) | 0.0007 | 14,645,577.3 | 0.0683 | 0.1914 |
-| Adaptive Quadtree (3mm tier) | 0.0042 | 2,400,441.7 | 0.4166 | 0.2403 |
-| Adaptive Quadtree (1mm tier) | 0.0045 | 2,199,010.4 | 0.4547 | 0.8741 |
-| Fourier MLP (4x4, 2.7km) | 0.0324 | 308,562.9 | 3.2408 | 101.1036 |
-| Thin Plate Spline (11km) | 0.3879 | 25,781.6 | 38.7874 | 1.2652 |
-| Thin Plate Spline (4x4, 2.7km) | 0.2166 | 46,163.8 | 21.6620 | 0.0232 |
-| PyTorch ResNet + Cyclic CellPos (4x4) | 0.0448 | 223,396.3 | 4.4764 | 126.0570 |
-| PyTorch ResNet + Cyclic CellPos (Adaptive Hybrid) | 0.0436 | 229,215.3 | 4.3627 | 340.2506 |
-| Bilinear + Neural Feature Grid (8x8) | 0.0038 | 2,613,286.0 | 0.3827 | 294.5727 |
+| KNN (K=4 IDW, 11km) | 0.0227 | 441,027.9 | 2.2674 | 0.0011 |
+| KNN (K=16 IDW, 11km) | 0.0404 | 247,578.1 | 4.0391 | 0.0011 |
+| Decision Tree (11km) | 0.0007 | 14,291,839.3 | 0.0700 | 0.0078 |
+| Decision Tree (8x8, pruned 1e-8) | 0.0007 | 14,210,601.0 | 0.0704 | 0.1999 |
+| Adaptive Quadtree (3mm tier) | 0.0043 | 2,312,620.0 | 0.4324 | 0.3625 |
+| Adaptive Quadtree (1mm tier) | 0.0047 | 2,121,745.8 | 0.4713 | 1.1004 |
+| Fourier MLP (4x4, 2.7km) | 0.0407 | 245,423.5 | 4.0746 | 103.2459 |
+| Thin Plate Spline (11km) | 0.5060 | 19,761.0 | 50.6047 | 1.2529 |
+| Thin Plate Spline (4x4, 2.7km) | 0.2576 | 38,816.1 | 25.7625 | 0.0086 |
+| PyTorch ResNet + Cyclic CellPos (4x4) | 0.0283 | 353,739.4 | 2.8269 | 118.1399 |
+| PyTorch ResNet + Cyclic CellPos (Adaptive Hybrid) | 0.0293 | 341,218.9 | 2.9307 | 343.2767 |
+| Bilinear + Neural Feature Grid (8x8) | 0.0031 | 3,179,852.4 | 0.3145 | 310.9969 |
 
 ## 3. Storage & Memory Breakdown (4 Components)
 
@@ -82,15 +82,15 @@ Components:
 
 | Model | Code Size (bytes) | Dependencies Size (bytes) | Model Weights/Instance Size (bytes) | Grid Lookup Size (bytes) | Total Footprint (MB) |
 | :--- | :---: | :---: | :---: | :---: | :---: |
-| KNN (K=4 IDW, 11km) | 3,075 | 41,029,584 | 30,809 | 86,048 | 39.2432 |
-| KNN (K=16 IDW, 11km) | 3,075 | 41,029,584 | 30,811 | 86,048 | 39.2432 |
-| Decision Tree (11km) | 4,184 | 41,029,584 | 431,362 | 0 | 39.5442 |
-| Decision Tree (8x8, pruned 1e-8) | 4,184 | 41,029,584 | 2,948,962 | 0 | 41.9452 |
+| KNN (K=4 IDW, 11km) | 3,075 | 41,029,584 | 30,843 | 86,048 | 39.2433 |
+| KNN (K=16 IDW, 11km) | 3,075 | 41,029,584 | 30,845 | 86,048 | 39.2433 |
+| Decision Tree (11km) | 4,184 | 41,029,584 | 431,452 | 0 | 39.5443 |
+| Decision Tree (8x8, pruned 1e-8) | 4,184 | 41,029,584 | 2,949,052 | 0 | 41.9453 |
 | Adaptive Quadtree (3mm tier) | 12,444 | 0 | 9,040 | 24,148,512 | 23.0503 |
 | Adaptive Quadtree (1mm tier) | 12,444 | 0 | 9,814 | 78,529,320 | 74.9126 |
-| Fourier MLP (4x4, 2.7km) | 12,550 | 73,428,937 | 2,148,272 | 0 | 72.0880 |
+| Fourier MLP (4x4, 2.7km) | 12,746 | 73,428,937 | 2,148,306 | 0 | 72.0882 |
 | Thin Plate Spline (11km) | 8,477 | 123,489,234 | 151,553 | 0 | 117.9211 |
 | Thin Plate Spline (4x4, 2.7km) | 8,477 | 123,489,234 | 3,032,295 | 0 | 120.6684 |
-| PyTorch ResNet + Cyclic CellPos (4x4) | 24,277 | 4,280,113,426 | 2,321,218 | 0 | 4084.0711 |
-| PyTorch ResNet + Cyclic CellPos (Adaptive Hybrid) | 24,277 | 4,280,113,426 | 2,321,218 | 0 | 4084.0711 |
-| Bilinear + Neural Feature Grid (8x8) | 4,956 | 4,280,113,426 | 29,127 | 663,648 | 4082.4997 |
+| PyTorch ResNet + Cyclic CellPos (4x4) | 19,652 | 4,280,113,426 | 1,215,638 | 0 | 4083.0123 |
+| PyTorch ResNet + Cyclic CellPos (Adaptive Hybrid) | 19,652 | 4,280,113,426 | 1,215,638 | 0 | 4083.0123 |
+| Bilinear + Neural Feature Grid (8x8) | 5,089 | 4,280,113,426 | 29,441 | 663,648 | 4082.5001 |

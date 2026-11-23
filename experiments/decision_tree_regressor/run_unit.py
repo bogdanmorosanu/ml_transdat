@@ -39,21 +39,21 @@ class DecisionTreeSpatialRegressorUnit(GridShiftExperimentUnit):
                 model=DecisionTreeSpatialRegressor(),
                 train_grid=GridId.RO_GRID_4X4,
                 eval_grids=[GridId.RO_GRID_8X8, GridId.CORRIDOR_SNW],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
             ),
             ExperimentModelSpec(
                 name="dt_8x8_1375m",
                 model=DecisionTreeSpatialRegressor(),
                 train_grid=GridId.RO_GRID_8X8,
                 eval_grids=[GridId.CORRIDOR_SNW],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
             ),
             ExperimentModelSpec(
                 name="dt_8x8_pruned_1e-8",
                 model=DecisionTreeSpatialRegressor(min_impurity_decrease=1e-8),
                 train_grid=GridId.RO_GRID_8X8,
                 eval_grids=[GridId.CORRIDOR_SNW],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 benchmark_candidate=True,
                 benchmark_suite="grid_shift_models",
                 benchmark_label="Decision Tree (8x8, pruned 1e-8)",
@@ -63,7 +63,7 @@ class DecisionTreeSpatialRegressorUnit(GridShiftExperimentUnit):
                 model=DecisionTreeSpatialRegressor(),
                 train_grid=GridId.RO_GRID_16X16,
                 eval_grids=[GridId.CORRIDOR_SNW],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
             ),
         ]
 

@@ -40,7 +40,8 @@ experiments/<slug>/
 ├── report.md            # [Human Walkthrough] Narrative, objectives, results tables, embedded figures, and Benchmark Candidates
 ├── unit_brief.json      # [Machine JSON] Standardized Schema v2 scorecard, artifacts, and benchmark_candidates
 ├── results/             # [Outputs] Metric JSON summaries, evaluations, scorecards
-├── plots/               # [Outputs] Saved visual figures (spatial maps, distributions, quivers)
+├── plots/               # [Outputs] Unified 1-row-per-model figures ({dataset}_{direction}_{type}.png) + custom plots
+├── models/              # [Gitignored] Fingerprint-synced fitted model checkpoints (<spec_name>.pkl)
 └── data/                # [Optional] Unit-specific intermediate splits (shared datasets go to data/features/)
 ```
 

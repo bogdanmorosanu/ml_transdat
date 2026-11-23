@@ -3,7 +3,7 @@
   "slug": "knn_spatial_regressor",
   "experiment_type": "grid_shift",
   "status": "completed",
-  "runtime_s": 24.155,
+  "runtime_s": 19.867,
   "key_metrics": [
     {
       "model": "k1_uniform",
@@ -16,9 +16,9 @@
       "max_2d_mm": 1037.0099,
       "pass_lt_1cm_pct": 9.12,
       "total_size_mb": 39.2432,
-      "fit_time_s": 0.002,
-      "eval_time_s": 0.032,
-      "throughput_pts_per_s": 1139402.0
+      "fit_time_s": 0.0013,
+      "eval_time_s": 0.0405,
+      "throughput_pts_per_s": 898812.9
     },
     {
       "model": "k4_uniform",
@@ -31,9 +31,9 @@
       "max_2d_mm": 819.2702,
       "pass_lt_1cm_pct": 5.97,
       "total_size_mb": 39.2432,
-      "fit_time_s": 0.0019,
-      "eval_time_s": 0.0446,
-      "throughput_pts_per_s": 816443.1
+      "fit_time_s": 0.0016,
+      "eval_time_s": 0.0428,
+      "throughput_pts_per_s": 851768.6
     },
     {
       "model": "k4_distance",
@@ -46,9 +46,9 @@
       "max_2d_mm": 478.2879,
       "pass_lt_1cm_pct": 19.3,
       "total_size_mb": 39.2432,
-      "fit_time_s": 0.0013,
-      "eval_time_s": 0.0438,
-      "throughput_pts_per_s": 832107.7
+      "fit_time_s": 0.0011,
+      "eval_time_s": 0.0391,
+      "throughput_pts_per_s": 931191.3
     },
     {
       "model": "k4_distance",
@@ -61,9 +61,9 @@
       "max_2d_mm": 497.2055,
       "pass_lt_1cm_pct": 16.25,
       "total_size_mb": 39.2432,
-      "fit_time_s": 0.0013,
-      "eval_time_s": 0.1706,
-      "throughput_pts_per_s": 857065.2
+      "fit_time_s": 0.0011,
+      "eval_time_s": 0.1616,
+      "throughput_pts_per_s": 904919.6
     },
     {
       "model": "k8_uniform",
@@ -76,9 +76,9 @@
       "max_2d_mm": 855.0636,
       "pass_lt_1cm_pct": 2.28,
       "total_size_mb": 39.2432,
-      "fit_time_s": 0.0016,
-      "eval_time_s": 0.0617,
-      "throughput_pts_per_s": 590516.7
+      "fit_time_s": 0.001,
+      "eval_time_s": 0.0555,
+      "throughput_pts_per_s": 656201.5
     },
     {
       "model": "k8_distance",
@@ -91,9 +91,9 @@
       "max_2d_mm": 675.7796,
       "pass_lt_1cm_pct": 10.39,
       "total_size_mb": 39.2432,
-      "fit_time_s": 0.0014,
-      "eval_time_s": 0.0598,
-      "throughput_pts_per_s": 609491.9
+      "fit_time_s": 0.0011,
+      "eval_time_s": 0.0546,
+      "throughput_pts_per_s": 666993.7
     },
     {
       "model": "k16_uniform",
@@ -106,9 +106,9 @@
       "max_2d_mm": 978.5233,
       "pass_lt_1cm_pct": 1.17,
       "total_size_mb": 39.2432,
-      "fit_time_s": 0.0013,
-      "eval_time_s": 0.1095,
-      "throughput_pts_per_s": 332670.2
+      "fit_time_s": 0.0011,
+      "eval_time_s": 0.0878,
+      "throughput_pts_per_s": 414924.8
     },
     {
       "model": "k16_distance",
@@ -121,9 +121,9 @@
       "max_2d_mm": 809.6589,
       "pass_lt_1cm_pct": 8.07,
       "total_size_mb": 39.2432,
-      "fit_time_s": 0.0021,
-      "eval_time_s": 0.1656,
-      "throughput_pts_per_s": 220042.3
+      "fit_time_s": 0.0011,
+      "eval_time_s": 0.0854,
+      "throughput_pts_per_s": 426728.8
     }
   ],
   "artifacts": {
@@ -132,40 +132,16 @@
     "scorecard_json": "results/scorecard_summary.json",
     "scorecard_md": "results/summary_table.md",
     "plots": [
-      "k1_uniform_ro_grid_4x4_grid_shift_2d_spatial_error.png",
-      "k1_uniform_ro_grid_4x4_grid_shift_2d_hist_ecdf.png",
-      "k1_uniform_ro_grid_4x4_grid_shift_2d_signed_scatter.png",
-      "k1_uniform_ro_grid_4x4_grid_shift_2d_subcell_heatmap.png",
-      "k4_uniform_ro_grid_4x4_grid_shift_2d_spatial_error.png",
-      "k4_uniform_ro_grid_4x4_grid_shift_2d_hist_ecdf.png",
-      "k4_uniform_ro_grid_4x4_grid_shift_2d_signed_scatter.png",
-      "k4_uniform_ro_grid_4x4_grid_shift_2d_subcell_heatmap.png",
-      "k4_distance_ro_grid_4x4_grid_shift_2d_spatial_error.png",
-      "k4_distance_ro_grid_4x4_grid_shift_2d_hist_ecdf.png",
-      "k4_distance_ro_grid_4x4_grid_shift_2d_signed_scatter.png",
-      "k4_distance_ro_grid_4x4_grid_shift_2d_subcell_heatmap.png",
-      "k4_distance_ro_grid_4x4_grid_shift_2d_vector_quiver.png",
-      "k4_distance_ro_grid_8x8_grid_shift_2d_spatial_error.png",
-      "k4_distance_ro_grid_8x8_grid_shift_2d_hist_ecdf.png",
-      "k4_distance_ro_grid_8x8_grid_shift_2d_signed_scatter.png",
-      "k4_distance_ro_grid_8x8_grid_shift_2d_subcell_heatmap.png",
-      "k4_distance_ro_grid_8x8_grid_shift_2d_vector_quiver.png",
-      "k8_uniform_ro_grid_4x4_grid_shift_2d_spatial_error.png",
-      "k8_uniform_ro_grid_4x4_grid_shift_2d_hist_ecdf.png",
-      "k8_uniform_ro_grid_4x4_grid_shift_2d_signed_scatter.png",
-      "k8_uniform_ro_grid_4x4_grid_shift_2d_subcell_heatmap.png",
-      "k8_distance_ro_grid_4x4_grid_shift_2d_spatial_error.png",
-      "k8_distance_ro_grid_4x4_grid_shift_2d_hist_ecdf.png",
-      "k8_distance_ro_grid_4x4_grid_shift_2d_signed_scatter.png",
-      "k8_distance_ro_grid_4x4_grid_shift_2d_subcell_heatmap.png",
-      "k16_uniform_ro_grid_4x4_grid_shift_2d_spatial_error.png",
-      "k16_uniform_ro_grid_4x4_grid_shift_2d_hist_ecdf.png",
-      "k16_uniform_ro_grid_4x4_grid_shift_2d_signed_scatter.png",
-      "k16_uniform_ro_grid_4x4_grid_shift_2d_subcell_heatmap.png",
-      "k16_distance_ro_grid_4x4_grid_shift_2d_spatial_error.png",
-      "k16_distance_ro_grid_4x4_grid_shift_2d_hist_ecdf.png",
-      "k16_distance_ro_grid_4x4_grid_shift_2d_signed_scatter.png",
-      "k16_distance_ro_grid_4x4_grid_shift_2d_subcell_heatmap.png",
+      "ro_grid_4x4_grid_shift_2d_spatial_error.png",
+      "ro_grid_4x4_grid_shift_2d_hist_ecdf.png",
+      "ro_grid_4x4_grid_shift_2d_signed_scatter.png",
+      "ro_grid_4x4_grid_shift_2d_subcell_heatmap.png",
+      "ro_grid_4x4_grid_shift_2d_vector_quiver.png",
+      "ro_grid_8x8_grid_shift_2d_spatial_error.png",
+      "ro_grid_8x8_grid_shift_2d_hist_ecdf.png",
+      "ro_grid_8x8_grid_shift_2d_signed_scatter.png",
+      "ro_grid_8x8_grid_shift_2d_subcell_heatmap.png",
+      "ro_grid_8x8_grid_shift_2d_vector_quiver.png",
       "cell_transect_66km.png"
     ]
   },

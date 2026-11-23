@@ -22,6 +22,7 @@ from src.models.helmert2d import (
     Helmert2DParams,
     TwoStepHelmert2DTransformer,
     fit_helmert2d,
+    load_embedded_spg_helmert_params,
 )
 from src.models.hist_gbr import HistGBRGridShiftModel
 from src.models.knn_regressor import KNNSpatialRegressor
@@ -59,4 +60,5 @@ __all__ = [
     "TorchMLPNet",
     "TwoStepHelmert2DTransformer",
     "fit_helmert2d",
+    "load_embedded_spg_helmert_params",
 ]

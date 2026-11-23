@@ -3,7 +3,7 @@
   "slug": "helmert2d_baseline",
   "experiment_type": "transformation",
   "status": "completed",
-  "runtime_s": 9.702,
+  "runtime_s": 8.091,
   "key_metrics": [
     {
       "model": "embedded_helmert2d",
@@ -15,10 +15,10 @@
       "p95_2d_mm": 878.3886,
       "max_2d_mm": 2757.0167,
       "pass_lt_1cm_pct": 0.09,
-      "total_size_mb": 0.0094,
+      "total_size_mb": 0.0101,
       "fit_time_s": 0.0,
-      "eval_time_s": 0.0706,
-      "throughput_pts_per_s": 516412.2
+      "eval_time_s": 0.0571,
+      "throughput_pts_per_s": 638208.4
     },
     {
       "model": "embedded_helmert2d",
@@ -30,10 +30,10 @@
       "p95_2d_mm": 878.2273,
       "max_2d_mm": 2755.2645,
       "pass_lt_1cm_pct": 0.09,
-      "total_size_mb": 0.0094,
+      "total_size_mb": 0.0101,
       "fit_time_s": 0.0,
-      "eval_time_s": 0.1479,
-      "throughput_pts_per_s": 246270.0
+      "eval_time_s": 0.1241,
+      "throughput_pts_per_s": 293596.0
     },
     {
       "model": "fitted_helmert2d",
@@ -45,10 +45,10 @@
       "p95_2d_mm": 851.4809,
       "max_2d_mm": 2681.0636,
       "pass_lt_1cm_pct": 0.09,
-      "total_size_mb": 0.0094,
+      "total_size_mb": 0.0101,
       "fit_time_s": 0.0,
-      "eval_time_s": 0.05,
-      "throughput_pts_per_s": 728201.9
+      "eval_time_s": 0.0453,
+      "throughput_pts_per_s": 805104.4
     },
     {
       "model": "fitted_helmert2d",
@@ -60,10 +60,10 @@
       "p95_2d_mm": 851.3646,
       "max_2d_mm": 2679.3589,
       "pass_lt_1cm_pct": 0.09,
-      "total_size_mb": 0.0094,
+      "total_size_mb": 0.0101,
       "fit_time_s": 0.0,
-      "eval_time_s": 0.4807,
-      "throughput_pts_per_s": 75801.2
+      "eval_time_s": 0.1014,
+      "throughput_pts_per_s": 359152.3
     }
   ],
   "artifacts": {
@@ -71,16 +71,15 @@
     "scorecard_csv": "results/scorecard.csv",
     "scorecard_json": "results/scorecard_summary.json",
     "scorecard_md": "results/summary_table.md",
-    "params_json": "results/helmert2d_params.json",
     "plots": [
-      "fitted_helmert2d_ro_grid_4x4_etrs89_to_st70_spatial_error.png",
-      "fitted_helmert2d_ro_grid_4x4_etrs89_to_st70_hist_ecdf.png",
-      "fitted_helmert2d_ro_grid_4x4_etrs89_to_st70_signed_scatter.png",
-      "fitted_helmert2d_ro_grid_4x4_etrs89_to_st70_subcell_heatmap.png",
-      "fitted_helmert2d_ro_grid_4x4_st70_to_etrs89_spatial_error.png",
-      "fitted_helmert2d_ro_grid_4x4_st70_to_etrs89_hist_ecdf.png",
-      "fitted_helmert2d_ro_grid_4x4_st70_to_etrs89_signed_scatter.png",
-      "fitted_helmert2d_ro_grid_4x4_st70_to_etrs89_subcell_heatmap.png"
+      "ro_grid_4x4_etrs89_to_st70_spatial_error.png",
+      "ro_grid_4x4_etrs89_to_st70_hist_ecdf.png",
+      "ro_grid_4x4_etrs89_to_st70_signed_scatter.png",
+      "ro_grid_4x4_etrs89_to_st70_subcell_heatmap.png",
+      "ro_grid_4x4_st70_to_etrs89_spatial_error.png",
+      "ro_grid_4x4_st70_to_etrs89_hist_ecdf.png",
+      "ro_grid_4x4_st70_to_etrs89_signed_scatter.png",
+      "ro_grid_4x4_st70_to_etrs89_subcell_heatmap.png"
     ]
   },
   "benchmark_candidates": [],

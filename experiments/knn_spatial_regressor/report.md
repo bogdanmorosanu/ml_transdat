@@ -53,9 +53,9 @@ This unit evaluates the **K-Nearest Neighbors (KNN)** family for learning the 2D
 ### 2x3 Spatial Comparison Matrix (Uniform vs. Distance for K=4, 8, 16)
 ![Comparison Matrix](plots/comparison_spatial_matrix.png)
 
-### Spatial Error Heatmaps (K=4 Distance vs. K=1 Voronoi)
-![K=4 Distance Error Map](plots/error_map_k4_distance.png)
-![K=1 Voronoi Error Map](plots/error_map_k1_uniform.png)
+### Unified Multi-Model Spatial Error Map (`ro_grid_4x4` & `ro_grid_8x8`)
+![Spatial Error Comparison](plots/ro_grid_4x4_grid_shift_2d_spatial_error.png)
+![8x8 Spatial Error](plots/ro_grid_8x8_grid_shift_2d_spatial_error.png)
 
 ---
 

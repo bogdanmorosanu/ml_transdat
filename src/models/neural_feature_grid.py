@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+import copy
+from typing import Any
+
 import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import nn
-from torch.utils.data import DataLoader, TensorDataset
 
-from pytransdat.spg_reader import SpgReader
+from src.geometry.cell_uv import encode_cyclic_cell_uv, get_spg_grid_bounds
+from src.models._torch_trainer import train_torch_regressor
 from src.models.base import BaseGridShiftModel
 
 
@@ -116,14 +119,13 @@ class NeuralFeatureGridShiftModel(BaseGridShiftModel):
         self.net: _FeatureGridMLPNet | None = None
 
     def _init_bounds(self) -> None:
-        reader = SpgReader(self.spg_path) if self.spg_path is not None else SpgReader()
-        min_e, max_e, min_n, max_n, step_e, step_n = reader.shift_bounds
-        self._min_n = float(min_n)
-        self._max_n = float(max_n)
-        self._min_e = float(min_e)
-        self._max_e = float(max_e)
-        self._step_n = float(step_n)
-        self._step_e = float(step_e)
+        min_e, max_e, min_n, max_n, step_e, step_n = get_spg_grid_bounds(self.spg_path)
+        self._min_n = min_n
+        self._max_n = max_n
+        self._min_e = min_e
+        self._max_e = max_e
+        self._step_n = step_n
+        self._step_e = step_e
 
     def _encode_inputs(self, coords: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """Return ``(grid_coords [-1, 1] as (e, n), aux_feats)`` in float32."""
@@ -134,27 +136,11 @@ class NeuralFeatureGridShiftModel(BaseGridShiftModel):
         # grid_sample expects (x=Easting, y=Northing) in [-1, 1]
         grid_coords = np.column_stack([e_norm, n_norm]).astype(np.float32)
 
-        r_idx = np.floor((n_arr - self._min_n) / self._step_n)
-        c_idx = np.floor((e_arr - self._min_e) / self._step_e)
-        u = (n_arr - (self._min_n + r_idx * self._step_n)) / self._step_n
-        v = (e_arr - (self._min_e + c_idx * self._step_e)) / self._step_e
-
-        aux_cols: list[np.ndarray] = [n_norm, e_norm]
-        for k in range(1, self.cyclic_cell_harmonics + 1):
-            ang_u = 2.0 * np.pi * k * u
-            ang_v = 2.0 * np.pi * k * v
-            aux_cols.extend([np.sin(ang_u), np.cos(ang_u), np.sin(ang_v), np.cos(ang_v)])
-        aux_feats = np.column_stack(aux_cols).astype(np.float32)
+        cyclic = encode_cyclic_cell_uv(
+            coords, harmonics=self.cyclic_cell_harmonics, spg_path=self.spg_path
+        )
+        aux_feats = np.column_stack([n_norm, e_norm, cyclic]).astype(np.float32)
         return grid_coords, aux_feats
-
-    def _build_criterion(self):
-        if self.loss_type == "mse":
-            return nn.MSELoss()
-        if self.loss_type == "huber":
-            return nn.SmoothL1Loss(beta=0.005)
-        if self.loss_type == "charbonnier":
-            return lambda p, y: torch.mean(torch.sqrt((p - y) ** 2 + 1e-8) - 1e-4)
-        raise ValueError(f"Unsupported loss_type '{self.loss_type}'.")
 
     def _fit_impl(self, coords: np.ndarray, shifts: np.ndarray) -> None:
         torch.manual_seed(self.random_state)
@@ -173,111 +159,38 @@ class NeuralFeatureGridShiftModel(BaseGridShiftModel):
             hidden_dim=self.hidden_dim,
         ).to(self.device)
 
-        n_samples = len(grid_coords)
-        if self.val_fraction > 0.0 and n_samples >= 10:
-            perm = np.random.RandomState(self.random_state).permutation(n_samples)
-            val_size = max(int(self.val_fraction * n_samples), 1)
-            val_idx = perm[:val_size]
-            train_idx = perm[val_size:]
-        else:
-            train_idx = np.arange(n_samples)
-            val_idx = None
-
-        train_gc = torch.from_numpy(grid_coords[train_idx])
-        train_aux = torch.from_numpy(aux_feats[train_idx])
-        train_y = torch.from_numpy(targets[train_idx])
-        loader = DataLoader(
-            TensorDataset(train_gc, train_aux, train_y),
+        train_torch_regressor(
+            net=self.net,
+            forward_fn=self.net,
+            inputs=(grid_coords, aux_feats),
+            targets=targets,
             batch_size=self.batch_size,
-            shuffle=True,
+            lr=self.lr,
+            weight_decay=self.weight_decay,
+            max_epochs=self.max_epochs,
+            patience=self.patience,
+            lr_scheduler="cosine",
+            val_fraction=self.val_fraction,
+            loss_type=self.loss_type,
+            lbfgs_steps=self.lbfgs_steps,
+            lbfgs_history_size=30,
+            device=self.device,
+            random_state=self.random_state,
         )
 
-        if val_idx is not None:
-            val_gc_t = torch.from_numpy(grid_coords[val_idx]).to(self.device)
-            val_aux_t = torch.from_numpy(aux_feats[val_idx]).to(self.device)
-            val_y_t = torch.from_numpy(targets[val_idx]).to(self.device)
+    def __getstate__(self) -> dict[str, Any]:
+        state = self.__dict__.copy()
+        if self.net is not None:
+            state["net"] = copy.deepcopy(self.net).cpu()
+        return state
 
-        optimizer = torch.optim.AdamW(
-            self.net.parameters(), lr=self.lr, weight_decay=self.weight_decay
-        )
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-            optimizer, T_max=max(self.max_epochs, 1), eta_min=1e-6
-        )
-        criterion = self._build_criterion()
-
-        best_loss = float("inf")
-        best_state: dict[str, torch.Tensor] | None = None
-        no_improve = 0
-
-        for _ in range(self.max_epochs):
-            self.net.train()
-            epoch_loss = 0.0
-            n_batches = 0
-            for bgc, baux, by in loader:
-                bgc = bgc.to(self.device)
-                baux = baux.to(self.device)
-                by = by.to(self.device)
-                optimizer.zero_grad()
-                pred = self.net(bgc, baux)
-                loss = criterion(pred, by)
-                loss.backward()
-                optimizer.step()
-                epoch_loss += float(loss.item())
-                n_batches += 1
-            scheduler.step()
-
-            if val_idx is not None:
-                self.net.eval()
-                with torch.no_grad():
-                    mon_loss = float(criterion(self.net(val_gc_t, val_aux_t), val_y_t).item())
-            else:
-                mon_loss = epoch_loss / max(n_batches, 1)
-
-            if mon_loss < best_loss:
-                best_loss = mon_loss
-                best_state = {k: v.cpu().clone() for k, v in self.net.state_dict().items()}
-                no_improve = 0
-            else:
-                no_improve += 1
-
-            if no_improve >= self.patience:
-                break
-
-        if best_state is not None:
-            self.net.load_state_dict({k: v.to(self.device) for k, v in best_state.items()})
-
-        if self.lbfgs_steps > 0:
-            full_gc = train_gc.to(self.device)
-            full_aux = train_aux.to(self.device)
-            full_y = train_y.to(self.device)
+    def __setstate__(self, state: dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        if self.device.startswith("cuda") and not torch.cuda.is_available():
+            self.device = "cpu"
+        if self.net is not None:
+            self.net = self.net.to(self.device)
             self.net.eval()
-            with torch.no_grad():
-                pre_loss = float(criterion(self.net(full_gc, full_aux), full_y).item())
-            pre_state = {k: v.cpu().clone() for k, v in self.net.state_dict().items()}
-            lbfgs = torch.optim.LBFGS(
-                self.net.parameters(),
-                lr=0.5,
-                max_iter=self.lbfgs_steps,
-                history_size=30,
-                line_search_fn="strong_wolfe",
-            )
-            self.net.train()
-
-            def _closure() -> torch.Tensor:
-                lbfgs.zero_grad()
-                out = self.net(full_gc, full_aux)
-                l_val = criterion(out, full_y)
-                l_val.backward()
-                return l_val
-
-            lbfgs.step(_closure)
-            self.net.eval()
-            with torch.no_grad():
-                post_loss = float(criterion(self.net(full_gc, full_aux), full_y).item())
-            if not np.isfinite(post_loss) or post_loss > pre_loss:
-                self.net.load_state_dict({k: v.to(self.device) for k, v in pre_state.items()})
-
-        self.net.eval()
 
     def _predict_impl(self, coords: np.ndarray) -> np.ndarray:
         if self.net is None:

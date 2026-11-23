@@ -153,16 +153,14 @@ def plot_point_distribution(
     return out_path
 
 
-def plot_spatial_error(
+def _draw_spatial_error_ax(
+    fig: plt.Figure,
+    ax: plt.Axes,
     err_df: pd.DataFrame,
     summary: dict[str, Any],
-    out_path: Path,
-    model_name: str,
-    direction: str,
-    dpi: int = 200,
-) -> Path:
-    """Plot borderless square heatmap of 2D horizontal errors across Romania."""
-    fig, ax = plt.subplots(figsize=(10, 7.5))
+    title: str,
+) -> None:
+    """Paint a single 2D spatial error heatmap onto ``ax``."""
     e_km = err_df["st70_e"].to_numpy(dtype=np.float64) * 1e-3
     n_km = err_df["st70_n"].to_numpy(dtype=np.float64) * 1e-3
     err = err_df["err_2d_m"].to_numpy(dtype=np.float64)
@@ -192,16 +190,11 @@ def plot_spatial_error(
     ax.set_aspect("equal", adjustable="box")
     ax.set_xlabel("Stereo 70 Easting (km)")
     ax.set_ylabel("Stereo 70 Northing (km)")
-    ax.set_title(f"{model_name} ({direction}) — Spatial 2D Error Map")
+    ax.set_title(title)
     ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.4)
-    fig.tight_layout()
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=dpi)
-    plt.close(fig)
-    return out_path
 
 
-def plot_hist_ecdf(
+def plot_spatial_error(
     err_df: pd.DataFrame,
     summary: dict[str, Any],
     out_path: Path,
@@ -209,8 +202,55 @@ def plot_hist_ecdf(
     direction: str,
     dpi: int = 200,
 ) -> Path:
-    """Plot dual-panel Histogram and Empirical Cumulative Distribution Function (ECDF)."""
-    fig, (ax_hist, ax_ecdf) = plt.subplots(1, 2, figsize=(13, 5))
+    """Plot borderless square heatmap of 2D horizontal errors across Romania."""
+    fig, ax = plt.subplots(figsize=(10, 7.5))
+    _draw_spatial_error_ax(
+        fig, ax, err_df, summary, f"{model_name} ({direction}) — Spatial 2D Error Map"
+    )
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi)
+    plt.close(fig)
+    return out_path
+
+
+def plot_spatial_error_rows(
+    results: Sequence[EvaluationResult],
+    out_path: Path,
+    dpi: int = 200,
+) -> Path:
+    """Plot a stacked 1-row-per-model figure of spatial 2D error maps."""
+    if not results:
+        raise ValueError("results must contain at least one EvaluationResult.")
+    n_models = len(results)
+    fig, axes = plt.subplots(
+        n_models, 1, figsize=(10.0, 6.2 * n_models), squeeze=False
+    )
+    for idx, res in enumerate(results):
+        s = res.summary
+        title = (
+            f"{res.model_name} ({res.direction} on {res.dataset_id}) — "
+            f"Mean={s['mean_2d_m'] * 1000.0:.2f} mm | "
+            f"RMSE={s['rmse_2d_m'] * 1000.0:.2f} mm | "
+            f"P95={s['p95_2d_m'] * 1000.0:.2f} mm | "
+            f"Max={s['max_2d_m'] * 1000.0:.2f} mm"
+        )
+        _draw_spatial_error_ax(fig, axes[idx, 0], res.err_df, s, title)
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi)
+    plt.close(fig)
+    return out_path
+
+
+def _draw_hist_ecdf_axes(
+    ax_hist: plt.Axes,
+    ax_ecdf: plt.Axes,
+    err_df: pd.DataFrame,
+    summary: dict[str, Any],
+    row_label: str | None = None,
+) -> None:
+    """Paint Histogram and ECDF panels onto ``(ax_hist, ax_ecdf)``."""
     err = np.sort(err_df["err_2d_m"].to_numpy(dtype=np.float64))
     ecdf = np.arange(1, len(err) + 1) / len(err) * 100.0
 
@@ -227,9 +267,10 @@ def plot_hist_ecdf(
             val, color=color, linestyle=ls, linewidth=1.6, label=f"{label}={val:.4f} m"
         )
 
+    prefix = f"{row_label} — " if row_label else ""
     ax_hist.set_xlabel("2D Horizontal Error (m)")
     ax_hist.set_ylabel("Point Count")
-    ax_hist.set_title("Error Distribution (Histogram)")
+    ax_hist.set_title(f"{prefix}Error Distribution (Histogram)")
     ax_hist.legend(framealpha=0.9)
     ax_hist.grid(True, linestyle="--", linewidth=0.5, alpha=0.4)
 
@@ -241,10 +282,22 @@ def plot_hist_ecdf(
     ax_ecdf.set_xlabel("2D Horizontal Error (m)")
     ax_ecdf.set_ylabel("Cumulative % of Points")
     ax_ecdf.set_ylim(0.0, 101.0)
-    ax_ecdf.set_title("Cumulative Error Distribution (ECDF)")
+    ax_ecdf.set_title(f"{prefix}Cumulative Error Distribution (ECDF)")
     ax_ecdf.legend(loc="lower right", framealpha=0.9)
     ax_ecdf.grid(True, linestyle="--", linewidth=0.5, alpha=0.4)
 
+
+def plot_hist_ecdf(
+    err_df: pd.DataFrame,
+    summary: dict[str, Any],
+    out_path: Path,
+    model_name: str,
+    direction: str,
+    dpi: int = 200,
+) -> Path:
+    """Plot dual-panel Histogram and Empirical Cumulative Distribution Function (ECDF)."""
+    fig, (ax_hist, ax_ecdf) = plt.subplots(1, 2, figsize=(13, 5))
+    _draw_hist_ecdf_axes(ax_hist, ax_ecdf, err_df, summary)
     fig.suptitle(f"{model_name} ({direction}) — Error Distribution", fontsize=12)
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -253,16 +306,42 @@ def plot_hist_ecdf(
     return out_path
 
 
-def plot_signed_scatter(
-    err_df: pd.DataFrame,
-    summary: dict[str, Any],
+def plot_hist_ecdf_rows(
+    results: Sequence[EvaluationResult],
     out_path: Path,
-    model_name: str,
-    direction: str,
     dpi: int = 200,
 ) -> Path:
-    """Plot 2D signed residual scatter (dE vs dN) with bias and tolerance circles."""
-    fig, ax = plt.subplots(figsize=(7.5, 7.5))
+    """Plot an ``N x 2`` stacked figure of Histogram + ECDF with 1 row per model."""
+    if not results:
+        raise ValueError("results must contain at least one EvaluationResult.")
+    n_models = len(results)
+    fig, axes = plt.subplots(
+        n_models, 2, figsize=(13.0, 4.3 * n_models), squeeze=False
+    )
+    for idx, res in enumerate(results):
+        _draw_hist_ecdf_axes(
+            axes[idx, 0],
+            axes[idx, 1],
+            res.err_df,
+            res.summary,
+            row_label=f"{res.model_name} ({res.direction})",
+        )
+    ds_id = results[0].dataset_id
+    fig.suptitle(f"Error Distribution Comparison ({ds_id})", fontsize=12.5, fontweight="bold")
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi)
+    plt.close(fig)
+    return out_path
+
+
+def _draw_signed_scatter_ax(
+    ax: plt.Axes,
+    err_df: pd.DataFrame,
+    summary: dict[str, Any],
+    title: str,
+) -> None:
+    """Paint a 2D signed residual scatter onto ``ax``."""
     ee = err_df["err_e_m"].to_numpy(dtype=np.float64)
     en = err_df["err_n_m"].to_numpy(dtype=np.float64)
 
@@ -300,9 +379,24 @@ def plot_signed_scatter(
     ax.set_aspect("equal", adjustable="box")
     ax.set_xlabel("Signed Easting Error dE (m)")
     ax.set_ylabel("Signed Northing Error dN (m)")
-    ax.set_title(f"{model_name} ({direction}) — Signed Error Vector Scatter")
+    ax.set_title(title)
     ax.legend(loc="upper right", framealpha=0.9)
     ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.4)
+
+
+def plot_signed_scatter(
+    err_df: pd.DataFrame,
+    summary: dict[str, Any],
+    out_path: Path,
+    model_name: str,
+    direction: str,
+    dpi: int = 200,
+) -> Path:
+    """Plot 2D signed residual scatter (dE vs dN) with bias and tolerance circles."""
+    fig, ax = plt.subplots(figsize=(7.5, 7.5))
+    _draw_signed_scatter_ax(
+        ax, err_df, summary, f"{model_name} ({direction}) — Signed Error Vector Scatter"
+    )
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=dpi)
@@ -310,27 +404,52 @@ def plot_signed_scatter(
     return out_path
 
 
-def plot_subcell_heatmap(
-    err_df: pd.DataFrame,
+def plot_signed_scatter_rows(
+    results: Sequence[EvaluationResult],
     out_path: Path,
-    model_name: str,
-    direction: str,
     dpi: int = 200,
-) -> Path | None:
-    """Plot mean and p95 2D error profile across normalized sub-cell (u, v) positions."""
+) -> Path:
+    """Plot a stacked 1-row-per-model figure of signed residual scatters."""
+    if not results:
+        raise ValueError("results must contain at least one EvaluationResult.")
+    n_models = len(results)
+    fig, axes = plt.subplots(
+        n_models, 1, figsize=(7.5, 6.8 * n_models), squeeze=False
+    )
+    for idx, res in enumerate(results):
+        _draw_signed_scatter_ax(
+            axes[idx, 0],
+            res.err_df,
+            res.summary,
+            f"{res.model_name} ({res.direction} on {res.dataset_id}) — Signed Error Scatter",
+        )
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi)
+    plt.close(fig)
+    return out_path
+
+
+def _has_discrete_subcell_uv(err_df: pd.DataFrame) -> tuple[list[float], list[float]] | None:
     if "u" not in err_df.columns or "v" not in err_df.columns:
         return None
-
     u_vals = sorted(err_df["u"].unique())
     v_vals = sorted(err_df["v"].unique())
-
-    # Continuous stratified samples have thousands of distinct float u, v values.
-    # Heatmap requires discrete lattice offsets (e.g., 4x4 or 8x8 subgrid).
     if len(u_vals) > 32 or len(v_vals) > 32:
         return None
+    return u_vals, v_vals
 
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4.8))
 
+def _draw_subcell_heatmap_axes(
+    fig: plt.Figure,
+    ax_mean: plt.Axes,
+    ax_p95: plt.Axes,
+    err_df: pd.DataFrame,
+    u_vals: list[float],
+    v_vals: list[float],
+    row_label: str | None = None,
+) -> None:
+    """Paint Mean and p95 sub-cell (u, v) heatmaps onto ``(ax_mean, ax_p95)``."""
     mean_piv = err_df.pivot_table(
         index="u", columns="v", values="err_2d_m", aggfunc="mean"
     ).reindex(index=u_vals, columns=v_vals)
@@ -341,9 +460,10 @@ def plot_subcell_heatmap(
         aggfunc=lambda s: float(np.percentile(s, 95.0)),
     ).reindex(index=u_vals, columns=v_vals)
 
+    prefix = f"{row_label} — " if row_label else ""
     for ax, piv, title in [
-        (axes[0], mean_piv, "Mean 2D Error (m)"),
-        (axes[1], p95_piv, "p95 2D Error (m)"),
+        (ax_mean, mean_piv, f"{prefix}Mean 2D Error (m)"),
+        (ax_p95, p95_piv, f"{prefix}p95 2D Error (m)"),
     ]:
         data = piv.to_numpy(dtype=np.float64)
         im = ax.imshow(data, origin="lower", cmap="viridis", aspect="equal")
@@ -371,6 +491,21 @@ def plot_subcell_heatmap(
                 )
         fig.colorbar(im, ax=ax, shrink=0.85)
 
+
+def plot_subcell_heatmap(
+    err_df: pd.DataFrame,
+    out_path: Path,
+    model_name: str,
+    direction: str,
+    dpi: int = 200,
+) -> Path | None:
+    """Plot mean and p95 2D error profile across normalized sub-cell (u, v) positions."""
+    uv = _has_discrete_subcell_uv(err_df)
+    if uv is None:
+        return None
+    u_vals, v_vals = uv
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.8))
+    _draw_subcell_heatmap_axes(fig, axes[0], axes[1], err_df, u_vals, v_vals)
     fig.suptitle(
         f"{model_name} ({direction}) — Sub-Cell (u, v) Error Profile", fontsize=12
     )
@@ -381,17 +516,54 @@ def plot_subcell_heatmap(
     return out_path
 
 
-def plot_vector_quiver(
+def plot_subcell_heatmap_rows(
+    results: Sequence[EvaluationResult],
+    out_path: Path,
+    dpi: int = 200,
+) -> Path | None:
+    """Plot an ``N x 2`` stacked figure of Mean + p95 sub-cell heatmaps (1 row per model)."""
+    valid_items: list[tuple[EvaluationResult, list[float], list[float]]] = []
+    for res in results:
+        uv = _has_discrete_subcell_uv(res.err_df)
+        if uv is not None:
+            valid_items.append((res, uv[0], uv[1]))
+    if not valid_items:
+        return None
+
+    n_models = len(valid_items)
+    fig, axes = plt.subplots(
+        n_models, 2, figsize=(11.0, 4.4 * n_models), squeeze=False
+    )
+    for idx, (res, u_vals, v_vals) in enumerate(valid_items):
+        _draw_subcell_heatmap_axes(
+            fig,
+            axes[idx, 0],
+            axes[idx, 1],
+            res.err_df,
+            u_vals,
+            v_vals,
+            row_label=f"{res.model_name} ({res.direction})",
+        )
+    ds_id = valid_items[0][0].dataset_id
+    fig.suptitle(f"Sub-Cell (u, v) Error Profile ({ds_id})", fontsize=12.5, fontweight="bold")
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi)
+    plt.close(fig)
+    return out_path
+
+
+def _draw_vector_quiver_ax(
+    fig: plt.Figure,
+    ax: plt.Axes,
     df: pd.DataFrame,
     de: np.ndarray,
     dn: np.ndarray,
     mag: np.ndarray,
-    out_path: Path,
     title: str,
     stride: int = 2,
-    dpi: int = 200,
-) -> Path:
-    """Plot 2D distortion vector field with direction arrows on thinned grid nodes."""
+) -> None:
+    """Paint a 2D distortion/residual vector quiver onto ``ax``."""
     if "is_node" in df.columns and "row_idx" in df.columns and "col_idx" in df.columns:
         node_mask = (
             df["is_node"]
@@ -406,7 +578,6 @@ def plot_vector_quiver(
     e_km = df["st70_e"].to_numpy(dtype=np.float64) * 1e-3
     n_km = df["st70_n"].to_numpy(dtype=np.float64) * 1e-3
 
-    fig, ax = plt.subplots(figsize=(11, 8))
     ax.scatter(
         e_km,
         n_km,
@@ -442,6 +613,55 @@ def plot_vector_quiver(
     ax.set_ylabel("Stereo 70 Northing (km)")
     ax.set_title(title)
     ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.4)
+
+
+def plot_vector_quiver(
+    df: pd.DataFrame,
+    de: np.ndarray,
+    dn: np.ndarray,
+    mag: np.ndarray,
+    out_path: Path,
+    title: str,
+    stride: int = 2,
+    dpi: int = 200,
+) -> Path:
+    """Plot 2D distortion vector field with direction arrows on thinned grid nodes."""
+    fig, ax = plt.subplots(figsize=(11, 8))
+    _draw_vector_quiver_ax(fig, ax, df, de, dn, mag, title, stride=stride)
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi)
+    plt.close(fig)
+    return out_path
+
+
+def plot_vector_quiver_rows(
+    results: Sequence[EvaluationResult],
+    out_path: Path,
+    stride: int = 2,
+    dpi: int = 200,
+) -> Path:
+    """Plot a stacked 1-row-per-model figure of residual vector quiver maps."""
+    if not results:
+        raise ValueError("results must contain at least one EvaluationResult.")
+    n_models = len(results)
+    fig, axes = plt.subplots(
+        n_models, 1, figsize=(11.0, 7.2 * n_models), squeeze=False
+    )
+    for idx, res in enumerate(results):
+        ee = res.err_df["err_e_m"].to_numpy(dtype=np.float64)
+        en = res.err_df["err_n_m"].to_numpy(dtype=np.float64)
+        mag = res.err_df["err_2d_m"].to_numpy(dtype=np.float64)
+        _draw_vector_quiver_ax(
+            fig,
+            axes[idx, 0],
+            res.err_df,
+            de=ee,
+            dn=en,
+            mag=mag,
+            title=f"{res.model_name} ({res.direction} on {res.dataset_id}) — Residual Quiver",
+            stride=stride,
+        )
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=dpi)
@@ -1071,3 +1291,112 @@ def plot_surface_comparison_grids(
     plt.close(fig_2d)
 
     return out_3d_path, out_2d_path
+
+
+def plot_multi_dataset_comparison(
+    results: Sequence[EvaluationResult],
+    out_path: Path,
+    dataset_labels: Mapping[str, str] | None = None,
+    model_labels: Mapping[str, str] | None = None,
+    metric: MetricType = MetricType.RMSE_2D_M,
+    precision_unit: str = "mm",
+    reference_lines: Sequence[tuple[float, str, str]] | None = None,
+    title: str | None = None,
+    dpi: int = 200,
+) -> Path:
+    """Plot a grouped bar chart comparing models across multiple evaluation datasets without re-inference.
+
+    :param results: Pre-computed :class:`EvaluationResult` objects.
+    :type results: Sequence[EvaluationResult]
+    :param out_path: Output PNG file path.
+    :type out_path: Path
+    :param dataset_labels: Optional mapping ``dataset_id -> display label``.
+    :type dataset_labels: Mapping[str, str] | None
+    :param model_labels: Optional mapping ``model_name -> display label`` (also controls order).
+    :type model_labels: Mapping[str, str] | None
+    :param metric: Scalar metric to compare.
+    :type metric: MetricType
+    :param precision_unit: Display unit for distance metrics (``'m'``, ``'cm'``, ``'mm'``).
+    :type precision_unit: str
+    :param reference_lines: Optional sequence of ``(y_value, label, color)`` horizontal lines.
+    :type reference_lines: Sequence[tuple[float, str, str]] | None
+    :param title: Optional chart title.
+    :type title: str | None
+    :param dpi: Figure DPI.
+    :type dpi: int
+    :return: Saved plot path.
+    :rtype: Path
+    """
+    if not results:
+        raise ValueError("results must contain at least one EvaluationResult.")
+
+    by_model: dict[str, dict[str, EvaluationResult]] = {}
+    ds_order: list[str] = []
+    for r in results:
+        by_model.setdefault(r.model_name, {})[r.dataset_id] = r
+        if r.dataset_id not in ds_order:
+            ds_order.append(r.dataset_id)
+
+    if model_labels is not None:
+        m_keys = [k for k in model_labels if k in by_model]
+        m_names = [model_labels[k] for k in m_keys]
+    else:
+        m_keys = list(by_model.keys())
+        m_names = list(m_keys)
+
+    if dataset_labels is not None:
+        ds_keys = [k for k in dataset_labels if k in ds_order]
+        ds_names = [dataset_labels[k] for k in ds_keys]
+    else:
+        ds_keys = ds_order
+        ds_names = list(ds_keys)
+
+    axis_label, scale = format_metric_label(metric, precision_unit=precision_unit)
+    n_ds = len(ds_keys)
+    x = np.arange(len(m_keys))
+    width = 0.76 / max(1, n_ds)
+    palette = ["#2563eb", "#dc2626", "#059669", "#d97706", "#7c3aed"]
+
+    fig, ax = plt.subplots(figsize=(max(11.0, 1.5 * len(m_keys)), 6.0))
+    for ds_idx, (ds_k, ds_lbl) in enumerate(zip(ds_keys, ds_names, strict=True)):
+        vals = [
+            extract_metric(by_model[mk][ds_k], metric) * scale if ds_k in by_model[mk] else 0.0
+            for mk in m_keys
+        ]
+        offset = (ds_idx - (n_ds - 1) / 2.0) * width
+        rects = ax.bar(
+            x + offset,
+            vals,
+            width,
+            label=ds_lbl,
+            color=palette[ds_idx % len(palette)],
+            alpha=0.88,
+        )
+        for rect in rects:
+            h = rect.get_height()
+            ax.annotate(
+                f"{h:.1f}",
+                xy=(rect.get_x() + rect.get_width() / 2.0, h),
+                xytext=(0, 3),
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+                fontsize=7.5,
+                fontweight="bold",
+            )
+
+    if reference_lines:
+        for y_val, ref_lbl, ref_col in reference_lines:
+            ax.axhline(y_val, color=ref_col, linestyle="--", linewidth=1.5, label=ref_lbl)
+
+    ax.set_ylabel(axis_label, fontsize=11, fontweight="bold")
+    ax.set_title(title or f"Multi-Dataset Comparison ({axis_label})", fontsize=12.5, fontweight="bold")
+    ax.set_xticks(x)
+    ax.set_xticklabels(m_names, rotation=25, ha="right", fontsize=9.5, fontweight="bold")
+    ax.grid(True, linestyle=":", alpha=0.5, axis="y")
+    ax.legend(loc="upper right", framealpha=0.9)
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi)
+    plt.close(fig)
+    return out_path

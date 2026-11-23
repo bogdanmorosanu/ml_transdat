@@ -12,6 +12,7 @@ from src.core.base_unit import (
     GridShiftExperimentUnit,
     ResearchUnit,
     TransformationExperimentUnit,
+    TransformationModelSpec,
     summarize_eval_results,
 )
 
@@ -24,6 +25,7 @@ __all__ = [
     "GridShiftExperimentUnit",
     "ResearchUnit",
     "TransformationExperimentUnit",
+    "TransformationModelSpec",
     "specs_from_unit",
     "summarize_eval_results",
 ]

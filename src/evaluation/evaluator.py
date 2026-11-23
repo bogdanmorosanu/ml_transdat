@@ -247,5 +247,70 @@ class ModelEvaluator:
             eval_time_sec=elapsed,
             throughput_pts_per_sec=throughput,
             model_size_bytes=transformer.memory_footprint_bytes(),
+            fit_time_sec=transformer.fit_time_sec,
             memory_breakdown=transformer.memory_breakdown(),
         )
+
+    def tabulate_delta_vs_baseline(
+        self,
+        results: Sequence[EvaluationResult],
+        baseline_model: str,
+        precision_unit: str = "mm",
+    ) -> pd.DataFrame:
+        """Build an apples-to-apples multi-dataset attribution table vs. a baseline model.
+
+        :param results: Sequence of :class:`EvaluationResult` across models and datasets.
+        :type results: Sequence[EvaluationResult]
+        :param baseline_model: Model name whose RMSE serves as the delta reference.
+        :type baseline_model: str
+        :param precision_unit: Display unit for error metrics (``'m'``, ``'cm'``, or ``'mm'``).
+        :type precision_unit: str
+        :return: DataFrame with per-dataset mean, RMSE, delta-RMSE, ``<1mm`` pass rate, and size.
+        :rtype: pd.DataFrame
+        :raises KeyError: If ``baseline_model`` is missing from ``results``.
+        """
+        unit_scale = {"m": 1.0, "cm": 100.0, "mm": 1000.0}.get(precision_unit.lower())
+        if unit_scale is None:
+            raise ValueError(
+                f"Unsupported precision_unit '{precision_unit}'. Expected 'm', 'cm', or 'mm'."
+            )
+        u_lbl = precision_unit.lower()
+
+        by_model: dict[str, dict[str, EvaluationResult]] = {}
+        dataset_order: list[str] = []
+        for r in results:
+            by_model.setdefault(r.model_name, {})[r.dataset_id] = r
+            if r.dataset_id not in dataset_order:
+                dataset_order.append(r.dataset_id)
+
+        if baseline_model not in by_model:
+            raise KeyError(f"Baseline model '{baseline_model}' not found in results.")
+        b_map = by_model[baseline_model]
+
+        rows: list[dict[str, Any]] = []
+        for m_name, d_map in by_model.items():
+            row: dict[str, Any] = {"model": m_name}
+            first_res: EvaluationResult | None = None
+            for ds_id in dataset_order:
+                if ds_id not in d_map:
+                    continue
+                res = d_map[ds_id]
+                if first_res is None:
+                    first_res = res
+                s = res.summary
+                rmse = float(s["rmse_2d_m"]) * unit_scale
+                mean = float(s["mean_2d_m"]) * unit_scale
+                row[f"{ds_id}_mean_{u_lbl}"] = round(mean, 2)
+                row[f"{ds_id}_rmse_{u_lbl}"] = round(rmse, 2)
+                if ds_id in b_map:
+                    b_rmse = float(b_map[ds_id].summary["rmse_2d_m"]) * unit_scale
+                    row[f"delta_{ds_id}_rmse_{u_lbl}"] = round(rmse - b_rmse, 2)
+                row[f"{ds_id}_lt_1mm_pct"] = round(
+                    float(s.get("pass_rates_pct", {}).get("lt_1mm", 0.0)), 2
+                )
+            if first_res is not None:
+                row["total_size_mb"] = round(
+                    first_res.model_size_bytes / (1024.0 * 1024.0), 3
+                )
+            rows.append(row)
+        return pd.DataFrame(rows)

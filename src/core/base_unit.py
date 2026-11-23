@@ -122,6 +122,7 @@ class ResearchUnit(abc.ABC):
         self.results_dir = self.unit_dir / "results"
         self.plots_dir = self.unit_dir / "plots"
         self.data_dir = self.unit_dir / "data"
+        self.models_dir = self.unit_dir / "models"
 
         self.results_dir.mkdir(parents=True, exist_ok=True)
         self.plots_dir.mkdir(parents=True, exist_ok=True)
@@ -309,6 +310,106 @@ class TransformationExperimentUnit(ResearchUnit):
             transect_models=transect_models,
         )
 
+    def get_transformer_specs(self) -> list[TransformationModelSpec]:
+        """Return ordered list of :class:`TransformationModelSpec` entries (optional)."""
+        raise NotImplementedError(
+            f"{type(self).__name__} must implement get_transformer_specs() or override run()."
+        )
+
+    def after_run(
+        self,
+        transformers: dict[str, BaseCoordinateTransformer],
+        results: list[EvaluationResult],
+    ) -> dict[str, Any]:
+        """Optional hook executed after all transformation specs are evaluated and plotted."""
+        return {}
+
+    def run(self) -> dict[str, Any]:
+        """Execute the declarative transformation experiment lifecycle."""
+        t0 = time.perf_counter()
+        print(f"=== Starting Experiment [{self.experiment_type.value}]: {self.slug} ===")
+
+        specs = self.get_transformer_specs()
+        all_results: list[EvaluationResult] = []
+        plot_items: list[tuple[EvaluationResult, PlotSpec | None]] = []
+        kept_transformers: dict[str, BaseCoordinateTransformer] = {}
+
+        for spec in specs:
+            res_list = self.evaluate_transformer(
+                transformer=spec.transformer,
+                model_name=spec.name,
+                dataset_id=spec.eval_grid,
+                directions=spec.directions,
+                plots=None,
+            )
+            all_results.extend(res_list)
+            for res in res_list:
+                plot_items.append((res, spec.plots))
+            kept_transformers[spec.name] = spec.transformer
+
+        self.save_scorecards(all_results)
+        rendered_paths = self.plotter.render_grouped(plot_items, out_dir=self.plots_dir)
+        extra_brief = self.after_run(kept_transformers, all_results)
+
+        plot_files: list[str] = [p.name for p in rendered_paths]
+        for v in extra_brief.values():
+            if isinstance(v, str) and v.endswith(".png") and v not in plot_files:
+                plot_files.append(v)
+
+        elapsed = time.perf_counter() - t0
+        brief = self.build_brief(
+            runtime_s=elapsed,
+            key_metrics=summarize_eval_results(all_results),
+            artifacts={
+                "scorecard_csv": "results/scorecard.csv",
+                "scorecard_json": "results/scorecard_summary.json",
+                "scorecard_md": "results/summary_table.md",
+                "plots": plot_files,
+            },
+            benchmark_candidates=[
+                s.to_benchmark_candidate_dict()
+                for s in specs
+                if s.benchmark_candidate
+            ],
+            extra=extra_brief,
+        )
+        self.save_brief(brief)
+        print(f"=== Experiment '{self.slug}' Complete in {elapsed:.2f}s ===")
+        return brief
+
+
+@dataclass
+class TransformationModelSpec:
+    """Declarative specification for one transformer in a :class:`TransformationExperimentUnit`."""
+
+    name: str
+    transformer: BaseCoordinateTransformer
+    eval_grid: GridId | str
+    directions: Sequence[str] = ("etrs89_to_st70", "st70_to_etrs89")
+    plots: PlotSpec | None = PlotGroup.STANDARD_DIAGNOSTIC
+    benchmark_candidate: bool = False
+    benchmark_suite: str | None = None
+    benchmark_label: str | None = None
+    extra: dict[str, Any] = field(default_factory=dict)
+
+    def to_benchmark_candidate_dict(self) -> dict[str, Any]:
+        """Serialize benchmark promotion metadata and exact transformer config."""
+        cfg = _extract_model_config(self.transformer)
+        eval_val = (
+            self.eval_grid.value
+            if isinstance(self.eval_grid, GridId)
+            else self.eval_grid
+        )
+        return {
+            "name": self.name,
+            "label": self.benchmark_label or self.name,
+            "suite": self.benchmark_suite,
+            "eval_grid": eval_val,
+            "model_class": cfg["model_class"],
+            "params": cfg["params"],
+            "extra": _to_json_safe(self.extra),
+        }
+
 
 @dataclass
 class ExperimentModelSpec:
@@ -320,10 +421,15 @@ class ExperimentModelSpec:
     train_grid: GridId | str | None = None
     plots: PlotSpec | None = PlotGroup.STANDARD_DIAGNOSTIC
     keep_in_memory: bool = False
+    persist_model: bool = True
     benchmark_candidate: bool = False
     benchmark_suite: str | None = None
     benchmark_label: str | None = None
     extra: dict[str, Any] = field(default_factory=dict)
+
+    def model_cache_path(self, unit_dir: Path) -> Path:
+        """Return canonical checkpoint path ``<unit_dir>/models/<name>.pkl``."""
+        return Path(unit_dir) / "models" / f"{self.name}.pkl"
 
     def to_benchmark_candidate_dict(self) -> dict[str, Any]:
         """Serialize benchmark promotion metadata and exact model config."""
@@ -368,13 +474,14 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
         """Optional hook executed after all specs are trained, evaluated, and saved."""
         return {}
 
-    def run(self) -> dict[str, Any]:
+    def run(self, force_retrain: bool = False) -> dict[str, Any]:
         """Execute the full grid-shift experiment lifecycle automatically."""
         t0 = time.perf_counter()
         print(f"=== Starting Experiment [{self.experiment_type.value}]: {self.slug} ===")
 
         specs = self.get_model_specs()
         all_results: list[EvaluationResult] = []
+        plot_items: list[tuple[EvaluationResult, PlotSpec | None]] = []
         kept_models: dict[str, BaseGridShiftModel] = {}
 
         for spec in specs:
@@ -384,21 +491,41 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
                     raise ValueError(
                         f"Model '{spec.name}' is not fitted and no train_grid was provided."
                     )
-                train_ds = self.load_grid(spec.train_grid)
-                model.fit(train_ds.coords, train_ds.true_shifts)
+                train_grid_str = (
+                    spec.train_grid.value
+                    if isinstance(spec.train_grid, GridId)
+                    else str(spec.train_grid)
+                )
+                cache_path = (
+                    spec.model_cache_path(self.unit_dir)
+                    if spec.persist_model
+                    else None
+                )
+                model.load_or_fit(
+                    lambda tg=spec.train_grid: (
+                        self.load_grid(tg).coords,
+                        self.load_grid(tg).true_shifts,
+                    ),
+                    cache_path=cache_path,
+                    train_grid=train_grid_str,
+                    force_retrain=force_retrain,
+                    label=spec.name,
+                )
                 mb = model.memory_breakdown()
                 print(
-                    f"Fitted {spec.name} on {train_ds.grid_id.value} "
-                    f"in {model.fit_time_sec:.3f}s | total={mb.total_mb:.2f} MB"
+                    f"Ready {spec.name} on {train_grid_str} "
+                    f"(fit_time={model.fit_time_sec:.3f}s | total={mb.total_mb:.2f} MB)"
                 )
 
             res_list = self.evaluate_shift_model(
                 model=model,
                 model_name=spec.name,
                 dataset_ids=spec.eval_grids,
-                plots=spec.plots,
+                plots=None,
             )
             all_results.extend(res_list)
+            for res in res_list:
+                plot_items.append((res, spec.plots))
 
             if spec.keep_in_memory:
                 kept_models[spec.name] = model
@@ -407,13 +534,10 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
                 gc.collect()
 
         self.save_scorecards(all_results)
+        rendered_paths = self.plotter.render_grouped(plot_items, out_dir=self.plots_dir)
         extra_brief = self.after_run(kept_models, all_results)
 
-        plot_files: list[str] = []
-        for r in all_results:
-            for p_name in r.extra.get("plots", {}).values():
-                if p_name not in plot_files:
-                    plot_files.append(p_name)
+        plot_files: list[str] = [p.name for p in rendered_paths]
         for v in extra_brief.values():
             if isinstance(v, str) and v.endswith(".png") and v not in plot_files:
                 plot_files.append(v)

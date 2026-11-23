@@ -29,6 +29,7 @@ Map the candidate(s) using the splitting criteria in `benchmarks/README.md`:
 ### Step 3: Wire Drift-Free Promotion & Execute
 1. In `benchmarks/<suite>/run_benchmark.py` (which subclasses `src.core.BenchmarkSuite`), pull candidates directly via `specs_from_unit(<UnitClass>, suite="<suite>", unit_dir=Path("experiments/<slug>"))`.
    - **Never copy-paste hyperparameters manually** into `run_benchmark.py`.
+   - `specs_from_unit(..., unit_dir=...)` automatically links each candidate to `experiments/<slug>/models/<spec_name>.pkl` and verifies its code+config SHA-256 fingerprint, reusing synced checkpoints or retraining automatically if out of sync.
 2. Run the benchmark suite from workspace root:
    ```powershell
    D:\anaconda3\envs\ml_transdat\python.exe -m benchmarks.<suite>.run_benchmark

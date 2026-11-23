@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 from sklearn.ensemble import HistGradientBoostingRegressor
 
-from pytransdat.spg_reader import SpgReader
+from src.geometry.cell_uv import encode_cyclic_cell_uv
 from src.models.base import BaseGridShiftModel
 
 
@@ -31,42 +31,16 @@ class HistGBRGridShiftModel(BaseGridShiftModel):
         self.random_state = int(random_state)
         self.spg_path = spg_path
 
-        self._min_n: float = 0.0
-        self._min_e: float = 0.0
-        self._step_n: float = 11000.0
-        self._step_e: float = 11000.0
         self._model_dn: HistGradientBoostingRegressor | None = None
         self._model_de: HistGradientBoostingRegressor | None = None
 
     def _build_features(self, coords: np.ndarray) -> np.ndarray:
         if not self.use_cyclic_cell_pos:
             return coords
-        n_arr = coords[:, 0]
-        e_arr = coords[:, 1]
-        r_idx = np.floor((n_arr - self._min_n) / self._step_n)
-        c_idx = np.floor((e_arr - self._min_e) / self._step_e)
-        u = (n_arr - (self._min_n + r_idx * self._step_n)) / self._step_n
-        v = (e_arr - (self._min_e + c_idx * self._step_e)) / self._step_e
-        return np.column_stack(
-            [
-                n_arr,
-                e_arr,
-                np.sin(2.0 * np.pi * u),
-                np.cos(2.0 * np.pi * u),
-                np.sin(2.0 * np.pi * v),
-                np.cos(2.0 * np.pi * v),
-            ]
-        )
+        cyclic = encode_cyclic_cell_uv(coords, harmonics=1, spg_path=self.spg_path)
+        return np.column_stack([coords[:, 0], coords[:, 1], cyclic])
 
     def _fit_impl(self, coords: np.ndarray, shifts: np.ndarray) -> None:
-        if self.use_cyclic_cell_pos:
-            reader = SpgReader(self.spg_path) if self.spg_path is not None else SpgReader()
-            min_e, _, min_n, _, step_e, step_n = reader.shift_bounds
-            self._min_n = float(min_n)
-            self._min_e = float(min_e)
-            self._step_n = float(step_n)
-            self._step_e = float(step_e)
-
         x_feats = self._build_features(coords)
         kwargs = {
             "max_iter": self.max_iter,

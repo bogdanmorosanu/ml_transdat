@@ -3,7 +3,7 @@
   "slug": "mlp_shape_features",
   "experiment_type": "grid_shift",
   "status": "completed",
-  "runtime_s": 533.185,
+  "runtime_s": 546.436,
   "key_metrics": [
     {
       "model": "mlp_fourier_4x4",
@@ -15,10 +15,10 @@
       "p95_2d_mm": 23.1,
       "max_2d_mm": 374.6679,
       "pass_lt_1cm_pct": 57.9,
-      "total_size_mb": 72.0842,
-      "fit_time_s": 105.142,
-      "eval_time_s": 0.1363,
-      "throughput_pts_per_s": 269733.3
+      "total_size_mb": 72.0882,
+      "fit_time_s": 101.3873,
+      "eval_time_s": 0.1199,
+      "throughput_pts_per_s": 306454.1
     },
     {
       "model": "mlp_fourier_4x4",
@@ -30,10 +30,10 @@
       "p95_2d_mm": 54.2919,
       "max_2d_mm": 514.6135,
       "pass_lt_1cm_pct": 40.9,
-      "total_size_mb": 72.0842,
-      "fit_time_s": 105.142,
-      "eval_time_s": 0.659,
-      "throughput_pts_per_s": 267586.5
+      "total_size_mb": 72.0882,
+      "fit_time_s": 101.3873,
+      "eval_time_s": 0.5365,
+      "throughput_pts_per_s": 328704.5
     },
     {
       "model": "mlp_fourier_shape_4x4",
@@ -45,10 +45,10 @@
       "p95_2d_mm": 25.3294,
       "max_2d_mm": 288.4702,
       "pass_lt_1cm_pct": 50.42,
-      "total_size_mb": 73.0074,
-      "fit_time_s": 49.2,
-      "eval_time_s": 0.1576,
-      "throughput_pts_per_s": 233157.9
+      "total_size_mb": 72.1325,
+      "fit_time_s": 47.25,
+      "eval_time_s": 0.1434,
+      "throughput_pts_per_s": 256267.4
     },
     {
       "model": "mlp_fourier_shape_4x4",
@@ -60,10 +60,10 @@
       "p95_2d_mm": 63.4462,
       "max_2d_mm": 615.5171,
       "pass_lt_1cm_pct": 33.83,
-      "total_size_mb": 73.0074,
-      "fit_time_s": 49.2,
-      "eval_time_s": 0.6597,
-      "throughput_pts_per_s": 267299.8
+      "total_size_mb": 72.1325,
+      "fit_time_s": 47.25,
+      "eval_time_s": 0.6237,
+      "throughput_pts_per_s": 282744.2
     },
     {
       "model": "mlp_fourier_shape_3mm_4x4",
@@ -75,10 +75,10 @@
       "p95_2d_mm": 25.5558,
       "max_2d_mm": 189.3428,
       "pass_lt_1cm_pct": 51.25,
-      "total_size_mb": 73.009,
-      "fit_time_s": 83.6811,
-      "eval_time_s": 0.1664,
-      "throughput_pts_per_s": 220888.0
+      "total_size_mb": 72.1338,
+      "fit_time_s": 77.9511,
+      "eval_time_s": 0.239,
+      "throughput_pts_per_s": 153762.9
     },
     {
       "model": "mlp_fourier_shape_3mm_4x4",
@@ -90,10 +90,10 @@
       "p95_2d_mm": 57.4081,
       "max_2d_mm": 501.9204,
       "pass_lt_1cm_pct": 33.93,
-      "total_size_mb": 73.009,
-      "fit_time_s": 83.6811,
-      "eval_time_s": 0.836,
-      "throughput_pts_per_s": 210937.3
+      "total_size_mb": 72.1338,
+      "fit_time_s": 77.9511,
+      "eval_time_s": 0.8674,
+      "throughput_pts_per_s": 203302.2
     },
     {
       "model": "mlp_fourier_shape_10mm_4x4",
@@ -105,10 +105,10 @@
       "p95_2d_mm": 23.7404,
       "max_2d_mm": 174.7436,
       "pass_lt_1cm_pct": 53.31,
-      "total_size_mb": 73.0091,
-      "fit_time_s": 78.8559,
-      "eval_time_s": 0.1447,
-      "throughput_pts_per_s": 253950.9
+      "total_size_mb": 72.1339,
+      "fit_time_s": 83.2074,
+      "eval_time_s": 0.149,
+      "throughput_pts_per_s": 246683.4
     },
     {
       "model": "mlp_fourier_shape_10mm_4x4",
@@ -120,10 +120,10 @@
       "p95_2d_mm": 59.4152,
       "max_2d_mm": 646.0823,
       "pass_lt_1cm_pct": 38.24,
-      "total_size_mb": 73.0091,
-      "fit_time_s": 78.8559,
-      "eval_time_s": 0.739,
-      "throughput_pts_per_s": 238632.6
+      "total_size_mb": 72.1339,
+      "fit_time_s": 83.2074,
+      "eval_time_s": 0.6329,
+      "throughput_pts_per_s": 278653.2
     },
     {
       "model": "mlp_fourier_sweight2_4x4",
@@ -135,10 +135,10 @@
       "p95_2d_mm": 22.4838,
       "max_2d_mm": 179.1347,
       "pass_lt_1cm_pct": 57.5,
-      "total_size_mb": 72.961,
-      "fit_time_s": 79.983,
-      "eval_time_s": 0.1492,
-      "throughput_pts_per_s": 246281.5
+      "total_size_mb": 72.086,
+      "fit_time_s": 83.0947,
+      "eval_time_s": 0.1438,
+      "throughput_pts_per_s": 255575.4
     },
     {
       "model": "mlp_fourier_sweight2_4x4",
@@ -150,10 +150,10 @@
       "p95_2d_mm": 57.6974,
       "max_2d_mm": 486.5522,
       "pass_lt_1cm_pct": 40.26,
-      "total_size_mb": 72.961,
-      "fit_time_s": 79.983,
-      "eval_time_s": 0.6725,
-      "throughput_pts_per_s": 262228.9
+      "total_size_mb": 72.086,
+      "fit_time_s": 83.0947,
+      "eval_time_s": 0.7378,
+      "throughput_pts_per_s": 239015.9
     },
     {
       "model": "mlp_fourier_sweight3_4x4",
@@ -165,10 +165,10 @@
       "p95_2d_mm": 21.8405,
       "max_2d_mm": 221.2544,
       "pass_lt_1cm_pct": 53.97,
-      "total_size_mb": 72.9613,
-      "fit_time_s": 122.3215,
-      "eval_time_s": 0.1244,
-      "throughput_pts_per_s": 295463.5
+      "total_size_mb": 72.0862,
+      "fit_time_s": 123.3511,
+      "eval_time_s": 0.1585,
+      "throughput_pts_per_s": 231807.0
     },
     {
       "model": "mlp_fourier_sweight3_4x4",
@@ -180,10 +180,10 @@
       "p95_2d_mm": 58.2032,
       "max_2d_mm": 485.7737,
       "pass_lt_1cm_pct": 39.09,
-      "total_size_mb": 72.9613,
-      "fit_time_s": 122.3215,
-      "eval_time_s": 0.5962,
-      "throughput_pts_per_s": 295795.5
+      "total_size_mb": 72.0862,
+      "fit_time_s": 123.3511,
+      "eval_time_s": 0.6855,
+      "throughput_pts_per_s": 257269.3
     }
   ],
   "artifacts": {
@@ -192,18 +192,12 @@
     "scorecard_json": "results/scorecard_summary.json",
     "scorecard_md": "results/summary_table.md",
     "plots": [
-      "mlp_fourier_4x4_ro_test_uniform_4x4_grid_shift_2d_spatial_error.png",
-      "mlp_fourier_4x4_ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png",
-      "mlp_fourier_4x4_ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png",
-      "mlp_fourier_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png",
-      "mlp_fourier_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png",
-      "mlp_fourier_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png",
-      "mlp_fourier_shape_4x4_ro_test_uniform_4x4_grid_shift_2d_spatial_error.png",
-      "mlp_fourier_shape_4x4_ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png",
-      "mlp_fourier_shape_4x4_ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png",
-      "mlp_fourier_shape_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png",
-      "mlp_fourier_shape_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png",
-      "mlp_fourier_shape_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png",
+      "ro_test_uniform_4x4_grid_shift_2d_spatial_error.png",
+      "ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png",
+      "ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png",
+      "ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png",
+      "ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png",
+      "ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png",
       "cell_transect_66km_mlp_shape.png"
     ]
   },

@@ -5,19 +5,18 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import numpy as np
-
 from src.core.base_unit import ExperimentModelSpec, GridShiftExperimentUnit
 from src.data import GridId
-from src.evaluation import EvaluationResult
+from src.evaluation import EvaluationResult, MetricType
 from src.models.base import BaseGridShiftModel
 from src.models.polynomial_surface import PolynomialSurfaceRegressor
 from src.models.rbf_surface import RBFSurfaceRegressor
-from src.viz import PlotGroup, plot_surface_comparison_grids, plot_transect_66km
+from src.viz import (
+    PlotGroup,
+    plot_multi_dataset_comparison,
+    plot_surface_comparison_grids,
+    plot_transect_66km,
+)
 
 
 class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
@@ -62,7 +61,7 @@ class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
                     GridId.RO_TEST_UNIFORM_4X4,
                     GridId.RO_TEST_ADAPTIVE_3MM_MID,
                 ],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
                 benchmark_candidate=True,
                 benchmark_suite="grid_shift_models",
@@ -77,7 +76,7 @@ class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
                     GridId.RO_TEST_UNIFORM_4X4,
                     GridId.RO_TEST_ADAPTIVE_3MM_MID,
                 ],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
                 benchmark_candidate=True,
                 benchmark_suite="grid_shift_models",
@@ -92,7 +91,7 @@ class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
                     GridId.RO_TEST_UNIFORM_4X4,
                     GridId.RO_TEST_ADAPTIVE_3MM_MID,
                 ],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
             ),
             # 6. Tuned Gaussian RBF (epsilon = 40.0, lambda = 1e-4)
@@ -170,9 +169,30 @@ class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
         out_plots["surfaces_3d_plot"] = p3d_path.name
         out_plots["heatmaps_2d_plot"] = p2d_path.name
 
-        # 4. Foundation & Kernel Comparison Plot
+        # 4. Foundation & Kernel Comparison Plot (reusing EvaluationResults with zero re-inference)
         comp_path = self.plots_dir / "rbf_foundation_and_smoothing.png"
-        self._plot_foundation_and_smoothing(comp_path, fitted_models)
+        plot_multi_dataset_comparison(
+            results=results,
+            out_path=comp_path,
+            dataset_labels={
+                GridId.RO_TEST_UNIFORM_4X4.value: "Uniform 4x4 (Nationwide)",
+                GridId.RO_TEST_ADAPTIVE_3MM_MID.value: "Adaptive 3mm (High Curvature)",
+            },
+            model_labels={
+                "tps_base_exact": "TPS Base Exact",
+                "tps_base_smooth_1e-4": "TPS Base (1e-4)",
+                "tps_base_optimal_2e-4": "TPS Base Opt (2e-4)",
+                "tps_densified_4x4": "TPS Densified (4x4)",
+                "linear_base": "Linear (Scale-Free)",
+                "mq_tuned_eps10": "Tuned MQ (eps=10)",
+                "gaussian_tuned_eps40": "Tuned Gauss (eps=40)",
+                "cubic_base": "Cubic (Overshoot)",
+            },
+            metric=MetricType.RMSE_2D_M,
+            precision_unit="mm",
+            reference_lines=[(191.8, "Level 2 Poly Deg 12 Floor (191.8 mm)", "#ea580c")],
+            title="Level 3 Comprehensive Kernel Shootout & Density Ladder vs. Level 2 Floor",
+        )
         out_plots["foundation_plot"] = comp_path.name
 
         return out_plots
@@ -203,72 +223,6 @@ class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
             title_3d="Level 3 Surface Progression: Flat Plane vs. Polynomial vs. Elastic Sheet (RBF / TPS)",
             title_2d="2D Plan-View Contours: Level 1 (Helmert) vs. Level 2 (Polynomial) vs. Level 3 (RBF / TPS)",
         )
-
-    def _plot_foundation_and_smoothing(
-        self,
-        out_path: Path,
-        fitted_models: dict[str, BaseGridShiftModel],
-    ) -> None:
-        """Plot comparison across all evaluated kernel architectures."""
-        test_uni = self.load_grid(GridId.RO_TEST_UNIFORM_4X4)
-        test_adp = self.load_grid(GridId.RO_TEST_ADAPTIVE_3MM_MID)
-
-        model_keys = [
-            ("TPS Base Exact", "tps_base_exact"),
-            ("TPS Base (1e-4)", "tps_base_smooth_1e-4"),
-            ("TPS Base Opt (2e-4)", "tps_base_optimal_2e-4"),
-            ("TPS Densified (4x4)", "tps_densified_4x4"),
-            ("Linear (Scale-Free)", "linear_base"),
-            ("Tuned MQ (eps=10)", "mq_tuned_eps10"),
-            ("Tuned Gauss (eps=40)", "gaussian_tuned_eps40"),
-            ("Cubic (Overshoot)", "cubic_base"),
-        ]
-
-        names = [k[0] for k in model_keys]
-        uni_rmses = []
-        adp_rmses = []
-
-        for _, key in model_keys:
-            m = fitted_models[key]
-            # Uni
-            p_u = m.predict(test_uni.coords)
-            e_u = np.linalg.norm(p_u - test_uni.true_shifts, axis=1)
-            uni_rmses.append(float(np.sqrt(np.mean(e_u**2)) * 1000.0))  # in mm
-            # Adp
-            p_a = m.predict(test_adp.coords)
-            e_a = np.linalg.norm(p_a - test_adp.true_shifts, axis=1)
-            adp_rmses.append(float(np.sqrt(np.mean(e_a**2)) * 1000.0))  # in mm
-
-        fig, ax = plt.subplots(figsize=(13, 6))
-        x = np.arange(len(names))
-        width = 0.38
-
-        rects1 = ax.bar(x - width / 2, uni_rmses, width, label="Uniform 4x4 (Nationwide)", color="#2563eb", alpha=0.88)
-        rects2 = ax.bar(x + width / 2, adp_rmses, width, label="Adaptive 3mm (High Curvature)", color="#dc2626", alpha=0.88)
-
-        ax.axhline(191.8, color="#ea580c", linestyle="--", linewidth=1.5, label="Level 2 Poly Deg 12 Floor (191.8 mm)")
-        ax.set_ylabel("2D RMSE (millimeters)", fontsize=11, fontweight="bold")
-        ax.set_title("Level 3 Comprehensive Kernel Shootout & Density Ladder vs. Level 2 Floor", fontsize=12.5, fontweight="bold")
-        ax.set_xticks(x)
-        ax.set_xticklabels(names, rotation=25, ha="right", fontsize=9.5, fontweight="bold")
-        ax.grid(True, linestyle=":", alpha=0.5, axis="y")
-        ax.legend(loc="upper right", framealpha=0.9)
-
-        # Annotate values
-        for rect in rects1:
-            h = rect.get_height()
-            ax.annotate(f"{h:.1f}", xy=(rect.get_x() + rect.get_width() / 2, h), xytext=(0, 3),
-                        textcoords="offset points", ha="center", va="bottom", fontsize=7.5, fontweight="bold")
-        for rect in rects2:
-            h = rect.get_height()
-            ax.annotate(f"{h:.1f}", xy=(rect.get_x() + rect.get_width() / 2, h), xytext=(0, 3),
-                        textcoords="offset points", ha="center", va="bottom", fontsize=7.5, fontweight="bold")
-
-        fig.tight_layout()
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(out_path, dpi=200)
-        plt.close(fig)
-
 
 def main() -> None:
     unit = RBFSurfaceRegressorUnit(Path("experiments/rbf_surface_regressor"))

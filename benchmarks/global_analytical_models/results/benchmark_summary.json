@@ -37,16 +37,16 @@
               "lt_1m": 99.80513242761081
             }
           },
-          "eval_time_sec": 0.0003139000000373926,
-          "fit_time_sec": 0.03611040000032517,
-          "throughput_pts_per_sec": 116071997.43759084,
+          "eval_time_sec": 0.00043169999844394624,
+          "fit_time_sec": 0.08886489999713376,
+          "throughput_pts_per_sec": 84398888.4209618,
           "memory_breakdown": {
-            "code_bytes": 8997,
+            "code_bytes": 9787,
             "dependencies_bytes": 32399353,
             "model_instance_bytes": 272,
             "grid_lookup_bytes": 0,
-            "total_bytes": 32408622,
-            "total_mb": 30.907270431518555
+            "total_bytes": 32409412,
+            "total_mb": 30.908023834228516
           }
         },
         {
@@ -79,16 +79,16 @@
               "lt_1m": 99.62947715109098
             }
           },
-          "eval_time_sec": 0.001220499998453306,
-          "fit_time_sec": 0.00200349999795435,
-          "throughput_pts_per_sec": 29852519.497068997,
+          "eval_time_sec": 0.012244699988514185,
+          "fit_time_sec": 0.04400920000625774,
+          "throughput_pts_per_sec": 2975573.1078896895,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 972,
+            "model_instance_bytes": 1001,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437978,
-            "total_mb": 70.03591346740723
+            "total_bytes": 73438007,
+            "total_mb": 70.0359411239624
           }
         },
         {
@@ -121,16 +121,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0030067999978200532,
-          "fit_time_sec": 0.0012892999984615017,
-          "throughput_pts_per_sec": 12117533.599313416,
+          "eval_time_sec": 0.0023665999906370416,
+          "fit_time_sec": 0.0016774000105215237,
+          "throughput_pts_per_sec": 15395504.159616102,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1038,
+            "model_instance_bytes": 1067,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438044,
-            "total_mb": 70.03597640991211
+            "total_bytes": 73438073,
+            "total_mb": 70.03600406646729
           }
         },
         {
@@ -163,16 +163,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.004493399999773828,
-          "fit_time_sec": 0.0012671999975282233,
-          "throughput_pts_per_sec": 8108559.22059775,
+          "eval_time_sec": 0.004076699988218024,
+          "fit_time_sec": 0.0014783999940846115,
+          "throughput_pts_per_sec": 8937375.844506573,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1130,
+            "model_instance_bytes": 1159,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438136,
-            "total_mb": 70.03606414794922
+            "total_bytes": 73438165,
+            "total_mb": 70.0360918045044
           }
         },
         {
@@ -205,16 +205,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.006759100000635954,
-          "fit_time_sec": 0.0028019999990647193,
-          "throughput_pts_per_sec": 5390510.570426815,
+          "eval_time_sec": 0.00717459998850245,
+          "fit_time_sec": 0.0033941000001505017,
+          "throughput_pts_per_sec": 5078331.901205416,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1395,
+            "model_instance_bytes": 1424,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438401,
-            "total_mb": 70.03631687164307
+            "total_bytes": 73438430,
+            "total_mb": 70.03634452819824
           }
         },
         {
@@ -247,16 +247,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.016996099999232683,
-          "fit_time_sec": 0.003431199998885859,
-          "throughput_pts_per_sec": 2143727.09042927,
+          "eval_time_sec": 0.014457600002060644,
+          "fit_time_sec": 0.003425000002607703,
+          "throughput_pts_per_sec": 2520127.8216859587,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1983,
+            "model_instance_bytes": 2012,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438989,
-            "total_mb": 70.03687763214111
+            "total_bytes": 73439018,
+            "total_mb": 70.03690528869629
           }
         },
         {
@@ -289,16 +289,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.033922399998118635,
-          "fit_time_sec": 0.004907399998046458,
-          "throughput_pts_per_sec": 1074069.0517776075,
+          "eval_time_sec": 0.03209919999062549,
+          "fit_time_sec": 0.004156500013777986,
+          "throughput_pts_per_sec": 1135075.017777414,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 3143,
+            "model_instance_bytes": 3172,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73440149,
-            "total_mb": 70.03798389434814
+            "total_bytes": 73440178,
+            "total_mb": 70.03801155090332
           }
         },
         {
@@ -331,16 +331,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.008059799998591188,
-          "fit_time_sec": 0.005315899998095119,
-          "throughput_pts_per_sec": 4520583.638101274,
+          "eval_time_sec": 0.007419100002152845,
+          "fit_time_sec": 0.0065756000112742186,
+          "throughput_pts_per_sec": 4910973.027648561,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1519,
+            "model_instance_bytes": 1556,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438525,
-            "total_mb": 70.0364351272583
+            "total_bytes": 73438562,
+            "total_mb": 70.03647041320801
           }
         }
       ]
@@ -435,16 +435,16 @@
               }
             }
           },
-          "eval_time_sec": 0.00042070000199601054,
-          "fit_time_sec": 0.03611040000032517,
-          "throughput_pts_per_sec": 86605656.82703635,
+          "eval_time_sec": 0.0004457000031834468,
+          "fit_time_sec": 0.08886489999713376,
+          "throughput_pts_per_sec": 81747811.84599549,
           "memory_breakdown": {
-            "code_bytes": 8997,
+            "code_bytes": 9787,
             "dependencies_bytes": 32399353,
             "model_instance_bytes": 272,
             "grid_lookup_bytes": 0,
-            "total_bytes": 32408622,
-            "total_mb": 30.907270431518555
+            "total_bytes": 32409412,
+            "total_mb": 30.908023834228516
           }
         },
         {
@@ -533,16 +533,16 @@
               }
             }
           },
-          "eval_time_sec": 0.0015554999990854412,
-          "fit_time_sec": 0.00200349999795435,
-          "throughput_pts_per_sec": 23423336.561505638,
+          "eval_time_sec": 0.001349300000583753,
+          "fit_time_sec": 0.04400920000625774,
+          "throughput_pts_per_sec": 27002890.37592602,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 972,
+            "model_instance_bytes": 1001,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437978,
-            "total_mb": 70.03591346740723
+            "total_bytes": 73438007,
+            "total_mb": 70.0359411239624
           }
         },
         {
@@ -631,16 +631,16 @@
               }
             }
           },
-          "eval_time_sec": 0.0026782999993884005,
-          "fit_time_sec": 0.0012892999984615017,
-          "throughput_pts_per_sec": 13603778.51932945,
+          "eval_time_sec": 0.002403300008154474,
+          "fit_time_sec": 0.0016774000105215237,
+          "throughput_pts_per_sec": 15160404.392449912,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1038,
+            "model_instance_bytes": 1067,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438044,
-            "total_mb": 70.03597640991211
+            "total_bytes": 73438073,
+            "total_mb": 70.03600406646729
           }
         },
         {
@@ -729,16 +729,16 @@
               }
             }
           },
-          "eval_time_sec": 0.003698100001201965,
-          "fit_time_sec": 0.0012671999975282233,
-          "throughput_pts_per_sec": 9852356.612357106,
+          "eval_time_sec": 0.004250799989677034,
+          "fit_time_sec": 0.0014783999940846115,
+          "throughput_pts_per_sec": 8571327.770885838,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1130,
+            "model_instance_bytes": 1159,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438136,
-            "total_mb": 70.03606414794922
+            "total_bytes": 73438165,
+            "total_mb": 70.0360918045044
           }
         },
         {
@@ -827,16 +827,16 @@
               }
             }
           },
-          "eval_time_sec": 0.006344800000078976,
-          "fit_time_sec": 0.0028019999990647193,
-          "throughput_pts_per_sec": 5742497.793397188,
+          "eval_time_sec": 0.0072029000002657995,
+          "fit_time_sec": 0.0033941000001505017,
+          "throughput_pts_per_sec": 5058379.26372093,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1395,
+            "model_instance_bytes": 1424,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438401,
-            "total_mb": 70.03631687164307
+            "total_bytes": 73438430,
+            "total_mb": 70.03634452819824
           }
         },
         {
@@ -925,16 +925,16 @@
               }
             }
           },
-          "eval_time_sec": 0.015440499999385793,
-          "fit_time_sec": 0.003431199998885859,
-          "throughput_pts_per_sec": 2359703.3775751656,
+          "eval_time_sec": 0.01591970000299625,
+          "fit_time_sec": 0.003425000002607703,
+          "throughput_pts_per_sec": 2288673.7811103575,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1983,
+            "model_instance_bytes": 2012,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438989,
-            "total_mb": 70.03687763214111
+            "total_bytes": 73439018,
+            "total_mb": 70.03690528869629
           }
         },
         {
@@ -1023,16 +1023,16 @@
               }
             }
           },
-          "eval_time_sec": 0.025367899997945642,
-          "fit_time_sec": 0.004907399998046458,
-          "throughput_pts_per_sec": 1436263.9399773178,
+          "eval_time_sec": 0.03333140000177082,
+          "fit_time_sec": 0.004156500013777986,
+          "throughput_pts_per_sec": 1093113.400519159,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 3143,
+            "model_instance_bytes": 3172,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73440149,
-            "total_mb": 70.03798389434814
+            "total_bytes": 73440178,
+            "total_mb": 70.03801155090332
           }
         },
         {
@@ -1121,16 +1121,16 @@
               }
             }
           },
-          "eval_time_sec": 0.006824399999459274,
-          "fit_time_sec": 0.005315899998095119,
-          "throughput_pts_per_sec": 5338930.895446764,
+          "eval_time_sec": 0.00712799999746494,
+          "fit_time_sec": 0.0065756000112742186,
+          "throughput_pts_per_sec": 5111531.988349893,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1519,
+            "model_instance_bytes": 1556,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438525,
-            "total_mb": 70.0364351272583
+            "total_bytes": 73438562,
+            "total_mb": 70.03647041320801
           }
         }
       ]
@@ -1169,16 +1169,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.00012559999959194101,
-          "fit_time_sec": 0.03611040000032517,
-          "throughput_pts_per_sec": 79617834.65357304,
+          "eval_time_sec": 0.00011059999815188348,
+          "fit_time_sec": 0.08886489999713376,
+          "throughput_pts_per_sec": 90415914.71156551,
           "memory_breakdown": {
-            "code_bytes": 8997,
+            "code_bytes": 9787,
             "dependencies_bytes": 32399353,
             "model_instance_bytes": 272,
             "grid_lookup_bytes": 0,
-            "total_bytes": 32408622,
-            "total_mb": 30.907270431518555
+            "total_bytes": 32409412,
+            "total_mb": 30.908023834228516
           }
         },
         {
@@ -1211,16 +1211,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0005547000000660773,
-          "fit_time_sec": 0.00200349999795435,
-          "throughput_pts_per_sec": 18027762.752494633,
+          "eval_time_sec": 0.0007799000013619661,
+          "fit_time_sec": 0.04400920000625774,
+          "throughput_pts_per_sec": 12822156.66436294,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 972,
+            "model_instance_bytes": 1001,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73437978,
-            "total_mb": 70.03591346740723
+            "total_bytes": 73438007,
+            "total_mb": 70.0359411239624
           }
         },
         {
@@ -1253,16 +1253,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0009218999985023402,
-          "fit_time_sec": 0.0012892999984615017,
-          "throughput_pts_per_sec": 10847163.484375052,
+          "eval_time_sec": 0.0010600999958114699,
+          "fit_time_sec": 0.0016774000105215237,
+          "throughput_pts_per_sec": 9433072.388935674,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1038,
+            "model_instance_bytes": 1067,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438044,
-            "total_mb": 70.03597640991211
+            "total_bytes": 73438073,
+            "total_mb": 70.03600406646729
           }
         },
         {
@@ -1295,16 +1295,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0010129000002052635,
-          "fit_time_sec": 0.0012671999975282233,
-          "throughput_pts_per_sec": 9872642.904505387,
+          "eval_time_sec": 0.0011143000010633841,
+          "fit_time_sec": 0.0014783999940846115,
+          "throughput_pts_per_sec": 8974243.911385562,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1130,
+            "model_instance_bytes": 1159,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438136,
-            "total_mb": 70.03606414794922
+            "total_bytes": 73438165,
+            "total_mb": 70.0360918045044
           }
         },
         {
@@ -1337,16 +1337,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0020324999968579505,
-          "fit_time_sec": 0.0028019999990647193,
-          "throughput_pts_per_sec": 4920049.208097928,
+          "eval_time_sec": 0.0023178999981610104,
+          "fit_time_sec": 0.0033941000001505017,
+          "throughput_pts_per_sec": 4314249.971065991,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1395,
+            "model_instance_bytes": 1424,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438401,
-            "total_mb": 70.03631687164307
+            "total_bytes": 73438430,
+            "total_mb": 70.03634452819824
           }
         },
         {
@@ -1379,16 +1379,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.00363380000271718,
-          "fit_time_sec": 0.003431199998885859,
-          "throughput_pts_per_sec": 2751940.115725269,
+          "eval_time_sec": 0.004215300010400824,
+          "fit_time_sec": 0.003425000002607703,
+          "throughput_pts_per_sec": 2372310.3872383973,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1983,
+            "model_instance_bytes": 2012,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438989,
-            "total_mb": 70.03687763214111
+            "total_bytes": 73439018,
+            "total_mb": 70.03690528869629
           }
         },
         {
@@ -1421,16 +1421,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.007854600000428036,
-          "fit_time_sec": 0.004907399998046458,
-          "throughput_pts_per_sec": 1273139.3068335818,
+          "eval_time_sec": 0.007095199995092116,
+          "fit_time_sec": 0.004156500013777986,
+          "throughput_pts_per_sec": 1409403.5413966046,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 3143,
+            "model_instance_bytes": 3172,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73440149,
-            "total_mb": 70.03798389434814
+            "total_bytes": 73440178,
+            "total_mb": 70.03801155090332
           }
         },
         {
@@ -1463,16 +1463,16 @@
               "lt_1m": 100.0
             }
           },
-          "eval_time_sec": 0.0029589000005216803,
-          "fit_time_sec": 0.005315899998095119,
-          "throughput_pts_per_sec": 3379634.3229703307,
+          "eval_time_sec": 0.0023594999947817996,
+          "fit_time_sec": 0.0065756000112742186,
+          "throughput_pts_per_sec": 4238186.065740922,
           "memory_breakdown": {
             "code_bytes": 8069,
             "dependencies_bytes": 73428937,
-            "model_instance_bytes": 1519,
+            "model_instance_bytes": 1556,
             "grid_lookup_bytes": 0,
-            "total_bytes": 73438525,
-            "total_mb": 70.0364351272583
+            "total_bytes": 73438562,
+            "total_mb": 70.03647041320801
           }
         }
       ]

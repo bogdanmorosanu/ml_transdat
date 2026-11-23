@@ -20,3 +20,7 @@
    - Strictly follow [`.agents/rules/python-style.md`](../rules/python-style.md): full type annotations, reST docstrings with array/tensor shapes, workspace-relative paths only, and explicit exception handling (no bare `except:`).
 5. **DRY Refactoring Trigger**:
    - If two experiments share a pattern (training loop, scaling, evaluation, plotting), extract it into `src/` instead of copying code.
+6. **Unified Row Plotting & Synced Model Caching**:
+   - Always render diagnostic plots via `PlotDispatcher.render_grouped` (1 unified PNG per `(dataset_id, direction, plot_type)`, 1 row per model).
+   - Keep `persist_model=True` default on `ExperimentModelSpec` so `load_or_fit` caches fitted `.pkl` checkpoints in gitignored `experiments/<slug>/models/` with SHA-256 code+param+grid fingerprints.
+   - Never re-run `.predict()` in `after_run()` on datasets already evaluated in `results`.

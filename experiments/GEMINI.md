@@ -8,7 +8,10 @@ Rules for any agent creating, modifying, or running experiments in `experiments/
 - **Never duplicate reusable logic inside `experiments/<slug>/`.**
 - Any reusable model architecture, fitting algorithm, mathematical helper, sampler, metric, or visualizer must live in `src/` (see [`docs/architecture.md`](../docs/architecture.md)) and be imported by `run_unit.py`.
 - Any reusable dataset produced by an experiment for downstream models or `src/` modules (e.g., `cell_shape_metrics.parquet`) **must** be exported to `data/features/` (or `data/grids/`)—`src/` must never read from `experiments/`.
-- Experiment folders should contain only orchestration (`run_unit.py`), the human report (`report.md`), machine brief (`unit_brief.json`), and outputs (`results/`, `plots/`, optional unit-local `data/`).
+- Experiment folders should contain only orchestration (`run_unit.py`), the human report (`report.md`), machine brief (`unit_brief.json`), outputs (`results/`, `plots/`), gitignored model checkpoints (`models/*.pkl`), and optional unit-local `data/`.
+- **Unified Multi-Model Row Plot Rule**: Diagnostic plots (`PlotGroup`) are always generated via `PlotDispatcher.render_grouped` as **one unified PNG per `(dataset_id, direction, plot_type)`** (`{dataset_id}_{direction}_{plot_type}.png`) with **1 row per model**—never one diagnostic PNG file per model.
+- **Fingerprint-Synced Model Persistence**: Trained models default to `persist_model=True` and are saved to gitignored `experiments/<slug>/models/<spec_name>.pkl` with a SHA-256 fingerprint of model code, hyperparameters, and `train_grid`. Both `run_unit.py` and `BenchmarkSuite` automatically reuse valid checkpoints or retrain if code/parameters change.
+- **Zero Re-Inference in `after_run()`**: Never call `model.predict()` in `after_run()` on datasets already present in `results`; reuse `results` via `ModelEvaluator.tabulate_delta_vs_baseline(...)` or `plot_multi_dataset_comparison(...)`.
 
 ---
 

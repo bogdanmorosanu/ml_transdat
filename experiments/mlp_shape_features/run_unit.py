@@ -96,7 +96,7 @@ class MLPShapeFeaturesUnit(GridShiftExperimentUnit):
                     GridId.RO_TEST_UNIFORM_4X4,
                     GridId.RO_TEST_ADAPTIVE_3MM_MID,
                 ],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
             ),
             # 4. Treatment (10 mm): Fourier MLP + 10 mm Per-Axis One-Hot Shape Features
@@ -122,7 +122,7 @@ class MLPShapeFeaturesUnit(GridShiftExperimentUnit):
                     GridId.RO_TEST_UNIFORM_4X4,
                     GridId.RO_TEST_ADAPTIVE_3MM_MID,
                 ],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
             ),
             # 5. S-Shape Weighting (2x): No shape input features, 2x weight on 5 mm S-Shape cells
@@ -149,7 +149,7 @@ class MLPShapeFeaturesUnit(GridShiftExperimentUnit):
                     GridId.RO_TEST_UNIFORM_4X4,
                     GridId.RO_TEST_ADAPTIVE_3MM_MID,
                 ],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
             ),
             # 6. S-Shape Weighting (3x): No shape input features, 3x weight on 5 mm S-Shape cells
@@ -176,7 +176,7 @@ class MLPShapeFeaturesUnit(GridShiftExperimentUnit):
                     GridId.RO_TEST_UNIFORM_4X4,
                     GridId.RO_TEST_ADAPTIVE_3MM_MID,
                 ],
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
             ),
         ]

@@ -32,7 +32,7 @@ class AdaptiveQuadtreeGridUnit(GridShiftExperimentUnit):
                     model=model,
                     train_grid=None,
                     eval_grids=[GridId.CORRIDOR_SNW],
-                    plots=PlotGroup.MINIMAL if tier == "1mm" else None,
+                    plots=PlotGroup.MINIMAL,
                     benchmark_candidate=tier in promoted_tiers,
                     benchmark_suite="grid_shift_models"
                     if tier in promoted_tiers

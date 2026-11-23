@@ -14,9 +14,6 @@ import logging
 from pathlib import Path
 from typing import Any
 
-import pandas as pd
-
-from pytransdat.spg_reader import SpgReader
 from src.core.base_unit import ExperimentModelSpec, GridShiftExperimentUnit
 from src.data import GridId
 from src.evaluation.evaluator import EvaluationResult
@@ -25,15 +22,14 @@ from src.models import (
     BaseGridShiftModel,
     CellBilinearShiftModel,
     CompositeResidualShiftModel,
-    Helmert2DParams,
     HistGBRGridShiftModel,
     NeuralFeatureGridShiftModel,
     RBFSurfaceRegressor,
     ResidualCoordinateTransformer,
     TorchMLPGridShiftModel,
     TwoStepHelmert2DTransformer,
+    load_embedded_spg_helmert_params,
 )
-from src.models.helmert2d import ARCSEC_PER_RAD
 from src.viz import PlotGroup
 
 logger = logging.getLogger(__name__)
@@ -45,18 +41,6 @@ EVAL_GRIDS: list[GridId] = [
 ]
 
 
-def _load_spg_helmert_params() -> Helmert2DParams:
-    """Load official embedded 4-parameter Helmert constants from active ``.spg``."""
-    reader = SpgReader()
-    return Helmert2DParams(
-        tn_m=float(reader.helmert_tn),
-        te_m=float(reader.helmert_te),
-        ppm=float(reader.helmert_ppm),
-        rot_rad=float(reader.helmert_rot_rad),
-        rot_arcsec=float(reader.helmert_rot_rad * ARCSEC_PER_RAD),
-    )
-
-
 class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
     """Multi-track exploratory screening unit for sub-millimeter coordinate shifts."""
 
@@ -65,14 +49,23 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
         return "submillimeter_exploration"
 
     def _build_prefitted_tps_11km(self) -> RBFSurfaceRegressor:
-        """Fit the compact 11 km Thin Plate Spline on valid SPG nodes for Track 3."""
-        ds = self.load_grid(GridId.SPG_NODES_VALID)
+        """Load or fit the compact 11 km Thin Plate Spline on valid SPG nodes for Track 3."""
         tps = RBFSurfaceRegressor(
             kernel="thin_plate_spline",
             degree=1,
             smoothing=2e-4,
         )
-        tps.fit(ds.coords, ds.true_shifts)
+        if self.unit_dir.name == "__probe__":
+            return tps
+        tps.load_or_fit(
+            lambda: (
+                self.load_grid(GridId.SPG_NODES_VALID).coords,
+                self.load_grid(GridId.SPG_NODES_VALID).true_shifts,
+            ),
+            cache_path=self.models_dir / "_stage1_tps_11km.pkl",
+            train_grid=GridId.SPG_NODES_VALID.value,
+            label="stage1_tps_11km",
+        )
         return tps
 
     def get_model_specs(self) -> list[ExperimentModelSpec]:
@@ -98,7 +91,7 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
                 ),
                 train_grid=GridId.RO_GRID_4X4,
                 eval_grids=EVAL_GRIDS,
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=False,
             ),
             # ------------------------------------------------------------------
@@ -365,7 +358,7 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
                 ),
                 train_grid=GridId.RO_TRAIN_ADAPTIVE_HYBRID,
                 eval_grids=EVAL_GRIDS,
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
                 benchmark_candidate=True,
                 benchmark_suite="grid_shift_models",
@@ -425,7 +418,7 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
                 ),
                 train_grid=GridId.RO_GRID_8X8,
                 eval_grids=EVAL_GRIDS,
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
             ),
             # ------------------------------------------------------------------
@@ -462,7 +455,7 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
                 ),
                 train_grid=GridId.RO_GRID_4X4,
                 eval_grids=EVAL_GRIDS,
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=False,
             ),
             ExperimentModelSpec(
@@ -498,7 +491,7 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
                 ),
                 train_grid=GridId.RO_GRID_8X8,
                 eval_grids=EVAL_GRIDS,
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
                 benchmark_candidate=True,
                 benchmark_suite="grid_shift_models",
@@ -514,47 +507,13 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
         fitted_models: dict[str, BaseGridShiftModel],
         results: list[EvaluationResult],
     ) -> dict[str, Any]:
-        """Generate track attribution summary, render champion plots, and run Track 7 bidirectional check."""
-        # 1. Build Delta-vs-Baseline Attribution Summary
-        by_model: dict[str, dict[str, EvaluationResult]] = {}
-        for r in results:
-            by_model.setdefault(r.model_name, {})[r.dataset_id] = r
-
-        b0 = by_model.get("B0_torch_res_relu_cellpos_4x4", {})
-        b0_uni_rmse = b0[GridId.RO_TEST_UNIFORM_4X4.value].summary["rmse_2d_m"] * 1000.0
-        b0_adp_rmse = b0[GridId.RO_TEST_ADAPTIVE_3MM_MID.value].summary["rmse_2d_m"] * 1000.0
-        b0_cor_rmse = b0[GridId.CORRIDOR_SNW.value].summary["rmse_2d_m"] * 1000.0
-
-        rows: list[dict[str, Any]] = []
-        for m_name, d_map in by_model.items():
-            u = d_map[GridId.RO_TEST_UNIFORM_4X4.value].summary
-            a = d_map[GridId.RO_TEST_ADAPTIVE_3MM_MID.value].summary
-            c = d_map[GridId.CORRIDOR_SNW.value].summary
-            u_rmse = u["rmse_2d_m"] * 1000.0
-            a_rmse = a["rmse_2d_m"] * 1000.0
-            c_rmse = c["rmse_2d_m"] * 1000.0
-            rows.append(
-                {
-                    "model": m_name,
-                    "uniform_mean_mm": round(u["mean_2d_m"] * 1000.0, 2),
-                    "uniform_rmse_mm": round(u_rmse, 2),
-                    "delta_uniform_rmse_mm": round(u_rmse - b0_uni_rmse, 2),
-                    "uniform_lt_1mm_pct": round(u["pass_rates_pct"].get("lt_1mm", 0.0), 2),
-                    "adaptive_mean_mm": round(a["mean_2d_m"] * 1000.0, 2),
-                    "adaptive_rmse_mm": round(a_rmse, 2),
-                    "delta_adaptive_rmse_mm": round(a_rmse - b0_adp_rmse, 2),
-                    "corridor_rmse_mm": round(c_rmse, 2),
-                    "delta_corridor_rmse_mm": round(c_rmse - b0_cor_rmse, 2),
-                    "corridor_lt_1mm_pct": round(c["pass_rates_pct"].get("lt_1mm", 0.0), 2),
-                    "total_size_mb": round(
-                        d_map[GridId.RO_TEST_UNIFORM_4X4.value].model_size_bytes
-                        / (1024.0 * 1024.0),
-                        3,
-                    ),
-                }
-            )
-
-        df_attr = pd.DataFrame(rows)
+        """Generate track attribution summary and run Track 7 bidirectional check."""
+        # 1. Build Delta-vs-Baseline Attribution Summary via ModelEvaluator
+        df_attr = self.evaluator.tabulate_delta_vs_baseline(
+            results=results,
+            baseline_model="B0_torch_res_relu_cellpos_4x4",
+            precision_unit="mm",
+        )
         df_attr.to_csv(self.results_dir / "track_attribution_summary.csv", index=False)
         md_lines = [
             "# Track Attribution Summary (Delta vs. B0 Baseline)",
@@ -567,6 +526,9 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
         )
 
         # 2. Pick overall best kept model by lowest Uniform 4x4 RMSE
+        by_model: dict[str, dict[str, EvaluationResult]] = {}
+        for r in results:
+            by_model.setdefault(r.model_name, {})[r.dataset_id] = r
         best_name = min(
             (k for k in fitted_models if k in by_model),
             key=lambda k: by_model[k][GridId.RO_TEST_UNIFORM_4X4.value].summary["rmse_2d_m"],
@@ -574,16 +536,8 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
         best_model = fitted_models[best_name]
         print(f"[after_run] Overall best kept shift model: {best_name}")
 
-        # Render diagnostic plots for winner
-        plot_files: list[str] = []
-        for gid in (GridId.RO_TEST_UNIFORM_4X4, GridId.RO_TEST_ADAPTIVE_3MM_MID):
-            res_win = by_model[best_name][gid.value]
-            rendered = self.render_plots(res_win, plots=PlotGroup.STANDARD_DIAGNOSTIC)
-            for p_path in rendered.values():
-                plot_files.append(p_path.name)
-
         # 3. Track 7: Full Bidirectional ETRS89 <-> Stereo70 Check
-        helmert_params = _load_spg_helmert_params()
+        helmert_params = load_embedded_spg_helmert_params()
         transformer = ResidualCoordinateTransformer(
             base_transformer=TwoStepHelmert2DTransformer(helmert_params),
             shift_model=best_model,
@@ -628,7 +582,6 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
                 * 1000.0,
                 4,
             ),
-            "winner_plots": plot_files,
             "track7_bidirectional": t7_payload,
         }
 

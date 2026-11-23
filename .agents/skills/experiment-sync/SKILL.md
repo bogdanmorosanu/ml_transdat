@@ -18,7 +18,8 @@ Keeps every experiment in `experiments/<slug>/` modular, reproducible, and consi
    - `transformation`: `TransformationExperimentUnit` (full bidirectional CRS transformers).
    - `analysis`: `AnalysisExperimentUnit` (exploratory profiling, geometry, or feature engineering).
 2. **Code Isolation Check**:
-   - Inspect `experiments/<slug>/`. It must contain **only** `run_unit.py`, `report.md`, `unit_brief.json`, `results/`, and `plots/` (plus optional local `data/`).
+   - Inspect `experiments/<slug>/`. It must contain **only** `run_unit.py`, `report.md`, `unit_brief.json`, `results/`, `plots/`, and gitignored `models/` (plus optional local `data/`).
+   - Confirm `run_unit.py` subclasses `GridShiftExperimentUnit`, `TransformationExperimentUnit`, or `AnalysisExperimentUnit` (never a standalone `main()` script), and `after_run()` never re-runs `.predict()` on datasets already in `results`.
    - Any reusable model class, feature extractor, sampler, metric, or plotting helper must be extracted to `src/` and imported by `run_unit.py`.
 3. **Shared Data Externalization Check**:
    - If the experiment produces datasets meant to be consumed by `src/` or other experiments (e.g., `cell_shape_metrics.parquet`), verify they are written to `data/features/` (or `data/grids/`), never read from `experiments/<slug>/results/` by `src/`.
@@ -30,7 +31,8 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.<slug>.run_unit
 ```
 Verify:
 - `unit_brief.json` exists and conforms to **Schema v2** (`schema_version == "2.0"`, `slug`, `experiment_type`, `status`, `runtime_s`, `key_metrics`, `artifacts`, `benchmark_candidates`, `extra`).
-- `results/` and `plots/` contain the expected scorecards and diagnostic figures.
+- `results/` and `plots/` contain the expected scorecards and **unified multi-model row diagnostic figures** (`{dataset_id}_{direction}_{plot_type}.png`, 1 row per model—no per-model diagnostic PNGs).
+- `models/*.pkl` checkpoints exist for trained models (`persist_model=True`) and are ignored by Git.
 
 ### Step 3: Synchronize Human Report (`report.md`)
 - Ensure `experiments/<slug>/report.md` exists and follows the category baseline template from `experiments/GEMINI.md`:

@@ -46,19 +46,19 @@ This unit evaluates a **grid-free 2-step 2D coordinate transformation** (`Stereo
 
 | ETRS89 $\rightarrow$ Stereo 70 | Stereo 70 $\rightarrow$ ETRS89 |
 |:---:|:---:|
-| ![Spatial Inv](plots/fitted_helmert2d_etrs89_to_st70_spatial_error.png) | ![Spatial Fwd](plots/fitted_helmert2d_st70_to_etrs89_spatial_error.png) |
+| ![Spatial Inv](plots/ro_grid_4x4_etrs89_to_st70_spatial_error.png) | ![Spatial Fwd](plots/ro_grid_4x4_st70_to_etrs89_spatial_error.png) |
 
 ### 2. Error Distributions (Histogram & ECDF)
 
 | ETRS89 $\rightarrow$ Stereo 70 | Stereo 70 $\rightarrow$ ETRS89 |
 |:---:|:---:|
-| ![Dist Inv](plots/fitted_helmert2d_etrs89_to_st70_hist_ecdf.png) | ![Dist Fwd](plots/fitted_helmert2d_st70_to_etrs89_hist_ecdf.png) |
+| ![Dist Inv](plots/ro_grid_4x4_etrs89_to_st70_hist_ecdf.png) | ![Dist Fwd](plots/ro_grid_4x4_st70_to_etrs89_hist_ecdf.png) |
 
 ### 3. Signed Residual Scatter & Sub-Cell Profiles
 
 | Signed Residuals ($dE$ vs $dN$) | Sub-Cell $(u, v)$ Error Profile |
 |:---:|:---:|
-| ![Scatter](plots/fitted_helmert2d_etrs89_to_st70_signed_scatter.png) | ![Subcell](plots/fitted_helmert2d_etrs89_to_st70_subcell_heatmap.png) |
+| ![Scatter](plots/ro_grid_4x4_etrs89_to_st70_signed_scatter.png) | ![Subcell](plots/ro_grid_4x4_etrs89_to_st70_subcell_heatmap.png) |
 
 ---
 
@@ -79,13 +79,13 @@ Refitting the 4-parameter `Helmert2D` on the 2,222 valid SPG grid nodes shifts a
 
 ### Visual Comparison: Error Distribution & Signed Residual Scatter
 
-| Unit 01: SPG Grid Distribution (`Grid2D`) | Unit 03: Refitted `Helmert2D` Distribution |
+| Unit 01: SPG Grid Distribution (`Grid2D`) | Unit 03: Helmert2D Distribution |
 |:---:|:---:|
-| ![Unit 01 Hist ECDF](../spg_grid_analysis/plots/spg_grid_shifts_2d_bicubic_hist_ecdf.png) | ![Unit 03 Hist ECDF](plots/fitted_helmert2d_etrs89_to_st70_hist_ecdf.png) |
+| ![Unit 01 Hist ECDF](../spg_grid_analysis/plots/ro_grid_4x4_2d_bicubic_hist_ecdf.png) | ![Unit 03 Hist ECDF](plots/ro_grid_4x4_etrs89_to_st70_hist_ecdf.png) |
 
-| Unit 01: SPG Grid Signed Scatter (`dE` vs `dN`) | Unit 03: Refitted `Helmert2D` Signed Scatter |
+| Unit 01: SPG Grid Signed Scatter (`dE` vs `dN`) | Unit 03: Helmert2D Signed Scatter |
 |:---:|:---:|
-| ![Unit 01 Signed Scatter](../spg_grid_analysis/plots/spg_grid_shifts_2d_bicubic_signed_scatter.png) | ![Unit 03 Signed Scatter](plots/fitted_helmert2d_etrs89_to_st70_signed_scatter.png) |
+| ![Unit 01 Signed Scatter](../spg_grid_analysis/plots/ro_grid_4x4_2d_bicubic_signed_scatter.png) | ![Unit 03 Signed Scatter](plots/ro_grid_4x4_etrs89_to_st70_signed_scatter.png) |
 
 *Note on sign convention*: Unit 01 plots the SPG shift $\Delta = \text{GroundTruth} - \text{PreGrid}$, whereas Unit 03 plots the prediction error $\varepsilon = \text{Pred} - \text{GroundTruth} = -\Delta_{\text{residual}}$ (mirrored across the origin). Notice how the refitted 2D Helmert pulls the extreme Banat/West lobe inward from $2.757\,\text{m}$ to $2.681\,\text{m}$ while keeping the core distribution tightly centered at $(0, 0)$.
 

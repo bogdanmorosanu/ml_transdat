@@ -3,7 +3,7 @@
   "slug": "mlp_spatial_regressor",
   "experiment_type": "grid_shift",
   "status": "completed",
-  "runtime_s": 247.35,
+  "runtime_s": 250.76,
   "key_metrics": [
     {
       "model": "mlp_raw_11km",
@@ -15,10 +15,10 @@
       "p95_2d_mm": 336.3744,
       "max_2d_mm": 1000.0889,
       "pass_lt_1cm_pct": 0.5,
-      "total_size_mb": 70.3019,
-      "fit_time_s": 5.3615,
-      "eval_time_s": 0.0393,
-      "throughput_pts_per_s": 934136.2
+      "total_size_mb": 70.3084,
+      "fit_time_s": 4.3654,
+      "eval_time_s": 0.0287,
+      "throughput_pts_per_s": 1280945.8
     },
     {
       "model": "mlp_raw_11km",
@@ -30,10 +30,10 @@
       "p95_2d_mm": 500.7885,
       "max_2d_mm": 1518.9882,
       "pass_lt_1cm_pct": 0.32,
-      "total_size_mb": 70.3019,
-      "fit_time_s": 5.3615,
-      "eval_time_s": 0.1724,
-      "throughput_pts_per_s": 1022762.9
+      "total_size_mb": 70.3084,
+      "fit_time_s": 4.3654,
+      "eval_time_s": 0.1493,
+      "throughput_pts_per_s": 1180848.2
     },
     {
       "model": "mlp_fourier_11km",
@@ -45,10 +45,10 @@
       "p95_2d_mm": 91.5558,
       "max_2d_mm": 411.6805,
       "pass_lt_1cm_pct": 6.67,
-      "total_size_mb": 70.4274,
-      "fit_time_s": 2.8534,
-      "eval_time_s": 0.0794,
-      "throughput_pts_per_s": 462833.6
+      "total_size_mb": 70.4339,
+      "fit_time_s": 2.515,
+      "eval_time_s": 0.0685,
+      "throughput_pts_per_s": 536221.8
     },
     {
       "model": "mlp_fourier_11km",
@@ -60,10 +60,10 @@
       "p95_2d_mm": 88.061,
       "max_2d_mm": 416.3937,
       "pass_lt_1cm_pct": 10.82,
-      "total_size_mb": 70.4274,
-      "fit_time_s": 2.8534,
-      "eval_time_s": 0.3565,
-      "throughput_pts_per_s": 494688.0
+      "total_size_mb": 70.4339,
+      "fit_time_s": 2.515,
+      "eval_time_s": 0.3049,
+      "throughput_pts_per_s": 578411.8
     },
     {
       "model": "mlp_fourier_4x4",
@@ -75,10 +75,10 @@
       "p95_2d_mm": 23.1,
       "max_2d_mm": 374.6679,
       "pass_lt_1cm_pct": 57.9,
-      "total_size_mb": 72.0817,
-      "fit_time_s": 109.4692,
-      "eval_time_s": 0.1455,
-      "throughput_pts_per_s": 252549.2
+      "total_size_mb": 72.0882,
+      "fit_time_s": 103.2459,
+      "eval_time_s": 0.1382,
+      "throughput_pts_per_s": 265868.6
     },
     {
       "model": "mlp_fourier_4x4",
@@ -90,10 +90,10 @@
       "p95_2d_mm": 54.2919,
       "max_2d_mm": 514.6135,
       "pass_lt_1cm_pct": 40.9,
-      "total_size_mb": 72.0817,
-      "fit_time_s": 109.4692,
-      "eval_time_s": 0.6236,
-      "throughput_pts_per_s": 282798.2
+      "total_size_mb": 72.0882,
+      "fit_time_s": 103.2459,
+      "eval_time_s": 0.7285,
+      "throughput_pts_per_s": 242057.3
     },
     {
       "model": "mlp_fourier_8x8",
@@ -105,10 +105,10 @@
       "p95_2d_mm": 26.6848,
       "max_2d_mm": 151.6906,
       "pass_lt_1cm_pct": 44.73,
-      "total_size_mb": 72.0787,
-      "fit_time_s": 113.9373,
-      "eval_time_s": 0.1405,
-      "throughput_pts_per_s": 261527.6
+      "total_size_mb": 72.0851,
+      "fit_time_s": 118.0109,
+      "eval_time_s": 0.1742,
+      "throughput_pts_per_s": 211026.6
     },
     {
       "model": "mlp_fourier_8x8",
@@ -120,10 +120,10 @@
       "p95_2d_mm": 44.7401,
       "max_2d_mm": 504.8762,
       "pass_lt_1cm_pct": 31.44,
-      "total_size_mb": 72.0787,
-      "fit_time_s": 113.9373,
-      "eval_time_s": 0.7043,
-      "throughput_pts_per_s": 250387.4
+      "total_size_mb": 72.0851,
+      "fit_time_s": 118.0109,
+      "eval_time_s": 0.7123,
+      "throughput_pts_per_s": 247582.5
     }
   ],
   "artifacts": {
@@ -132,20 +132,14 @@
     "scorecard_json": "results/scorecard_summary.json",
     "scorecard_md": "results/summary_table.md",
     "plots": [
-      "mlp_raw_11km_ro_test_uniform_4x4_grid_shift_2d_spatial_error.png",
-      "mlp_raw_11km_ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png",
-      "mlp_raw_11km_ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png",
-      "mlp_raw_11km_ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png",
-      "mlp_raw_11km_ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png",
-      "mlp_raw_11km_ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png",
-      "mlp_fourier_8x8_ro_test_uniform_4x4_grid_shift_2d_spatial_error.png",
-      "mlp_fourier_8x8_ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png",
-      "mlp_fourier_8x8_ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png",
-      "mlp_fourier_8x8_ro_test_uniform_4x4_grid_shift_2d_vector_quiver.png",
-      "mlp_fourier_8x8_ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png",
-      "mlp_fourier_8x8_ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png",
-      "mlp_fourier_8x8_ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png",
-      "mlp_fourier_8x8_ro_test_adaptive_3mm_mid_grid_shift_2d_vector_quiver.png",
+      "ro_test_uniform_4x4_grid_shift_2d_spatial_error.png",
+      "ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png",
+      "ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png",
+      "ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png",
+      "ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png",
+      "ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png",
+      "ro_test_uniform_4x4_grid_shift_2d_vector_quiver.png",
+      "ro_test_adaptive_3mm_mid_grid_shift_2d_vector_quiver.png",
       "cell_transect_66km_mlp.png"
     ]
   },
@@ -173,7 +167,15 @@
         "batch_size": 128,
         "learning_rate_init": 0.001,
         "tol": 1e-07,
-        "n_iter_no_change": 25
+        "n_iter_no_change": 25,
+        "use_shape_features": false,
+        "shape_tol_mm": 5.0,
+        "s_shape_weight": 1,
+        "use_neighbor_features": false,
+        "neighbor_feature_mode": "all",
+        "neighbor_features_path": "data/features/cell_neighbor_features.parquet",
+        "scale_neighbor_features": true,
+        "use_cell_center_distance": false
       },
       "extra": {}
     }

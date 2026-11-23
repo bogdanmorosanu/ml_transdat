@@ -58,10 +58,12 @@ This research unit upgrades the neural network baseline from `sklearn`'s shallow
 ---
 
 ## 4. Visual Diagnostics
-- [`plots/torch_res_relu_cellpos_4x4_ro_test_uniform_4x4_grid_shift_2d_spatial_error.png`](plots/torch_res_relu_cellpos_4x4_ro_test_uniform_4x4_grid_shift_2d_spatial_error.png)
-- [`plots/torch_res_relu_cellpos_4x4_ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png`](plots/torch_res_relu_cellpos_4x4_ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png)
-- [`plots/torch_res_relu_cellpos_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png`](plots/torch_res_relu_cellpos_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png)
-- [`plots/torch_res_relu_cellpos_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png`](plots/torch_res_relu_cellpos_4x4_ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png)
+- [`plots/ro_test_uniform_4x4_grid_shift_2d_spatial_error.png`](plots/ro_test_uniform_4x4_grid_shift_2d_spatial_error.png)
+- [`plots/ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png`](plots/ro_test_uniform_4x4_grid_shift_2d_hist_ecdf.png)
+- [`plots/ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png`](plots/ro_test_uniform_4x4_grid_shift_2d_signed_scatter.png)
+- [`plots/ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png`](plots/ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png)
+- [`plots/ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png`](plots/ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png)
+- [`plots/ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png`](plots/ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png)
 
 ---
 

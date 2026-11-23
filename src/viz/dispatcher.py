@@ -1,131 +1,156 @@
-"""Declarative PlotDispatcher mapping PlotType / PlotGroup specs to rendered figures."""
+"""Declarative PlotDispatcher rendering unified 1-row-per-model figures per PlotType."""
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Sequence
 from pathlib import Path
 from typing import Any
-
-import numpy as np
 
 from src.evaluation.evaluator import EvaluationResult
 from src.models.base import BaseGridShiftModel
 from src.viz.plots import (
-    plot_hist_ecdf,
-    plot_signed_scatter,
-    plot_spatial_error,
-    plot_subcell_heatmap,
+    plot_hist_ecdf_rows,
+    plot_signed_scatter_rows,
+    plot_spatial_error_rows,
+    plot_subcell_heatmap_rows,
     plot_transect_66km,
-    plot_vector_quiver,
+    plot_vector_quiver_rows,
 )
 from src.viz.registry import PlotGroup, PlotSpec, PlotType, resolve_plot_types
 
-_PlotHandler = Callable[
-    [
-        EvaluationResult,
-        Path,
-        int,
-        dict[str, BaseGridShiftModel] | None,
-        dict[str, Any],
-    ],
+_GroupedPlotHandler = Callable[
+    [Sequence[EvaluationResult], Path, int, dict[str, Any]],
     Path | None,
 ]
 
 
-def _handle_spatial_error(
-    res: EvaluationResult,
+def _handle_spatial_error_rows(
+    results: Sequence[EvaluationResult],
     out_path: Path,
     dpi: int,
-    _transect: dict[str, BaseGridShiftModel] | None,
     _ctx: dict[str, Any],
 ) -> Path:
-    return plot_spatial_error(
-        res.err_df, res.summary, out_path, res.model_name, res.direction, dpi=dpi
-    )
+    return plot_spatial_error_rows(results, out_path, dpi=dpi)
 
 
-def _handle_hist_ecdf(
-    res: EvaluationResult,
+def _handle_hist_ecdf_rows(
+    results: Sequence[EvaluationResult],
     out_path: Path,
     dpi: int,
-    _transect: dict[str, BaseGridShiftModel] | None,
     _ctx: dict[str, Any],
 ) -> Path:
-    return plot_hist_ecdf(
-        res.err_df, res.summary, out_path, res.model_name, res.direction, dpi=dpi
-    )
+    return plot_hist_ecdf_rows(results, out_path, dpi=dpi)
 
 
-def _handle_signed_scatter(
-    res: EvaluationResult,
+def _handle_signed_scatter_rows(
+    results: Sequence[EvaluationResult],
     out_path: Path,
     dpi: int,
-    _transect: dict[str, BaseGridShiftModel] | None,
     _ctx: dict[str, Any],
 ) -> Path:
-    return plot_signed_scatter(
-        res.err_df, res.summary, out_path, res.model_name, res.direction, dpi=dpi
-    )
+    return plot_signed_scatter_rows(results, out_path, dpi=dpi)
 
 
-def _handle_subcell_heatmap(
-    res: EvaluationResult,
+def _handle_subcell_heatmap_rows(
+    results: Sequence[EvaluationResult],
     out_path: Path,
     dpi: int,
-    _transect: dict[str, BaseGridShiftModel] | None,
     _ctx: dict[str, Any],
 ) -> Path | None:
-    return plot_subcell_heatmap(
-        res.err_df, out_path, res.model_name, res.direction, dpi=dpi
-    )
+    return plot_subcell_heatmap_rows(results, out_path, dpi=dpi)
 
 
-def _handle_vector_quiver(
-    res: EvaluationResult,
+def _handle_vector_quiver_rows(
+    results: Sequence[EvaluationResult],
     out_path: Path,
     dpi: int,
-    _transect: dict[str, BaseGridShiftModel] | None,
     ctx: dict[str, Any],
 ) -> Path:
-    ee = res.err_df["err_e_m"].to_numpy(dtype=np.float64)
-    en = res.err_df["err_n_m"].to_numpy(dtype=np.float64)
-    mag = res.err_df["err_2d_m"].to_numpy(dtype=np.float64)
-    return plot_vector_quiver(
-        res.err_df,
-        de=ee,
-        dn=en,
-        mag=mag,
+    return plot_vector_quiver_rows(
+        results,
         out_path=out_path,
-        title=f"{res.model_name} ({res.direction}) — Residual Quiver",
         stride=int(ctx.get("quiver_stride", 2)),
         dpi=dpi,
     )
 
 
-def _handle_transect_66km(
-    _res: EvaluationResult,
-    out_path: Path,
-    dpi: int,
-    transect_models: dict[str, BaseGridShiftModel] | None,
-    _ctx: dict[str, Any],
-) -> Path:
-    if not transect_models:
-        raise ValueError("PlotType.TRANSECT_66KM requires non-empty `transect_models`.")
-    return plot_transect_66km(models=transect_models, out_path=out_path, dpi=dpi)
-
-
-_SINGLE_RESULT_HANDLERS: dict[PlotType, _PlotHandler] = {
-    PlotType.SPATIAL_ERROR: _handle_spatial_error,
-    PlotType.HIST_ECDF: _handle_hist_ecdf,
-    PlotType.SIGNED_SCATTER: _handle_signed_scatter,
-    PlotType.SUBCELL_HEATMAP: _handle_subcell_heatmap,
-    PlotType.VECTOR_QUIVER: _handle_vector_quiver,
-    PlotType.TRANSECT_66KM: _handle_transect_66km,
+_GROUPED_HANDLERS: dict[PlotType, _GroupedPlotHandler] = {
+    PlotType.SPATIAL_ERROR: _handle_spatial_error_rows,
+    PlotType.HIST_ECDF: _handle_hist_ecdf_rows,
+    PlotType.SIGNED_SCATTER: _handle_signed_scatter_rows,
+    PlotType.SUBCELL_HEATMAP: _handle_subcell_heatmap_rows,
+    PlotType.VECTOR_QUIVER: _handle_vector_quiver_rows,
 }
 
 
 class PlotDispatcher:
-    """Renders requested :class:`PlotType` / :class:`PlotGroup` sets from an :class:`EvaluationResult`."""
+    """Renders requested :class:`PlotType` / :class:`PlotGroup` sets as unified multi-model figures."""
+
+    def render_grouped(
+        self,
+        items: Sequence[tuple[EvaluationResult, PlotSpec | None]],
+        out_dir: Path,
+        dpi: int = 200,
+        extra_context: dict[str, Any] | None = None,
+        transect_models: dict[str, BaseGridShiftModel] | None = None,
+    ) -> list[Path]:
+        """Group evaluation results by ``(dataset_id, direction, plot_type)`` into 1-row-per-model PNGs.
+
+        :param items: Ordered sequence of ``(EvaluationResult, PlotSpec | None)`` pairs.
+        :type items: Sequence[tuple[EvaluationResult, PlotSpec | None]]
+        :param out_dir: Target directory for output PNG files.
+        :type out_dir: Path
+        :param dpi: Figure DPI.
+        :type dpi: int
+        :param extra_context: Optional extra keyword parameters for specific plots.
+        :type extra_context: dict[str, Any] | None
+        :param transect_models: Optional dict of models for :attr:`PlotType.TRANSECT_66KM`.
+        :type transect_models: dict[str, BaseGridShiftModel] | None
+        :return: Ordered list of rendered PNG file paths.
+        :rtype: list[Path]
+        :raises ValueError: If an unsupported :class:`PlotType` is requested.
+        """
+        out_dir.mkdir(parents=True, exist_ok=True)
+        ctx = extra_context or {}
+
+        buckets: dict[tuple[str, str, PlotType], list[EvaluationResult]] = {}
+        transect_requested = False
+
+        for eval_res, spec in items:
+            if spec is None:
+                continue
+            for p_type in resolve_plot_types(spec):
+                if p_type == PlotType.TRANSECT_66KM:
+                    transect_requested = True
+                    continue
+                if p_type not in _GROUPED_HANDLERS:
+                    raise ValueError(
+                        f"PlotType.{p_type.name} is not supported by PlotDispatcher.render_grouped()."
+                    )
+                key = (eval_res.dataset_id, eval_res.direction, p_type)
+                buckets.setdefault(key, []).append(eval_res)
+
+        rendered_paths: list[Path] = []
+        for (dataset_id, direction, p_type), group_results in buckets.items():
+            handler = _GROUPED_HANDLERS[p_type]
+            out_path = out_dir / f"{dataset_id}_{direction}_{p_type.value}.png"
+            saved_path = handler(group_results, out_path, dpi, ctx)
+            if saved_path is not None:
+                rendered_paths.append(saved_path)
+                for res in group_results:
+                    res.extra.setdefault("plots", {})[p_type.value] = saved_path.name
+
+        if transect_requested:
+            if not transect_models:
+                raise ValueError(
+                    "PlotType.TRANSECT_66KM requires non-empty `transect_models`."
+                )
+            t_path = out_dir / f"{PlotType.TRANSECT_66KM.value}.png"
+            rendered_paths.append(
+                plot_transect_66km(models=transect_models, out_path=t_path, dpi=dpi)
+            )
+
+        return rendered_paths
 
     def render(
         self,
@@ -137,47 +162,16 @@ class PlotDispatcher:
         extra_context: dict[str, Any] | None = None,
         include_dataset_id: bool = True,
     ) -> dict[PlotType, Path]:
-        """Generate all resolved plots for an evaluation result.
-
-        :param eval_result: Evaluation output from :class:`ModelEvaluator`.
-        :type eval_result: EvaluationResult
-        :param out_dir: Target directory for output PNG files.
-        :type out_dir: Path
-        :param plots: A :class:`PlotGroup`, :class:`PlotType`, or mixed sequence.
-        :type plots: PlotSpec
-        :param dpi: Figure DPI.
-        :type dpi: int
-        :param transect_models: Optional dict of models for :attr:`PlotType.TRANSECT_66KM`.
-        :type transect_models: dict[str, BaseGridShiftModel] | None
-        :param extra_context: Optional extra keyword parameters for specific plots.
-        :type extra_context: dict[str, Any] | None
-        :param include_dataset_id: Whether to include ``dataset_id`` in the output filename.
-        :type include_dataset_id: bool
-        :return: Mapping of rendered :class:`PlotType` to saved file paths.
-        :rtype: dict[PlotType, Path]
-        :raises ValueError: If a requested :class:`PlotType` is not supported on single results
-            or is missing required context.
-        """
-        out_dir.mkdir(parents=True, exist_ok=True)
-        resolved = resolve_plot_types(plots)
-        prefix = (
-            f"{eval_result.model_name}_{eval_result.dataset_id}_{eval_result.direction}"
-            if include_dataset_id
-            else f"{eval_result.model_name}_{eval_result.direction}"
+        """Render requested plots for a single :class:`EvaluationResult` via :meth:`render_grouped`."""
+        del include_dataset_id
+        self.render_grouped(
+            items=[(eval_result, plots)],
+            out_dir=out_dir,
+            dpi=dpi,
+            extra_context=extra_context,
+            transect_models=transect_models,
         )
-        rendered: dict[PlotType, Path] = {}
-        ctx = extra_context or {}
-
-        for p_type in resolved:
-            handler = _SINGLE_RESULT_HANDLERS.get(p_type)
-            if handler is None:
-                raise ValueError(
-                    f"PlotType.{p_type.name} is not supported by PlotDispatcher.render() "
-                    "on a single EvaluationResult."
-                )
-            out_path = out_dir / f"{prefix}_{p_type.value}.png"
-            saved_path = handler(eval_result, out_path, dpi, transect_models, ctx)
-            if saved_path is not None:
-                rendered[p_type] = saved_path
-
-        return rendered
+        out: dict[PlotType, Path] = {}
+        for p_key, fname in eval_result.extra.get("plots", {}).items():
+            out[PlotType(p_key)] = out_dir / fname
+        return out

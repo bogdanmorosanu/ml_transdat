@@ -25,7 +25,7 @@ When triggered, act as a strict Git Commit and Release Manager. Follow this exac
    - Run `git diff` and `git diff --cached` (or `git diff --staged`).
 
 4. **Sensitive File & Cache Scan**:
-   - Never propose staging `.env*`, credentials/keys (`*.pem`, `*.key`, `id_rsa*`), or caches/artifacts (`__pycache__`, `*.pyc`, `.pytest_cache/`, `*.log`, `Thumbs.db`, `.DS_Store`).
+   - Never propose staging `.env*`, credentials/keys (`*.pem`, `*.key`, `id_rsa*`), model binaries (`*.pkl`, `*.pt`, `*.pth`, `experiments/*/models/`), or caches/artifacts (`__pycache__`, `*.pyc`, `.pytest_cache/`, `*.log`, `Thumbs.db`, `.DS_Store`).
 
 ---
 

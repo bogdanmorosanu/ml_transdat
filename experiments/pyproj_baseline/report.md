@@ -31,7 +31,7 @@ The spatial distribution of `pyproj` error directly mirrors the SPG distortion g
 
 | ETRS89 $\rightarrow$ Stereo 70 | Stereo 70 $\rightarrow$ ETRS89 |
 |:---:|:---:|
-| ![Spatial Inv](plots/pyproj_epsg3844_etrs89_to_st70_spatial_error.png) | ![Spatial Fwd](plots/pyproj_epsg3844_st70_to_etrs89_spatial_error.png) |
+| ![Spatial Inv](plots/ro_grid_4x4_etrs89_to_st70_spatial_error.png) | ![Spatial Fwd](plots/ro_grid_4x4_st70_to_etrs89_spatial_error.png) |
 
 ---
 
@@ -39,7 +39,7 @@ The spatial distribution of `pyproj` error directly mirrors the SPG distortion g
 
 | ETRS89 $\rightarrow$ Stereo 70 | Stereo 70 $\rightarrow$ ETRS89 |
 |:---:|:---:|
-| ![Dist Inv](plots/pyproj_epsg3844_etrs89_to_st70_hist_ecdf.png) | ![Dist Fwd](plots/pyproj_epsg3844_st70_to_etrs89_hist_ecdf.png) |
+| ![Dist Inv](plots/ro_grid_4x4_etrs89_to_st70_hist_ecdf.png) | ![Dist Fwd](plots/ro_grid_4x4_st70_to_etrs89_hist_ecdf.png) |
 
 ---
 
@@ -47,7 +47,7 @@ The spatial distribution of `pyproj` error directly mirrors the SPG distortion g
 
 | Signed Residuals ($dE$ vs $dN$) | Sub-Cell $(u, v)$ Error Profile |
 |:---:|:---:|
-| ![Scatter](plots/pyproj_epsg3844_etrs89_to_st70_signed_scatter.png) | ![Subcell](plots/pyproj_epsg3844_etrs89_to_st70_subcell_heatmap.png) |
+| ![Scatter](plots/ro_grid_4x4_etrs89_to_st70_signed_scatter.png) | ![Subcell](plots/ro_grid_4x4_etrs89_to_st70_subcell_heatmap.png) |
 
 ---
 

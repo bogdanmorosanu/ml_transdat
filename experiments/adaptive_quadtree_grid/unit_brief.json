@@ -3,7 +3,7 @@
   "slug": "adaptive_quadtree_grid",
   "experiment_type": "grid_shift",
   "status": "completed",
-  "runtime_s": 6.085,
+  "runtime_s": 6.423,
   "key_metrics": [
     {
       "model": "quadtree_2cm",
@@ -16,9 +16,9 @@
       "max_2d_mm": 59.2054,
       "pass_lt_1cm_pct": 61.21,
       "total_size_mb": 3.4785,
-      "fit_time_s": 0.0431,
-      "eval_time_s": 0.0181,
-      "throughput_pts_per_s": 2008732.9
+      "fit_time_s": 0.0312,
+      "eval_time_s": 0.0111,
+      "throughput_pts_per_s": 3295048.6
     },
     {
       "model": "quadtree_1cm",
@@ -31,9 +31,9 @@
       "max_2d_mm": 59.2054,
       "pass_lt_1cm_pct": 92.53,
       "total_size_mb": 7.3292,
-      "fit_time_s": 0.1136,
-      "eval_time_s": 0.015,
-      "throughput_pts_per_s": 2422620.4
+      "fit_time_s": 0.0692,
+      "eval_time_s": 0.0111,
+      "throughput_pts_per_s": 3270881.2
     },
     {
       "model": "quadtree_3mm",
@@ -46,9 +46,9 @@
       "max_2d_mm": 26.324,
       "pass_lt_1cm_pct": 99.91,
       "total_size_mb": 23.0503,
-      "fit_time_s": 0.3976,
-      "eval_time_s": 0.017,
-      "throughput_pts_per_s": 2147100.1
+      "fit_time_s": 0.2487,
+      "eval_time_s": 0.0126,
+      "throughput_pts_per_s": 2888686.3
     },
     {
       "model": "quadtree_1mm",
@@ -61,9 +61,9 @@
       "max_2d_mm": 5.7741,
       "pass_lt_1cm_pct": 100.0,
       "total_size_mb": 74.9126,
-      "fit_time_s": 1.4368,
-      "eval_time_s": 0.0276,
-      "throughput_pts_per_s": 1319143.2
+      "fit_time_s": 0.9008,
+      "eval_time_s": 0.0194,
+      "throughput_pts_per_s": 1879138.9
     }
   ],
   "artifacts": {
@@ -72,8 +72,8 @@
     "scorecard_json": "results/scorecard_summary.json",
     "scorecard_md": "results/summary_table.md",
     "plots": [
-      "quadtree_1mm_ro_corridor_snw_grid_shift_2d_spatial_error.png",
-      "quadtree_1mm_ro_corridor_snw_grid_shift_2d_hist_ecdf.png",
+      "ro_corridor_snw_grid_shift_2d_spatial_error.png",
+      "ro_corridor_snw_grid_shift_2d_hist_ecdf.png",
       "tier_comparison.png"
     ]
   },

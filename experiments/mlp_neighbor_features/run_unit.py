@@ -89,7 +89,7 @@ class MLPNeighborFeaturesUnit(GridShiftExperimentUnit):
                 ),
                 train_grid=GridId.RO_GRID_4X4,
                 eval_grids=eval_grids,
-                plots=None,
+                plots=PlotGroup.STANDARD_DIAGNOSTIC,
                 keep_in_memory=True,
             ),
             # 3. Center Distance + Slopes: +2 midpoint distances + 32 standardized slopes

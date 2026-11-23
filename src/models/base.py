@@ -4,22 +4,63 @@ from __future__ import annotations
 
 import abc
 import functools
+import hashlib
 import importlib.metadata
 import inspect
+import json
+import logging
 import pickle
 import time
-from collections.abc import Iterator, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
 
+logger = logging.getLogger(__name__)
+
 if TYPE_CHECKING:
     from src.data.catalog import GridDataset
     from src.evaluation.evaluator import EvaluationResult
     from src.viz.registry import PlotSpec, PlotType
+
+_VOLATILE_CONFIG_KEYS: frozenset[str] = frozenset({"device", "spg_path"})
+
+
+def _to_canonical_config_val(val: Any) -> Any:
+    """Convert constructor parameter values into deterministic JSON-serializable structures."""
+    if val is None or isinstance(val, (bool, int, float, str)):
+        return val
+    if isinstance(val, Enum):
+        return val.value
+    if isinstance(val, Path):
+        return val.as_posix()
+    if isinstance(val, (np.integer, np.floating, np.bool_)):
+        return val.item()
+    if isinstance(val, BaseSpatialModel):
+        return {
+            "model_class": f"{type(val).__module__}.{type(val).__qualname__}",
+            "code_sha256": val._source_code_sha256(),
+            "config": val.get_config_dict(),
+        }
+    if isinstance(val, (list, tuple)):
+        return [_to_canonical_config_val(v) for v in val]
+    if isinstance(val, dict):
+        return {str(k): _to_canonical_config_val(v) for k, v in sorted(val.items())}
+    if isinstance(val, pd.DataFrame):
+        return f"<DataFrame shape={val.shape}>"
+    if isinstance(val, np.ndarray):
+        return f"<ndarray shape={val.shape} dtype={val.dtype}>"
+    return repr(val)
+
+
+@functools.lru_cache(maxsize=64)
+def _file_sha256(file_path: str) -> str:
+    """Return SHA-256 hex digest of a Python source file."""
+    return hashlib.sha256(Path(file_path).read_bytes()).hexdigest()
 
 
 @functools.lru_cache(maxsize=64)
@@ -107,6 +148,62 @@ class BaseSpatialModel(abc.ABC):
         """Return byte size of retained spatial lookup anchors or cell tables."""
         return 0
 
+    def get_config_dict(self) -> dict[str, Any]:
+        """Inspect ``__init__`` parameters on ``self`` for deterministic fingerprinting."""
+        cls = type(self)
+        sig = inspect.signature(cls.__init__)
+        params: dict[str, Any] = {}
+        for param_name, param in sig.parameters.items():
+            if param_name == "self" or param_name in _VOLATILE_CONFIG_KEYS:
+                continue
+            if param.kind in (
+                inspect.Parameter.VAR_POSITIONAL,
+                inspect.Parameter.VAR_KEYWORD,
+            ):
+                continue
+            if hasattr(self, param_name):
+                raw_val = getattr(self, param_name)
+            elif hasattr(self, f"_{param_name}"):
+                raw_val = getattr(self, f"_{param_name}")
+            elif param.default is not inspect.Parameter.empty:
+                raw_val = param.default
+            else:
+                raw_val = "<unset>"
+            params[param_name] = _to_canonical_config_val(raw_val)
+        return params
+
+    def _source_code_sha256(self) -> str:
+        """Compute combined SHA-256 of this model's source file and any nested child models."""
+        hashes: list[str] = []
+        try:
+            src_file = inspect.getsourcefile(type(self))
+            if src_file and Path(src_file).is_file():
+                hashes.append(_file_sha256(str(Path(src_file).resolve())))
+        except (TypeError, OSError):
+            pass
+        for attr_name in sorted(self.__dict__):
+            val = self.__dict__[attr_name]
+            if isinstance(val, BaseSpatialModel):
+                hashes.append(f"{attr_name}:{val._source_code_sha256()}")
+        return hashlib.sha256("|".join(hashes).encode("utf-8")).hexdigest()
+
+    def compute_sync_fingerprint(self, train_grid: str | None = None) -> str:
+        """Compute deterministic SHA-256 fingerprint over code, hyperparameters, and ``train_grid``.
+
+        :param train_grid: Canonical training grid identifier (e.g., ``'ro_grid_4x4'``).
+        :type train_grid: str | None
+        :return: 64-character hexadecimal SHA-256 digest.
+        :rtype: str
+        """
+        payload = {
+            "model_class": f"{type(self).__module__}.{type(self).__qualname__}",
+            "code_sha256": self._source_code_sha256(),
+            "config": self.get_config_dict(),
+            "train_grid": train_grid,
+        }
+        canonical = json.dumps(payload, sort_keys=True, separators=(",", ":"))
+        return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
     def memory_footprint_bytes(self) -> int:
         """Estimate serialized model size in bytes via pickle."""
         try:
@@ -176,6 +273,97 @@ class BaseGridShiftModel(BaseSpatialModel):
     @abc.abstractmethod
     def _fit_impl(self, coords: np.ndarray, shifts: np.ndarray) -> None:
         """Algorithm-specific fitting logic on validated ``(N, 2)`` arrays."""
+
+    def save_checkpoint(self, path: Path, train_grid: str | None = None) -> Path:
+        """Persist this fitted model and its sync fingerprint as a ``.pkl`` envelope.
+
+        :param path: Target ``.pkl`` file path.
+        :type path: Path
+        :param train_grid: Canonical training grid identifier used during fitting.
+        :type train_grid: str | None
+        :return: Written checkpoint path.
+        :rtype: Path
+        :raises RuntimeError: If called before the model is fitted.
+        """
+        if not self._is_fitted:
+            raise RuntimeError(
+                f"Cannot save unfitted {type(self).__name__} checkpoint."
+            )
+        path = Path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        envelope = {
+            "schema": "ml_transdat_model_v1",
+            "fingerprint": self.compute_sync_fingerprint(train_grid),
+            "train_grid": train_grid,
+            "fit_time_sec": self._fit_time_sec,
+            "model": self,
+        }
+        tmp_path = path.with_suffix(".pkl.tmp")
+        with tmp_path.open("wb") as fh:
+            pickle.dump(envelope, fh, protocol=pickle.HIGHEST_PROTOCOL)
+        tmp_path.replace(path)
+        return path
+
+    def load_or_fit(
+        self,
+        train_data: tuple[np.ndarray, np.ndarray]
+        | Callable[[], tuple[np.ndarray, np.ndarray]],
+        *,
+        cache_path: Path | None = None,
+        train_grid: str | None = None,
+        force_retrain: bool = False,
+        label: str | None = None,
+    ) -> BaseGridShiftModel:
+        """Load a fingerprint-matched checkpoint if valid, or fit from scratch and save.
+
+        :param train_data: Either ``(coords, shifts)`` or a lazy callable returning them.
+        :type train_data: tuple[np.ndarray, np.ndarray] | Callable[[], tuple[np.ndarray, np.ndarray]]
+        :param cache_path: Optional ``.pkl`` checkpoint path.
+        :type cache_path: Path | None
+        :param train_grid: Canonical training grid identifier for fingerprint verification.
+        :type train_grid: str | None
+        :param force_retrain: If True, ignore any existing checkpoint and retrain.
+        :type force_retrain: bool
+        :param label: Optional display label for log output.
+        :type label: str | None
+        :return: Fitted self instance.
+        :rtype: BaseGridShiftModel
+        """
+        tag = label or type(self).__name__
+        expected_fp = self.compute_sync_fingerprint(train_grid)
+
+        if cache_path is not None and not force_retrain and Path(cache_path).is_file():
+            try:
+                with Path(cache_path).open("rb") as fh:
+                    envelope = pickle.load(fh)
+                if (
+                    isinstance(envelope, dict)
+                    and envelope.get("schema") == "ml_transdat_model_v1"
+                    and envelope.get("fingerprint") == expected_fp
+                    and isinstance(envelope.get("model"), type(self))
+                ):
+                    loaded: BaseGridShiftModel = envelope["model"]
+                    self.__dict__.clear()
+                    self.__dict__.update(loaded.__dict__)
+                    print(
+                        f"[CACHE HIT] Loaded {tag} from {Path(cache_path).as_posix()} "
+                        f"(saved fit_time={self._fit_time_sec:.3f}s)"
+                    )
+                    return self
+                print(
+                    f"[CACHE INVALIDATED] Fingerprint mismatch for {tag} "
+                    f"(code or params changed); retraining..."
+                )
+            except (OSError, pickle.PickleError, EOFError, AttributeError, RuntimeError) as exc:
+                logger.warning("Failed to load checkpoint %s: %s", cache_path, exc)
+                print(f"[CACHE CORRUPT] Retraining {tag}: {exc}")
+
+        coords, shifts = train_data() if callable(train_data) else train_data
+        self.fit(coords, shifts)
+        if cache_path is not None:
+            self.save_checkpoint(Path(cache_path), train_grid=train_grid)
+            print(f"[CACHE SAVED] {tag} -> {Path(cache_path).as_posix()}")
+        return self
 
     def fit_stream(
         self, chunks: Iterator[tuple[np.ndarray, np.ndarray]]
@@ -322,6 +510,11 @@ class BaseGridShiftModel(BaseSpatialModel):
 class BaseCoordinateTransformer(BaseSpatialModel):
     """Abstract base class for full ETRS89 <-> Stereo 70 coordinate transformers."""
 
+    @property
+    def fit_time_sec(self) -> float:
+        """Return wall-clock fitting time in seconds (0.0 for analytical baselines)."""
+        return 0.0
+
     @abc.abstractmethod
     def etrs89_to_st70(
         self,
@@ -416,6 +609,11 @@ class ResidualCoordinateTransformer(BaseCoordinateTransformer):
                 )
             )
         )
+
+    @property
+    def fit_time_sec(self) -> float:
+        """Return the wrapped shift model's fitting time in seconds."""
+        return float(self.shift_model.fit_time_sec)
 
     def _grid_lookup_bytes(self) -> int:
         return self.shift_model._grid_lookup_bytes()
