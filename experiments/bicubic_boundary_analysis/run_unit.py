@@ -1,13 +1,20 @@
 """Bicubic Cell Boundary Extension Analysis.
 
-Visualizes the true piecewise bicubic interpolation along the 198 km (18-cell)
-Easting transect centered on the exact 66 km (6-cell) ``plot_transect_66km``
-section (row 24, cols 18..24, extended 6 cells before and 6 cells after).
-Each cell's individual bicubic polynomial is extended into the adjacent cells
-before and after ([-1, 2] in unit-cell coordinates) using distinct dashed colors.
+Visualizes the true piecewise bicubic interpolation along:
+1. The 198 km (18-cell) Easting transect centered on row 24, cols 18..24.
+2. Group 1: Gradient & Linear Extremes (3-panel plot: `extreme_scenarios_gradient_and_linear.png`):
+   - Steepest Left-to-Right Fall (-0.536 m drop across 11 km)
+   - Steepest Left-to-Right Rise (+0.453 m jump in dE across 11 km)
+   - Flat Endpoints with High Internal Sag (nodal diff < 2 mm, bowing > 35 mm)
+3. Group 2: Curvature & Boundary Discontinuity Extremes (4-panel plot: `extreme_scenarios_curvature_and_kinks.png`):
+   - Genuine S-Shape (sigmoidal inflection point & high curvature reversal, zoomed to true scale)
+   - Strongest Bowl / Trough (maximum downward dip / sagitta of 74.7 mm)
+   - Strongest Dome / Peak (maximum upward crest / crown of 41.1 mm)
+   - Worst-Case C1 Boundary Discontinuity (sharpest slope crease of 0.788 m/step)
 """
 
 from pathlib import Path
+from typing import Any, Dict, List
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -30,7 +37,6 @@ def _plot_easting_transect(
     step = grid.e_step
     e_total = n_cells * step
 
-    # Highlight the original 66 km plot_transect_66km section
     orig_e0_km = (e0 + orig_start_cell * step) * 1e-3
     orig_e1_km = (e0 + orig_end_cell * step) * 1e-3
     ax.axvspan(
@@ -42,7 +48,6 @@ def _plot_easting_transect(
         label="Original 66 km transect (cols 18–24)",
     )
 
-    # 1. True piecewise bicubic curve
     eps = 1e-6
     dist_m = np.linspace(eps, e_total - eps, n_cells * pts_per_cell + 1)
     e_pts = e0 + dist_m
@@ -52,7 +57,6 @@ def _plot_easting_transect(
     dn_true, de_true = grid.interp(n_pts.tolist(), e_pts.tolist())
     y_true = np.asarray(dn_true if component == "dN" else de_true, dtype=np.float64)
 
-    # 2. Per-cell polynomial extended to [-1, 2] (1 cell before, cell itself, 1 cell after)
     colors = plt.cm.tab20(np.arange(n_cells))
     u_ext = np.linspace(-1.0, 2.0, 3 * pts_per_cell + 1)
 
@@ -80,7 +84,6 @@ def _plot_easting_transect(
             zorder=3,
         )
 
-    # 3. True curve on top
     ax.plot(
         e_km,
         y_true,
@@ -90,7 +93,6 @@ def _plot_easting_transect(
         zorder=5,
     )
 
-    # 4. Vertical 11 km cell boundaries & true SPG nodal shift values
     row_idx = round((n_fixed - grid.n_min) / grid.n_step)
     col_start = round((e0 - grid.e_min) / grid.e_step)
     node_cols = [col_start + k for k in range(n_cells + 1)]
@@ -122,11 +124,303 @@ def _plot_easting_transect(
     ax.grid(True, linestyle=":", linewidth=0.5, alpha=0.5)
 
 
+def _plot_extended_scenario(
+    ax: plt.Axes,
+    grid: Grid2D,
+    scenario: Dict[str, Any],
+    pts_per_cell: int = 80,
+) -> None:
+    """Plots a scenario with the cell of interest in the middle and neighbors extended.
+
+    Displays a 5-cell window: [col_idx-2 .. col_idx+3], where target cell is [col_idx, col_idx+1]
+    in the center, flanked by 2 cells to the left and 2 cells to the right.
+    Strictly sets the vertical axis based on true curve and nodes to ensure magnification.
+    """
+    row_idx = scenario["row"]
+    col_idx = scenario["col"]
+    comp = scenario["comp"]
+    title = scenario["title"]
+    desc = scenario["desc"]
+
+    step = grid.e_step
+    n_fixed = grid.n_min + row_idx * grid.n_step
+    e_cell_start = grid.e_min + col_idx * step
+
+    # 5-cell window: u in [-2, 3] relative to cell start
+    u_win = np.linspace(-2.0, 3.0, 5 * pts_per_cell + 1)
+    x_win_km = (e_cell_start + u_win * step) * 1e-3
+
+    # 1. Target cell BiInterp polynomial extended across the window
+    e_center = e_cell_start + 0.5 * step
+    sg_idxs = grid._sgrid_idxs(n_fixed, e_center)
+    sg_v_dict = grid.get_vs_at_idxs_cached(sg_idxs)
+    sg_v_e_list, sg_v_n_list = zip(*sg_v_dict.values(), strict=True)
+    bi = grid._init_interp(sg_v_n_list if comp == "dN" else sg_v_e_list)
+    y_target_poly = np.array([bi.interp(0.0, float(u)) for u in u_win])
+
+    # 2. True piecewise bicubic curve across 5 cells
+    eps = 1e-5
+    e_min_win = e_cell_start - 2.0 * step + eps
+    e_max_win = e_cell_start + 3.0 * step - eps
+    e_true_m = np.clip(e_cell_start + u_win * step, e_min_win, e_max_win)
+    dn_true, de_true = grid.interp(np.full_like(e_true_m, n_fixed).tolist(), e_true_m.tolist())
+    y_true = np.asarray(dn_true if comp == "dN" else de_true, dtype=np.float64)
+
+    # 3. 6 Grid nodes: cols col_idx-2 to col_idx+3
+    node_cols = list(range(col_idx - 2, col_idx + 4))
+    node_idxs = tuple(row_idx * grid.c_count + c for c in node_cols)
+    node_vals = grid.get_vs_at_idxs_cached(node_idxs)
+    node_x_km = [(grid.e_min + c * step) * 1e-3 for c in node_cols]
+    node_y = [
+        node_vals[idx][1] if comp == "dN" else node_vals[idx][0]
+        for idx in node_idxs
+    ]
+
+    # Target cell nodes g5, g6 (cols col_idx, col_idx+1)
+    g4 = node_y[1]
+    g5 = node_y[2]
+    g6 = node_y[3]
+    g7 = node_y[4]
+
+    # Tangents for target cell
+    slope_left = (-g7 + 4.0 * g6 - 3.0 * g5) / 2.0
+    slope_right = (3.0 * g6 - 4.0 * g5 + g4) / 2.0
+
+    # Catmull-Rom inside [0, 1] for comparison
+    u_in = np.linspace(0.0, 1.0, pts_per_cell + 1)
+    x_in_km = (e_cell_start + u_in * step) * 1e-3
+    cr_sl = (g6 - g4) / 2.0
+    cr_sr = (g7 - g5) / 2.0
+    a0, a1 = g5, cr_sl
+    a2 = -3.0 * g5 + 3.0 * g6 - 2.0 * cr_sl - cr_sr
+    a3 = 2.0 * g5 - 2.0 * g6 + cr_sl + cr_sr
+    y_cr = a0 + a1 * u_in + a2 * (u_in**2) + a3 * (u_in**3)
+
+    # Target cell highlight (yellow)
+    ax.axvspan(
+        e_cell_start * 1e-3,
+        (e_cell_start + step) * 1e-3,
+        color="#fef3c7",
+        alpha=0.55,
+        zorder=0,
+        label=f"Target cell [0, 1] (cols {col_idx}–{col_idx + 1})",
+    )
+
+    # Flanking neighbor highlights (subtle blue-gray)
+    ax.axvspan(
+        (e_cell_start - step) * 1e-3,
+        e_cell_start * 1e-3,
+        color="#f1f5f9",
+        alpha=0.45,
+        zorder=0,
+    )
+    ax.axvspan(
+        (e_cell_start + step) * 1e-3,
+        (e_cell_start + 2 * step) * 1e-3,
+        color="#f1f5f9",
+        alpha=0.45,
+        zorder=0,
+    )
+
+    # Polynomial extension (clipped visually to y_limits so it does not distort scale)
+    y_min_true = min(float(np.min(y_true)), min(node_y))
+    y_max_true = max(float(np.max(y_true)), max(node_y))
+    y_span = max(y_max_true - y_min_true, 0.05)
+    y_lim_lower = y_min_true - 0.18 * y_span
+    y_lim_upper = y_max_true + 0.18 * y_span
+
+    ax.plot(
+        x_win_km,
+        y_target_poly,
+        linestyle="--",
+        linewidth=1.7,
+        color="#7c3aed",
+        label="Target cell polynomial (extended to neighbors)",
+        zorder=3,
+    )
+
+    # True piecewise bicubic curve
+    ax.plot(
+        x_win_km,
+        y_true,
+        color="#0f172a",
+        linewidth=2.4,
+        label="True Piecewise Bicubic (pytransdat)",
+        zorder=4,
+    )
+
+    # Catmull-Rom baseline
+    ax.plot(
+        x_in_km,
+        y_cr,
+        color="#0ea5e9",
+        linewidth=1.8,
+        linestyle=":",
+        label="Catmull-Rom baseline (central diff)",
+        zorder=5,
+    )
+
+    # Tangent segments
+    u_tl = np.linspace(-0.35, 0.35, 20)
+    u_tr = np.linspace(0.65, 1.35, 20)
+    ax.plot(
+        (e_cell_start + u_tl * step) * 1e-3,
+        g5 + slope_left * u_tl,
+        color="#059669",
+        linewidth=2.0,
+        linestyle="-.",
+        zorder=5,
+        label=f"Left tangent at u=0 ({slope_left:+.3f})",
+    )
+    ax.plot(
+        (e_cell_start + u_tr * step) * 1e-3,
+        g6 + slope_right * (u_tr - 1.0),
+        color="#d97706",
+        linewidth=2.0,
+        linestyle="-.",
+        zorder=5,
+        label=f"Right tangent at u=1 ({slope_right:+.3f})",
+    )
+
+    # Vertical cell boundaries
+    for bx in node_x_km:
+        ax.axvline(bx, color="#94a3b8", linestyle=":", linewidth=0.9, zorder=1)
+
+    # Nodal points
+    ax.scatter(
+        node_x_km,
+        node_y,
+        color="#dc2626",
+        edgecolor="white",
+        linewidth=1.0,
+        s=55,
+        zorder=6,
+        label="SPG Grid Nodes (11 km)",
+    )
+
+    # Node annotations
+    for idx_pt, (c_num, x_pt, y_pt) in enumerate(zip(node_cols, node_x_km, node_y)):
+        is_target = c_num in (col_idx, col_idx + 1)
+        ax.annotate(
+            f"col {c_num}\n({y_pt:+.3f} m)",
+            xy=(x_pt, y_pt),
+            xytext=(0, -18 if idx_pt in (2, 3) else 10),
+            textcoords="offset points",
+            ha="center",
+            va="top" if idx_pt in (2, 3) else "bottom",
+            fontsize=7.5,
+            fontweight="bold" if is_target else "normal",
+            color="#991b1b" if is_target else "#475569",
+            bbox={
+                "boxstyle": "round,pad=0.2",
+                "fc": "#fee2e2" if is_target else "white",
+                "ec": "#ef4444" if is_target else "#cbd5e1",
+                "alpha": 0.85,
+            },
+            zorder=7,
+        )
+
+    ax.set_title(f"{title}\n{desc}", fontsize=10.5, fontweight="bold")
+    ax.set_ylabel(f"{comp} Shift (m)")
+    ax.set_xlabel("Stereo 70 Easting (km)")
+    ax.set_xlim(x_win_km[0], x_win_km[-1])
+    # Enforce magnified vertical scale matching true curve dynamics
+    ax.set_ylim(y_lim_lower, y_lim_upper)
+    ax.grid(True, linestyle=":", linewidth=0.5, alpha=0.5)
+    ax.legend(fontsize=7.2, ncol=3, loc="best", framealpha=0.9)
+
+
+def _save_grouped_extreme_scenarios(grid: Grid2D, out_dir: Path) -> None:
+    """Generates two separate grouped output plots for extreme scenarios."""
+    # Group 1: Gradient & Linear Extremes (Steepest Fall, Steepest Rise, Flat Bending)
+    group1_scenarios: List[Dict[str, Any]] = [
+        {
+            "id": "steepest_fall",
+            "title": "Scenario 1A: Steepest Left-to-Right Fall (Row 23, Col 34, dN) — -0.536 m Drop",
+            "row": 23,
+            "col": 34,
+            "comp": "dN",
+            "desc": "Maximum downward drop across an 11 km cell width from -0.185 m to -0.722 m.",
+        },
+        {
+            "id": "steepest_rise_de",
+            "title": "Scenario 1B: Steepest Left-to-Right Rise in Easting (Row 45, Col 38, dE) — +0.453 m Jump",
+            "row": 45,
+            "col": 38,
+            "comp": "dE",
+            "desc": "Largest horizontal Easting jump across an 11 km cell width from -0.668 m to -0.215 m.",
+        },
+        {
+            "id": "flat_bending",
+            "title": "Scenario 1C: Flat Endpoints with High Internal Sag (Row 45, Col 35, dN) — 38.0 mm Bowing",
+            "row": 45,
+            "col": 35,
+            "comp": "dN",
+            "desc": "Cell endpoints differ by only 1.5 mm, yet bicubic curve bows by 38.0 mm due to external stencil slopes.",
+        },
+    ]
+
+    # Group 2: Curvature & Boundary Discontinuity Extremes (S-Shape, Bowl, Dome, Worst Kink)
+    group2_scenarios: List[Dict[str, Any]] = [
+        {
+            "id": "s_shape",
+            "title": "Scenario 2A: True S-Shape (Row 23, Col 36, dN) — Sigmoidal Inflection",
+            "row": 23,
+            "col": 36,
+            "comp": "dN",
+            "desc": "Inflection point u_inf=0.48 with opposite curvature signs at endpoints (magnified to true vertical scale).",
+        },
+        {
+            "id": "bowl",
+            "title": "Scenario 2B: Strongest Bowl / Trough (Row 23, Col 35, dN) — 74.7 mm Sagitta",
+            "row": 23,
+            "col": 35,
+            "comp": "dN",
+            "desc": "Extreme interior trough dipping 74.7 mm below chord line between nodes.",
+        },
+        {
+            "id": "dome",
+            "title": "Scenario 2C: Strongest Dome / Peak (Row 3, Col 34, dN) — 41.1 mm Crown",
+            "row": 3,
+            "col": 34,
+            "comp": "dN",
+            "desc": "Interior crest peaking 41.1 mm above the boundary chord line.",
+        },
+        {
+            "id": "worst_kink",
+            "title": "Scenario 2D: Worst-Case C1 Boundary Discontinuity (Row 10, Col 16, dN) — 0.788 m/step Break",
+            "row": 10,
+            "col": 16,
+            "comp": "dN",
+            "desc": "Sharpest slope crease across an 11 km boundary in active Romanian territory.",
+        },
+    ]
+
+    # Plot Group 1
+    fig1, axes1 = plt.subplots(len(group1_scenarios), 1, figsize=(12, 4.3 * len(group1_scenarios)))
+    for ax, scen in zip(axes1, group1_scenarios, strict=True):
+        _plot_extended_scenario(ax, grid, scen)
+    fig1.tight_layout()
+    path1 = out_dir / "extreme_scenarios_gradient_and_linear.png"
+    fig1.savefig(path1, dpi=200)
+    plt.close(fig1)
+    print(f"Saved Group 1 (Gradient & Linear) to: {path1}")
+
+    # Plot Group 2
+    fig2, axes2 = plt.subplots(len(group2_scenarios), 1, figsize=(12, 4.3 * len(group2_scenarios)))
+    for ax, scen in zip(axes2, group2_scenarios, strict=True):
+        _plot_extended_scenario(ax, grid, scen)
+    fig2.tight_layout()
+    path2 = out_dir / "extreme_scenarios_curvature_and_kinks.png"
+    fig2.savefig(path2, dpi=200)
+    plt.close(fig2)
+    print(f"Saved Group 2 (Curvature & Kinks) to: {path2}")
+
+
 def main() -> None:
-    """Runs the 198 km (18-cell) bicubic cell boundary extension analysis."""
+    """Runs the bicubic cell boundary extension and grouped extreme scenarios analysis."""
     grid = Grid2D()
 
-    # Exact row from plot_transect_66km, tripled in Easting (6 before + 6 original + 6 after)
     n_fixed = grid.n_min + 24 * grid.n_step
     e0 = grid.e_min + 12 * grid.e_step
     n_cells = 18
@@ -168,322 +462,10 @@ def main() -> None:
     out_path = out_dir / "bicubic_cell_boundary_extension.png"
     fig.savefig(out_path, dpi=200)
     plt.close(fig)
-    print(f"Saved plot to: {out_path}")
+    print(f"Saved transect plot to: {out_path}")
 
-    # Isolated single-cell zoom (Cell 9: row 24, cols 20–21, 329.783–340.783 km)
-    _save_single_cell_zoom(grid, row_idx=24, col_idx=20, out_dir=out_dir)
-
-    # Extreme S-shape and Bowl/Dome scenarios from full-grid scan
-    _save_extreme_scenarios(grid, out_dir=out_dir)
-
-
-def _save_single_cell_zoom(
-    grid: Grid2D,
-    row_idx: int,
-    col_idx: int,
-    out_dir: Path,
-    pts_per_cell: int = 100,
-) -> None:
-    """Plots an isolated single-cell bicubic polynomial over [-1, 2] (no neighbors)."""
-    n_fixed = grid.n_min + row_idx * grid.n_step
-    e_cell_start = grid.e_min + col_idx * grid.e_step
-    step = grid.e_step
-
-    # Extract only this cell's 4x4 subgrid and BiInterp polynomial
-    e_center = e_cell_start + 0.5 * step
-    sg_idxs = grid._sgrid_idxs(n_fixed, e_center)
-    sg_v_dict = grid.get_vs_at_idxs_cached(sg_idxs)
-    sg_v_e_list, sg_v_n_list = zip(*sg_v_dict.values(), strict=True)
-
-    # 4 SPG nodes along row_idx used by this cell's 4x4 subgrid (cols col_idx-1 .. col_idx+2)
-    node_cols = [col_idx - 1, col_idx, col_idx + 1, col_idx + 2]
-    node_idxs = tuple(row_idx * grid.c_count + c for c in node_cols)
-    node_vals = grid.get_vs_at_idxs_cached(node_idxs)
-    node_x_km = [(grid.e_min + c * step) * 1e-3 for c in node_cols]
-
-    u_ext = np.linspace(-1.0, 2.0, 3 * pts_per_cell + 1)
-    x_ext_km = (e_cell_start + u_ext * step) * 1e-3
-
-    # True piecewise bicubic curve across [-1, 2] (neighbor before, target cell, neighbor after)
-    eps = 1e-6
-    e_true_m = np.clip(e_cell_start + u_ext * step, e_cell_start - step + eps, e_cell_start + 2 * step - eps)
-    n_true_m = np.full_like(e_true_m, n_fixed)
-    dn_true_all, de_true_all = grid.interp(n_true_m.tolist(), e_true_m.tolist())
-
-    fig, (ax_dn, ax_de) = plt.subplots(2, 1, figsize=(11, 7.5), sharex=True)
-
-    for ax, comp, sg_list, y_true_all, color in (
-        (ax_dn, "dN", sg_v_n_list, np.asarray(dn_true_all, dtype=np.float64), "#7c3aed"),
-        (ax_de, "dE", sg_v_e_list, np.asarray(de_true_all, dtype=np.float64), "#2563eb"),
-    ):
-        bi = grid._init_interp(sg_list)
-        y_ext = np.array([bi.interp(0.0, float(u)) for u in u_ext])
-
-        ax.axvspan(
-            e_cell_start * 1e-3,
-            (e_cell_start + step) * 1e-3,
-            color="#fef3c7",
-            alpha=0.45,
-            zorder=0,
-            label=f"Target cell [0, 1] (cols {col_idx}–{col_idx + 1})",
-        )
-        ax.plot(
-            x_ext_km,
-            y_ext,
-            linestyle="--",
-            linewidth=1.8,
-            color=color,
-            label="Isolated cell polynomial (u in [-1, 2])",
-            zorder=3,
-        )
-        ax.plot(
-            x_ext_km,
-            y_true_all,
-            color="#0f172a",
-            linewidth=2.4,
-            label="True bicubic (pytransdat, u in [-1, 2])",
-            zorder=4,
-        )
-        for bx in node_x_km:
-            ax.axvline(bx, color="#94a3b8", linestyle=":", linewidth=0.9, zorder=1)
-
-        node_y = [
-            node_vals[idx][1] if comp == "dN" else node_vals[idx][0]
-            for idx in node_idxs
-        ]
-        # Draw the two Hermite tangent lines at u=0 (col_idx) and u=1 (col_idx+1)
-        # g4, g5, g6, g7 correspond to cols [col_idx-1, col_idx, col_idx+1, col_idx+2]
-        g4, g5, g6, g7 = node_y
-        slope_left = (-g7 + 4.0 * g6 - 3.0 * g5) / 2.0
-        slope_right = (3.0 * g6 - 4.0 * g5 + g4) / 2.0
-
-        u_tan_l = np.linspace(-0.45, 0.45, 20)
-        x_tan_l = (e_cell_start + u_tan_l * step) * 1e-3
-        y_tan_l = g5 + slope_left * u_tan_l
-
-        u_tan_r = np.linspace(0.55, 1.45, 20)
-        x_tan_r = (e_cell_start + u_tan_r * step) * 1e-3
-        y_tan_r = g6 + slope_right * (u_tan_r - 1.0)
-
-        ax.plot(
-            x_tan_l,
-            y_tan_l,
-            color="#059669",
-            linewidth=2.0,
-            linestyle="-.",
-            zorder=5,
-            label=f"Left tangent at u=0 (uses cols {col_idx}–{col_idx + 2})",
-        )
-        ax.plot(
-            x_tan_r,
-            y_tan_r,
-            color="#d97706",
-            linewidth=2.0,
-            linestyle="-.",
-            zorder=5,
-            label=f"Right tangent at u=1 (uses cols {col_idx - 1}–{col_idx + 1})",
-        )
-
-        ax.scatter(
-            node_x_km,
-            node_y,
-            color="#dc2626",
-            edgecolor="white",
-            linewidth=1.0,
-            s=55,
-            zorder=6,
-            label="SPG Grid Nodes (11 km)",
-        )
-        for idx_pt, (c_num, x_pt, y_pt) in enumerate(zip(node_cols, node_x_km, node_y)):
-            dx_off = 6 if idx_pt == 0 else (-6 if idx_pt == len(node_cols) - 1 else 0)
-            ha = "left" if idx_pt == 0 else ("right" if idx_pt == len(node_cols) - 1 else "center")
-            ax.annotate(
-                f"col {c_num}\n({y_pt:+.3f} m)",
-                xy=(x_pt, y_pt),
-                xytext=(dx_off, -16 if idx_pt in (1, 2) else 10),
-                textcoords="offset points",
-                ha=ha,
-                va="top" if idx_pt in (1, 2) else "bottom",
-                fontsize=8,
-                fontweight="bold",
-                color="#991b1b",
-                bbox={"boxstyle": "round,pad=0.2", "fc": "white", "ec": "#fca5a5", "alpha": 0.85},
-                zorder=7,
-            )
-        ax.set_ylabel(f"{comp} Shift (m)")
-        ax.grid(True, linestyle=":", linewidth=0.5, alpha=0.5)
-        ax.legend(loc="best", framealpha=0.9)
-
-    ax_dn.set_title(
-        f"Isolated Single Cell (Row {row_idx}, Cols {col_idx}–{col_idx + 1}: "
-        f"{e_cell_start * 1e-3:.3f}–{(e_cell_start + step) * 1e-3:.3f} km)",
-        fontsize=12,
-        fontweight="bold",
-    )
-    ax_de.set_xlabel("Stereo 70 Easting (km)")
-    ax_de.set_xlim(x_ext_km[0], x_ext_km[-1])
-
-    fig.tight_layout()
-    zoom_path = out_dir / f"single_cell_zoom_col{col_idx}.png"
-    fig.savefig(zoom_path, dpi=200)
-    plt.close(fig)
-    print(f"Saved single-cell zoom to: {zoom_path}")
-
-
-def _save_extreme_scenarios(
-    grid: Grid2D,
-    out_dir: Path,
-    pts_per_cell: int = 100,
-) -> None:
-    """Plots the strongest S-shape and Bowl scenarios in the SPG grid."""
-    scenarios = [
-        ("Strongest S-Shape (Row 23, Cols 36–37, dN)", 23, 36, "dN"),
-        ("Strongest Bowl / Trough (Row 23, Cols 35–36, dN)", 23, 35, "dN"),
-    ]
-    fig, axes = plt.subplots(2, 1, figsize=(11, 8.0))
-
-    u_in = np.linspace(0.0, 1.0, pts_per_cell + 1)
-    u_ext = np.linspace(-1.0, 2.0, 3 * pts_per_cell + 1)
-
-    for ax, (title, row_idx, col_idx, comp) in zip(axes, scenarios, strict=True):
-        n_fixed = grid.n_min + row_idx * grid.n_step
-        e_cell_start = grid.e_min + col_idx * grid.e_step
-        step = grid.e_step
-
-        e_center = e_cell_start + 0.5 * step
-        sg_idxs = grid._sgrid_idxs(n_fixed, e_center)
-        sg_v_dict = grid.get_vs_at_idxs_cached(sg_idxs)
-        sg_v_e_list, sg_v_n_list = zip(*sg_v_dict.values(), strict=True)
-        bi = grid._init_interp(sg_v_n_list if comp == "dN" else sg_v_e_list)
-
-        node_cols = [col_idx - 1, col_idx, col_idx + 1, col_idx + 2]
-        node_idxs = tuple(row_idx * grid.c_count + c for c in node_cols)
-        node_vals = grid.get_vs_at_idxs_cached(node_idxs)
-        node_x_km = [(grid.e_min + c * step) * 1e-3 for c in node_cols]
-        node_y = [
-            node_vals[idx][1] if comp == "dN" else node_vals[idx][0]
-            for idx in node_idxs
-        ]
-        g4, g5, g6, g7 = node_y
-
-        x_in_km = (e_cell_start + u_in * step) * 1e-3
-        x_ext_km = (e_cell_start + u_ext * step) * 1e-3
-        y_ext = np.array([bi.interp(0.0, float(u)) for u in u_ext])
-
-        eps = 1e-6
-        e_true_m = np.clip(e_cell_start + u_ext * step, e_cell_start - step + eps, e_cell_start + 2 * step - eps)
-        dn_true_all, de_true_all = grid.interp(np.full_like(e_true_m, n_fixed).tolist(), e_true_m.tolist())
-        y_true_all = np.asarray(dn_true_all if comp == "dN" else de_true_all, dtype=np.float64)
-
-        # Standard central-difference Catmull-Rom inside [0, 1] for comparison
-        cr_sl = (g6 - g4) / 2.0
-        cr_sr = (g7 - g5) / 2.0
-        a0, a1 = g5, cr_sl
-        a2 = -3.0 * g5 + 3.0 * g6 - 2.0 * cr_sl - cr_sr
-        a3 = 2.0 * g5 - 2.0 * g6 + cr_sl + cr_sr
-        y_cr = a0 + a1 * u_in + a2 * (u_in**2) + a3 * (u_in**3)
-
-        ax.axvspan(
-            e_cell_start * 1e-3,
-            (e_cell_start + step) * 1e-3,
-            color="#fef3c7",
-            alpha=0.45,
-            zorder=0,
-            label=f"Target cell [0, 1] (cols {col_idx}–{col_idx + 1})",
-        )
-        ax.plot(
-            x_ext_km,
-            y_ext,
-            linestyle="--",
-            linewidth=1.7,
-            color="#7c3aed",
-            label="pytransdat polynomial (u in [-1, 2])",
-            zorder=3,
-        )
-        ax.plot(
-            x_ext_km,
-            y_true_all,
-            color="#0f172a",
-            linewidth=2.4,
-            label="True bicubic (pytransdat, u in [-1, 2])",
-            zorder=4,
-        )
-        ax.plot(
-            x_in_km,
-            y_cr,
-            color="#0ea5e9",
-            linewidth=2.0,
-            linestyle=":",
-            label="Standard Catmull-Rom (central diff.)",
-            zorder=5,
-        )
-
-        # Tangents
-        slope_left = (-g7 + 4.0 * g6 - 3.0 * g5) / 2.0
-        slope_right = (3.0 * g6 - 4.0 * g5 + g4) / 2.0
-        u_tl = np.linspace(-0.4, 0.4, 20)
-        u_tr = np.linspace(0.6, 1.4, 20)
-        ax.plot(
-            (e_cell_start + u_tl * step) * 1e-3,
-            g5 + slope_left * u_tl,
-            color="#059669",
-            linewidth=2.0,
-            linestyle="-.",
-            zorder=5,
-            label=f"Left tangent (cols {col_idx}–{col_idx + 2})",
-        )
-        ax.plot(
-            (e_cell_start + u_tr * step) * 1e-3,
-            g6 + slope_right * (u_tr - 1.0),
-            color="#d97706",
-            linewidth=2.0,
-            linestyle="-.",
-            zorder=5,
-            label=f"Right tangent (cols {col_idx - 1}–{col_idx + 1})",
-        )
-
-        for bx in node_x_km:
-            ax.axvline(bx, color="#94a3b8", linestyle=":", linewidth=0.9, zorder=1)
-
-        ax.scatter(
-            node_x_km,
-            node_y,
-            color="#dc2626",
-            edgecolor="white",
-            linewidth=1.0,
-            s=55,
-            zorder=6,
-            label="SPG Grid Nodes (11 km)",
-        )
-        for idx_pt, (c_num, x_pt, y_pt) in enumerate(zip(node_cols, node_x_km, node_y)):
-            dx_off = 6 if idx_pt == 0 else (-6 if idx_pt == len(node_cols) - 1 else 0)
-            ha = "left" if idx_pt == 0 else ("right" if idx_pt == len(node_cols) - 1 else "center")
-            ax.annotate(
-                f"col {c_num}\n({y_pt:+.3f} m)",
-                xy=(x_pt, y_pt),
-                xytext=(dx_off, -14 if idx_pt in (1, 2) else 10),
-                textcoords="offset points",
-                ha=ha,
-                va="top" if idx_pt in (1, 2) else "bottom",
-                fontsize=8,
-                fontweight="bold",
-                color="#991b1b",
-                bbox={"boxstyle": "round,pad=0.2", "fc": "white", "ec": "#fca5a5", "alpha": 0.85},
-                zorder=7,
-            )
-
-        ax.set_title(title, fontsize=11, fontweight="bold")
-        ax.set_ylabel(f"{comp} Shift (m)")
-        ax.set_xlabel("Stereo 70 Easting (km)")
-        ax.set_xlim(x_ext_km[0], x_ext_km[-1])
-        ax.grid(True, linestyle=":", linewidth=0.5, alpha=0.5)
-        ax.legend(fontsize=7.5, ncol=2, loc="best", framealpha=0.9)
-
-    fig.tight_layout()
-    ext_path = out_dir / "extreme_scenarios_s_and_bowl.png"
-    fig.savefig(ext_path, dpi=200)
-    plt.close(fig)
-    print(f"Saved extreme scenarios to: {ext_path}")
+    # Generate the two grouped extreme scenarios plots
+    _save_grouped_extreme_scenarios(grid, out_dir=out_dir)
 
 
 if __name__ == "__main__":

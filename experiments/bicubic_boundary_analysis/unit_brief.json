@@ -3,25 +3,34 @@
   "slug": "bicubic_boundary_analysis",
   "experiment_type": "analysis",
   "status": "completed",
-  "runtime_s": 2.5,
+  "runtime_s": 8.5,
   "key_metrics": {
     "transect_length_km": 198.0,
     "transect_cells": 18,
     "max_single_cell_jump_m": 0.6874,
-    "strongest_s_shape_cell": "row_23_col_36_dN",
-    "strongest_bowl_cell": "row_23_col_35_dN"
+    "group1_gradient_linear": {
+      "steepest_fall_cell": "row_23_col_34_dN",
+      "steepest_rise_de_cell": "row_45_col_38_dE",
+      "flat_bending_cell": "row_45_col_35_dN"
+    },
+    "group2_curvature_kinks": {
+      "true_s_shape_cell": "row_23_col_36_dN",
+      "strongest_bowl_cell": "row_23_col_35_dN",
+      "strongest_dome_cell": "row_3_col_34_dN",
+      "worst_kink_cell": "row_10_col_16_dN"
+    }
   },
   "artifacts": {
     "plots": [
       "bicubic_cell_boundary_extension.png",
-      "single_cell_zoom_col20.png",
-      "extreme_scenarios_s_and_bowl.png"
+      "extreme_scenarios_gradient_and_linear.png",
+      "extreme_scenarios_curvature_and_kinks.png"
     ],
     "results": []
   },
   "benchmark_candidates": [],
   "extra": {
     "primary_source": "Avramiuc, Dragomir, & Rus (2009), RevCAD, p. 112",
-    "verdict": "Confirmed pytransdat Grid.BiInterp matches published TransDatRO one-sided 3-point finite-difference formulas verbatim; C1 slope kinks at 11 km borders are inherent to the specification."
+    "verdict": "Confirmed pytransdat Grid.BiInterp matches published TransDatRO one-sided 3-point finite-difference formulas verbatim. Grouped extreme scenarios cleanly into Gradient/Linear (3-panel) and Curvature/Kinks (4-panel) with true vertical-axis scaling, ensuring that subtle features like S-shapes, bowls, domes, and kinks are magnified and clearly visible."
   }
 }

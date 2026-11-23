@@ -23,12 +23,16 @@ flowchart TD
     MSF["mlp_shape_features<br><b>Status: Dead End</b><br>Discrete shape tags degrade Fourier MLP (13.0 -> 14.4mm uniform, 32.5 -> 40.8mm adaptive)"]
     CNF["cell_neighbor_features<br><b>Status: Validated</b><br>40 continuous 3x3 corner slopes & twists on 2,297 interior 11km cells"]
     MNF["mlp_neighbor_features<br><b>Status: Dead End</b><br>3x3 slopes/twists & center_dist degrade Fourier MLP (13.0 -> 13.7-15.5mm uniform, 32.5 -> 42.0-47.3mm adaptive)"]
-    ML["Next: Sub-Millimeter Hybrid Decompositions<br><b>Status: Exploring</b><br>Goal: Sub-millimeter via Densified RBF / Helmert Hybrid Models"]
+    BBA["bicubic_boundary_analysis<br><b>Status: Validated</b><br>Proves C1 slope kinks match official TransDatRO specification; groups 7 extreme boundary scenarios"]
+    TMLP["torch_mlp_regressor<br><b>Status: Validated</b><br>Deep PyTorch ResNet: 6.8mm uniform RMSE with cyclic (u, v) cell coordinates"]
+    SME["submillimeter_exploration<br><b>Status: Validated</b><br>T7 Bilinear + FeatGrid reaches 0.77mm uniform mean / 0.84mm bidirectional RMSE; T4 data-adaptive ResNet cuts stress RMSE 94%"]
+    ML["Next: Sub-Millimeter Production Architecture<br><b>Status: Exploring</b><br>Goal: Sub-millimeter production deployment and unified benchmark promotion"]
 
     SPG -->|"motivates"| PROJ
     SPG -->|"motivates"| H2D
     SPG -->|"extracts 3-class geometry"| CSF
     SPG -->|"extracts 3x3 corner slopes & twists"| CNF
+    SPG -->|"mathematically audits boundary continuity"| BBA
     PROJ -->|"establishes floor for"| ML
     H2D -->|"bends flat plane into"| POLY
     H2D -->|"provides analytical base for"| KNN
@@ -42,9 +46,14 @@ flowchart TD
     AQG -->|"provides continuous stress benchmarks for"| MLP
     MLP -->|"provides baseline for"| MSF
     MLP -->|"provides baseline for"| MNF
+    MLP -->|"advances to PyTorch ResNets"| TMLP
     CSF -->|"feeds discrete shape priors into"| MSF
     CNF -->|"feeds 3x3 neighbor priors into"| MNF
     CNF -->|"provides continuous 3x3 neighbor priors for"| ML
+    BBA -->|"explains boundary kink limits for"| RBF
+    BBA -->|"explains boundary kink limits for"| TMLP
+    BBA -->|"explains boundary kink limits for"| SME
+    TMLP -->|"spawns 7-track screening"| SME
 ```
 
 ---
@@ -72,6 +81,10 @@ flowchart TD
 | `mlp_spatial_regressor` | `mlp_shape_features` | `provides baseline for` | Supplies the `mlp_fourier_4x4` baseline for testing whether discrete per-axis cell shape categories improve neural accuracy. |
 | `mlp_spatial_regressor` | `mlp_neighbor_features` | `provides baseline for` | Supplies the `mlp_fourier_4x4` baseline for testing whether continuous $3\times 3$ neighbor slopes, twists, and midpoint distance improve neural accuracy. |
 | `cell_neighbor_features` | `mlp_neighbor_features` | `feeds 3x3 neighbor priors into` | Supplies the 40 continuous corner slopes/twists and `[0, 1]` midpoint distance for controlled Fourier MLP ablation (`Dead End` via additive concatenation). |
+| `spg_grid_analysis` | `bicubic_boundary_analysis` | `mathematically audits boundary continuity` | Audits whether 1D transect slope breaks at 11 km cell boundaries are code bugs or intrinsic to the official TransDatRO standard (they match the published specification verbatim). |
+| `bicubic_boundary_analysis` | `Continuous ML Models` | `explains boundary kink limits` | Proves that because official ground truth contains $C^1$ creases at every 11 km border, global continuous models naturally smooth over them; capturing sub-millimeter detail requires localized feature grids or cell priors. |
+| `mlp_spatial_regressor` | `torch_mlp_regressor` | `advances to PyTorch ResNets` | Replaces single feedforward MLP with deep PyTorch ResNets and cyclic local cell coordinates, cutting uniform RMSE from 13.0 mm to 6.8 mm. |
+| `torch_mlp_regressor` | `submillimeter_exploration` | `spawns 7-track screening` | Prompts structured multi-track exploration to break the sub-millimeter continuous ceiling. |
 
 ---
 
@@ -92,3 +105,6 @@ flowchart TD
 | [`mlp_shape_features`](mlp_shape_features.md) | `Dead End` | Controlled ablation of discrete 3/5/10 mm per-axis shape categories and S-Shape sample weighting (`2x`, `3x`) on `mlp_fourier_4x4`; degrades RMSE (`13.0 -> 14.4 mm` uniform, `32.5 -> 40.8 mm` adaptive). | [`experiments/mlp_shape_features/report.md`](../../experiments/mlp_shape_features/report.md) |
 | [`cell_neighbor_features`](cell_neighbor_features.md) | `Validated` | Extracts 40 continuous $3\times 3$ one-sided corner slopes and diagonal twists across 2,297 interior `11 km` cells; delivers $O(1)$ `CellNeighborFeatureExtractor`. | [`experiments/cell_neighbor_features/`](../../experiments/cell_neighbor_features/report.md) | [`src/geometry/neighbor_features.py`](../../src/geometry/neighbor_features.py) |
 | [`mlp_neighbor_features`](mlp_neighbor_features.md) | `Dead End` | Controlled ablation of 32 slopes, 40 slopes+twists, and continuous `[0, 1]` midpoint distance on `mlp_fourier_4x4`; degrades RMSE (`13.0 -> 13.7–15.5 mm` uniform, `32.5 -> 42.0–47.3 mm` adaptive). | [`experiments/mlp_neighbor_features/report.md`](../../experiments/mlp_neighbor_features/report.md) |
+| [`torch_mlp_regressor`](torch_mlp_regressor.md) | `Validated` | Deep PyTorch residual neural network with cyclic `(u, v)` local cell coordinates; achieves `6.8 mm` uniform RMSE and `95.6% < 1 cm`. | [`experiments/torch_mlp_regressor/report.md`](../../experiments/torch_mlp_regressor/report.md) |
+| [`submillimeter_exploration`](submillimeter_exploration.md) | `Validated` | Multi-track sub-millimeter exploration; `T7_bilinear_plus_featgrid_8x8` achieves `0.77 mm` uniform mean / `0.84 mm` bidirectional RMSE; `T4` data-adaptive ResNet collapses adaptive stress RMSE by 94% to `2.59 mm`. | [`experiments/submillimeter_exploration/report.md`](../../experiments/submillimeter_exploration/report.md) |
+| [`bicubic_boundary_analysis`](bicubic_boundary_analysis.md) | `Validated` | Proves `pytransdat` `Grid.BiInterp` matches published `TransDatRO` one-sided 3-point finite-difference formulas verbatim; $C^1$ slope kinks at 11 km borders are inherent to the specification. Establishes a 7-scenario taxonomy across 5-cell extended windows with true vertical-axis scaling. | [`experiments/bicubic_boundary_analysis/report.md`](../../experiments/bicubic_boundary_analysis/report.md) | [`pytransdat/trans_grid.py`](../../pytransdat/trans_grid.py) |

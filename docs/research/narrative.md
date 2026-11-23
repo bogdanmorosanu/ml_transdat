@@ -92,3 +92,17 @@ An ordered, causal record of how our understanding, hypotheses, and modeling dec
      - **3-Class Taxonomy**: Evaluating 25 interior test points per cell across polynomial orders proves that under a $5\,\text{mm}$ geodetic tolerance, Category 4 (high-order bicubic anomalies) vanishes ($< 0.5\%$), yielding a clean **$53.2\%$ Parabolic Dome/Bowl** vs. **$46.8\%$ Cubic S-Shape** split. Within $1\,\text{cm}$ ($10\,\text{mm}$), **$92.5\%$ of Romania** is captured by a simple 2nd-degree parabola.
      - **High Axis Concordance**: In $68.7\%$ of cells at $5\,\text{mm}$ (and $69.6\%$ at $10\,\text{mm}$), Northing and Easting shifts share the exact same shape category.
    - *Impact*: Delivers `CellShapeFeatureExtractor` providing $O(1)$ spatial feature lookups, providing downstream neural networks and hybrid models with localized scale-free $(u, v)$ coordinates, zero-offset base shifts, and functional shape priors.
+
+---
+
+## Phase 6: Algorithmic Boundary Continuity & Extreme Scenario Verification
+
+9. **Bicubic Cell Boundary & Extreme Scenarios Analysis (icubic_boundary_analysis)**:
+   - *Question*: Are the visible slope kinks along \,\text{km}$ cell boundaries in 1D transect plots an implementation bug in pytransdat, or are they mathematically inherent to official TransDatRO? Furthermore, how does the true bicubic curve behave under extreme geometric conditions (S-curves, bowls, domes, flat-sag bridges, and steepest gradient shifts)?
+   - *Finding*:
+     - **Verification of Official Specification**: Comparing pytransdat/trans_grid.py against Avramiuc, Dragomir, & Rus (2009, p. 112) confirms that Grid.BiInterp matches official TransDatRO verbatim. Boundary partial derivatives (, f_E$) are calculated using **one-sided 3-point finite-difference stencils** (forward at 0, backward at 1). Because adjacent cells evaluate different boundary tangents, ^0$ coordinate continuity is exact, but ^1$ first-derivative slope kinks are **inherent to the specification**.
+     - **Mathematical S-Shape Discovery**: Formulating the S-shape criterion via second-derivative zero-crossing (''(u_{\text{inf}}) = 0$ with {\text{inf}} \in [0.2, 0.8]$ and opposite curvature signs at endpoints) isolated a genuine sigmoidal curve (
+ow 23, col 36, dN, {\text{inf}} = 0.48$).
+     - **True Vertical-Scale Magnification**: Unconstrained polynomial extrapolation over 5 cells ( \in [-2, 3]$) blows up cubic terms to $> 20\,\text{m}$, which naively squashes the true \,\text{m}$ ground-truth curve. Clamping the vertical axis to true curve and node values (\%$ margin) magnifies the internal S-bend, revealing its true sigmoidal geometry.
+     - **Grouped Extreme Scenarios Taxonomy**: Established a 7-scenario suite evaluated across 5-cell extended windows, split into **Group 1 (Gradient & Linear Extremes)** (Steepest Fall of $-0.536\,\text{m}$, Steepest Easting Rise of $+0.453\,\text{m}$, and Flat-Sag Bowing of .0\,\text{mm}$ between identical nodes) and **Group 2 (Curvature & Kinks Extremes)** (True S-Shape, .7\,\text{mm}$ Bowl Trough, .1\,\text{mm}$ Dome Crest, and .788\,\text{m/step}$ worst-case ^1$ boundary crease).
+   - *Impact*: Confirms ground-truth reference fidelity and proves that continuous global ML models will naturally smooth over Romania's official \,\text{km}$ slope creases unless equipped with localized cell priors or micro-grid feature representations.
