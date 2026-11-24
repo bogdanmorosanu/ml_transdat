@@ -21,6 +21,7 @@ from src.evaluation.evaluator import EvaluationResult, ModelEvaluator
 from src.evaluation.metrics import dataframe_to_markdown, format_scorecard_table
 from src.models.base import BaseCoordinateTransformer, BaseGridShiftModel
 from src.viz.dispatcher import PlotDispatcher
+from src.viz.plots import plot_extreme_scenarios_9cells
 from src.viz.registry import PlotGroup, PlotSpec, PlotType
 
 
@@ -100,8 +101,26 @@ def summarize_eval_results(results: Sequence[EvaluationResult]) -> list[dict[str
                 "count": int(s.get("count", 0)),
                 "mean_2d_mm": round(float(s["mean_2d_m"]) * 1000.0, 4),
                 "rmse_2d_mm": round(float(s["rmse_2d_m"]) * 1000.0, 4),
+                "crmse_2d_mm": round(
+                    float(s.get("crmse_2d_m", float("nan"))) * 1000.0, 4
+                ),
+                "iqr_2d_mm": round(
+                    float(s.get("iqr_2d_m", float("nan"))) * 1000.0, 4
+                ),
                 "p95_2d_mm": round(float(s["p95_2d_m"]) * 1000.0, 4),
                 "max_2d_mm": round(float(s["max_2d_m"]) * 1000.0, 4),
+                "roughness_grad_rms_mm_km": round(
+                    float(s.get("roughness_grad_rms_mm_km", float("nan"))), 4
+                ),
+                "roughness_grad_p95_mm_km": round(
+                    float(s.get("roughness_grad_p95_mm_km", float("nan"))), 4
+                ),
+                "local_jitter_ratio": round(
+                    float(s.get("local_jitter_ratio", float("nan"))), 4
+                ),
+                "learnability_score_mm": round(
+                    float(s.get("learnability_score_mm", float("nan"))), 4
+                ),
                 "pass_lt_1cm_pct": round(float(pr.get("lt_1cm", 0.0)), 2),
                 "total_size_mb": round(float(total_mb), 4),
                 "fit_time_s": round(float(res.fit_time_sec), 4),
@@ -457,6 +476,8 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
     :meth:`after_run` hook for custom comparison plots such as transects).
     """
 
+    render_extreme_scenarios: bool = True
+
     @property
     def experiment_type(self) -> ExperimentType:
         """Return :attr:`ExperimentType.GRID_SHIFT`."""
@@ -465,6 +486,13 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
     @abc.abstractmethod
     def get_model_specs(self) -> list[ExperimentModelSpec]:
         """Return the ordered list of model variants to train and evaluate."""
+
+    def get_extreme_scenario_models(
+        self,
+        fitted_models: dict[str, BaseGridShiftModel],
+    ) -> dict[str, BaseGridShiftModel]:
+        """Return ``display_label -> model`` mapping for 9-cell extreme scenario plots."""
+        return dict(fitted_models)
 
     def after_run(
         self,
@@ -535,9 +563,21 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
 
         self.save_scorecards(all_results)
         rendered_paths = self.plotter.render_grouped(plot_items, out_dir=self.plots_dir)
+        plot_files: list[str] = [p.name for p in rendered_paths]
+
+        if self.render_extreme_scenarios:
+            scenario_models = self.get_extreme_scenario_models(kept_models)
+            if scenario_models:
+                g1_path, g2_path = plot_extreme_scenarios_9cells(
+                    models=scenario_models,
+                    out_dir=self.plots_dir,
+                )
+                for p_name in (g1_path.name, g2_path.name):
+                    if p_name not in plot_files:
+                        plot_files.append(p_name)
+
         extra_brief = self.after_run(kept_models, all_results)
 
-        plot_files: list[str] = [p.name for p in rendered_paths]
         for v in extra_brief.values():
             if isinstance(v, str) and v.endswith(".png") and v not in plot_files:
                 plot_files.append(v)

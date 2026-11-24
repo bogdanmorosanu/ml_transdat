@@ -2,12 +2,16 @@
 
 from src.viz.dispatcher import PlotDispatcher
 from src.viz.plots import (
+    EXTREME_SCENARIOS_GROUP1_GRADIENT_LINEAR,
+    EXTREME_SCENARIOS_GROUP2_CURVATURE_KINKS,
+    plot_extreme_scenarios_9cells,
     plot_hist_ecdf,
     plot_hist_ecdf_rows,
     plot_memory_breakdown_stacked,
     plot_model_comparison,
     plot_multi_dataset_comparison,
     plot_point_distribution,
+    plot_residual_roughness_rows,
     plot_signed_scatter,
     plot_signed_scatter_rows,
     plot_spatial_error,
@@ -16,6 +20,7 @@ from src.viz.plots import (
     plot_subcell_heatmap,
     plot_subcell_heatmap_rows,
     plot_surface_comparison_grids,
+    plot_surface_learnability_ranking,
     plot_transect_66km,
     plot_vector_quiver,
     plot_vector_quiver_rows,
@@ -23,16 +28,20 @@ from src.viz.plots import (
 from src.viz.registry import PlotGroup, PlotSpec, PlotType, resolve_plot_types
 
 __all__ = [
+    "EXTREME_SCENARIOS_GROUP1_GRADIENT_LINEAR",
+    "EXTREME_SCENARIOS_GROUP2_CURVATURE_KINKS",
     "PlotDispatcher",
     "PlotGroup",
     "PlotSpec",
     "PlotType",
+    "plot_extreme_scenarios_9cells",
     "plot_hist_ecdf",
     "plot_hist_ecdf_rows",
     "plot_memory_breakdown_stacked",
     "plot_model_comparison",
     "plot_multi_dataset_comparison",
     "plot_point_distribution",
+    "plot_residual_roughness_rows",
     "plot_signed_scatter",
     "plot_signed_scatter_rows",
     "plot_spatial_error",
@@ -41,6 +50,7 @@ __all__ = [
     "plot_subcell_heatmap",
     "plot_subcell_heatmap_rows",
     "plot_surface_comparison_grids",
+    "plot_surface_learnability_ranking",
     "plot_transect_66km",
     "plot_vector_quiver",
     "plot_vector_quiver_rows",

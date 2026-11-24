@@ -16,7 +16,7 @@ from src.data import GridId
 from src.evaluation import EvaluationResult
 from src.models.base import BaseGridShiftModel
 from src.models.polynomial_surface import PolynomialSurfaceRegressor
-from src.viz import PlotGroup, plot_surface_comparison_grids, plot_transect_66km
+from src.viz import PlotGroup, plot_surface_comparison_grids
 
 
 class PolynomialSurfaceRegressorUnit(GridShiftExperimentUnit):
@@ -171,6 +171,19 @@ class PolynomialSurfaceRegressorUnit(GridShiftExperimentUnit):
             ),
         ]
 
+    def get_extreme_scenario_models(
+        self,
+        fitted_models: dict[str, BaseGridShiftModel],
+    ) -> dict[str, BaseGridShiftModel]:
+        return {
+            "Flat Plane (Deg 1)": fitted_models["poly_deg1_11km"],
+            "Quadratic (Deg 2)": fitted_models["poly_deg2_11km"],
+            "Cubic (Deg 3)": fitted_models["poly_deg3_11km"],
+            "Quintic (Deg 5)": fitted_models["poly_deg5_11km"],
+            "Poly Deg 12 (11 km)": fitted_models["poly_deg12_11km"],
+            "Poly Deg 12 (4x4)": fitted_models["poly_deg12_4x4"],
+        }
+
     def after_run(
         self,
         fitted_models: dict[str, BaseGridShiftModel],
@@ -178,23 +191,7 @@ class PolynomialSurfaceRegressorUnit(GridShiftExperimentUnit):
     ) -> dict[str, Any]:
         out_plots: dict[str, str] = {}
 
-        # 1. 66 km Transect Comparison Plot
-        transect_path = self.plots_dir / "cell_transect_66km_polynomial.png"
-        plot_transect_66km(
-            models={
-                "Flat Plane (Deg 1)": fitted_models["poly_deg1_11km"],
-                "Quadratic (Deg 2)": fitted_models["poly_deg2_11km"],
-                "Cubic (Deg 3)": fitted_models["poly_deg3_11km"],
-                "Quintic (Deg 5)": fitted_models["poly_deg5_11km"],
-                "Poly Deg 12 (11 km)": fitted_models["poly_deg12_11km"],
-                "Poly Deg 12 (4x4)": fitted_models["poly_deg12_4x4"],
-            },
-            out_path=transect_path,
-            title="2D Polynomial Surface Progression Across 66 km Transect vs. Bicubic Ground Truth",
-        )
-        out_plots["transect_plot"] = transect_path.name
-
-        # 2. Comprehensive Degree Scaling Plot (Degrees 1 to 14)
+        # 1. Comprehensive Degree Scaling Plot (Degrees 1 to 14)
         scaling_path = self.plots_dir / "polynomial_degree_scaling.png"
         self._plot_degree_scaling(scaling_path)
         out_plots["degree_scaling_plot"] = scaling_path.name

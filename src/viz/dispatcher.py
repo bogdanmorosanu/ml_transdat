@@ -10,6 +10,7 @@ from src.evaluation.evaluator import EvaluationResult
 from src.models.base import BaseGridShiftModel
 from src.viz.plots import (
     plot_hist_ecdf_rows,
+    plot_residual_roughness_rows,
     plot_signed_scatter_rows,
     plot_spatial_error_rows,
     plot_subcell_heatmap_rows,
@@ -74,12 +75,22 @@ def _handle_vector_quiver_rows(
     )
 
 
+def _handle_residual_roughness_rows(
+    results: Sequence[EvaluationResult],
+    out_path: Path,
+    dpi: int,
+    _ctx: dict[str, Any],
+) -> Path:
+    return plot_residual_roughness_rows(results, out_path=out_path, dpi=dpi)
+
+
 _GROUPED_HANDLERS: dict[PlotType, _GroupedPlotHandler] = {
     PlotType.SPATIAL_ERROR: _handle_spatial_error_rows,
     PlotType.HIST_ECDF: _handle_hist_ecdf_rows,
     PlotType.SIGNED_SCATTER: _handle_signed_scatter_rows,
     PlotType.SUBCELL_HEATMAP: _handle_subcell_heatmap_rows,
     PlotType.VECTOR_QUIVER: _handle_vector_quiver_rows,
+    PlotType.RESIDUAL_ROUGHNESS: _handle_residual_roughness_rows,
 }
 
 

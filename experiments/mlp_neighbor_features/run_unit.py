@@ -9,11 +9,10 @@ import numpy as np
 
 from src.core.base_unit import ExperimentModelSpec, GridShiftExperimentUnit
 from src.data import GridDataset, GridId
-from src.evaluation import EvaluationResult
 from src.geometry.neighbor_features import CellNeighborFeatureExtractor
 from src.models.base import BaseGridShiftModel
 from src.models.mlp import MLPGridShiftModel
-from src.viz import PlotGroup, plot_transect_66km
+from src.viz import PlotGroup
 
 NEIGHBOR_FEATURES_PATH = Path("data/features/cell_neighbor_features.parquet")
 
@@ -126,29 +125,22 @@ class MLPNeighborFeaturesUnit(GridShiftExperimentUnit):
             ),
         ]
 
-    def after_run(
+    def get_extreme_scenario_models(
         self,
         fitted_models: dict[str, BaseGridShiftModel],
-        results: list[EvaluationResult],
-    ) -> dict[str, Any]:
-        transect_path = self.plots_dir / "cell_transect_66km_mlp_neighbor.png"
-        plot_transect_66km(
-            models={
-                "Fourier MLP (4x4, Baseline)": fitted_models["mlp_fourier_4x4"],
-                "Fourier MLP + Center Dist (4x4)": fitted_models[
-                    "mlp_fourier_center_dist_4x4"
-                ],
-                "Fourier MLP + Center Dist + 32 Slopes": fitted_models[
-                    "mlp_fourier_center_dist_slopes_4x4"
-                ],
-                "Fourier MLP + Center Dist + 40 All": fitted_models[
-                    "mlp_fourier_center_dist_all_4x4"
-                ],
-            },
-            out_path=transect_path,
-            title="Fourier MLP (4x4): Baseline vs. Center Distance + 3x3 Neighbor Features (66 km Transect)",
-        )
-        return {"transect_plot": transect_path.name}
+    ) -> dict[str, BaseGridShiftModel]:
+        return {
+            "Fourier MLP (4x4, Baseline)": fitted_models["mlp_fourier_4x4"],
+            "Fourier MLP + Center Dist (4x4)": fitted_models[
+                "mlp_fourier_center_dist_4x4"
+            ],
+            "Fourier MLP + Center Dist + 32 Slopes": fitted_models[
+                "mlp_fourier_center_dist_slopes_4x4"
+            ],
+            "Fourier MLP + Center Dist + 40 All": fitted_models[
+                "mlp_fourier_center_dist_all_4x4"
+            ],
+        }
 
 
 def main() -> None:

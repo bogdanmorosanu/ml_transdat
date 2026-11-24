@@ -68,9 +68,18 @@ class EvaluationResult:
             "Count": self.summary["count"],
             f"Mean 2D ({u})": self.summary["mean_2d_m"] * unit_scale,
             f"RMSE 2D ({u})": self.summary["rmse_2d_m"] * unit_scale,
+            f"cRMSE 2D ({u})": self.summary.get("crmse_2d_m", float("nan")) * unit_scale,
+            f"IQR 2D ({u})": self.summary.get("iqr_2d_m", float("nan")) * unit_scale,
             f"P95 ({u})": self.summary["p95_2d_m"] * unit_scale,
             f"P99 ({u})": self.summary["p99_2d_m"] * unit_scale,
             f"Max 2D ({u})": self.summary["max_2d_m"] * unit_scale,
+            "Roughness RMS (mm/km)": self.summary.get(
+                "roughness_grad_rms_mm_km", float("nan")
+            ),
+            "Jitter Ratio": self.summary.get("local_jitter_ratio", float("nan")),
+            "Learnability (mm)": self.summary.get(
+                "learnability_score_mm", float("nan")
+            ),
             "<1cm (%)": pr["lt_1cm"],
             "<5cm (%)": pr["lt_5cm"],
             "Time (s)": self.eval_time_sec,
@@ -314,3 +323,78 @@ class ModelEvaluator:
                 )
             rows.append(row)
         return pd.DataFrame(rows)
+
+    def rank_surface_candidates(
+        self,
+        results: Sequence[EvaluationResult],
+        primary_dataset: str | None = None,
+    ) -> pd.DataFrame:
+        """Rank candidate Stage-1 surfaces by Stage-2 ML learnability metrics.
+
+        :param results: Evaluation results across candidate models and datasets.
+        :type results: Sequence[EvaluationResult]
+        :param primary_dataset: Optional dataset ID to sort by. If ``None``, sorts
+            by mean Learnability Score across non-training evaluation datasets (or
+            all datasets if only one dataset is present).
+        :type primary_dataset: str | None
+        :return: Ranked DataFrame with ``Rank``, ``Model``, per-dataset learnability
+            columns, and ``Overall Learnability (mm)``.
+        :rtype: pd.DataFrame
+        """
+        if not results:
+            return pd.DataFrame()
+
+        by_model: dict[str, dict[str, EvaluationResult]] = {}
+        dataset_order: list[str] = []
+        for r in results:
+            by_model.setdefault(r.model_name, {})[r.dataset_id] = r
+            if r.dataset_id not in dataset_order:
+                dataset_order.append(r.dataset_id)
+
+        eval_ds = [
+            d for d in dataset_order if d not in {"ro_grid_4x4", "spg_nodes_valid"}
+        ] or dataset_order
+
+        rows: list[dict[str, Any]] = []
+        for m_name, d_map in by_model.items():
+            row: dict[str, Any] = {"Model": m_name}
+            scores: list[float] = []
+            for ds_id in dataset_order:
+                if ds_id not in d_map:
+                    continue
+                s = d_map[ds_id].summary
+                crmse_mm = float(s.get("crmse_2d_m", float("nan"))) * 1000.0
+                iqr_mm = float(s.get("iqr_2d_m", float("nan"))) * 1000.0
+                p95_mm = float(s.get("p95_2d_m", float("nan"))) * 1000.0
+                r_rms = float(s.get("roughness_grad_rms_mm_km", float("nan")))
+                r_p95 = float(s.get("roughness_grad_p95_mm_km", float("nan")))
+                jitter = float(s.get("local_jitter_ratio", float("nan")))
+                score = float(s.get("learnability_score_mm", float("nan")))
+
+                row[f"{ds_id} cRMSE (mm)"] = round(crmse_mm, 3)
+                row[f"{ds_id} IQR (mm)"] = round(iqr_mm, 3)
+                row[f"{ds_id} P95 (mm)"] = round(p95_mm, 3)
+                row[f"{ds_id} RoughRMS (mm/km)"] = round(r_rms, 3)
+                row[f"{ds_id} RoughP95 (mm/km)"] = round(r_p95, 3)
+                row[f"{ds_id} Jitter"] = round(jitter, 4)
+                row[f"{ds_id} Score (mm)"] = round(score, 3)
+
+                if ds_id in eval_ds and pd.notna(score):
+                    scores.append(score)
+
+            if primary_dataset is not None and primary_dataset in d_map:
+                overall = float(
+                    d_map[primary_dataset].summary.get(
+                        "learnability_score_mm", float("inf")
+                    )
+                )
+            else:
+                overall = sum(scores) / len(scores) if scores else float("inf")
+            row["Overall Learnability (mm)"] = round(overall, 3)
+            rows.append(row)
+
+        df = pd.DataFrame(rows).sort_values(
+            "Overall Learnability (mm)", ascending=True, kind="mergesort"
+        )
+        df.insert(0, "Rank", range(1, len(df) + 1))
+        return df.reset_index(drop=True)

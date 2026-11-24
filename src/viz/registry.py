@@ -15,6 +15,9 @@ class PlotType(str, Enum):
     SUBCELL_HEATMAP = "subcell_heatmap"
     VECTOR_QUIVER = "vector_quiver"
     TRANSECT_66KM = "transect_66km"
+    RESIDUAL_ROUGHNESS = "residual_roughness"
+    EXTREME_SCENARIOS_9CELLS = "extreme_scenarios_9cells"
+    SURFACE_LEARNABILITY_RANKING = "surface_learnability_ranking"
     POINT_DISTRIBUTION = "point_distribution"
     MODEL_COMPARISON = "model_comparison"
 
@@ -24,6 +27,7 @@ class PlotGroup(str, Enum):
 
     MINIMAL = "minimal"
     STANDARD_DIAGNOSTIC = "standard_diagnostic"
+    SURFACE_DIAGNOSTIC = "surface_diagnostic"
     EXTENDED_SHIFT = "extended_shift"
 
 
@@ -37,6 +41,11 @@ PLOT_GROUP_MEMBERS: dict[PlotGroup, tuple[PlotType, ...]] = {
         PlotType.HIST_ECDF,
         PlotType.SIGNED_SCATTER,
         PlotType.SUBCELL_HEATMAP,
+    ),
+    PlotGroup.SURFACE_DIAGNOSTIC: (
+        PlotType.SPATIAL_ERROR,
+        PlotType.HIST_ECDF,
+        PlotType.RESIDUAL_ROUGHNESS,
     ),
     PlotGroup.EXTENDED_SHIFT: (
         PlotType.SPATIAL_ERROR,

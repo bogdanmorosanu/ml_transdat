@@ -12,6 +12,7 @@ from pathlib import Path
 
 from src.core.base_unit import ExperimentModelSpec, GridShiftExperimentUnit
 from src.data import GridId
+from src.models.base import BaseGridShiftModel
 from src.models.torch_mlp import TorchMLPGridShiftModel
 from src.viz import PlotGroup
 
@@ -105,6 +106,20 @@ class TorchMLPRegressorUnit(GridShiftExperimentUnit):
                 keep_in_memory=True,
             ),
         ]
+
+    def get_extreme_scenario_models(
+        self,
+        fitted_models: dict[str, BaseGridShiftModel],
+    ) -> dict[str, BaseGridShiftModel]:
+        return {
+            "PyTorch ResNet ReLU (4x4)": fitted_models["torch_res_relu_4x4"],
+            "PyTorch ResNet + Cyclic CellPos (4x4)": fitted_models[
+                "torch_res_relu_cellpos_4x4"
+            ],
+            "PyTorch ResNet + CellPos + Hermite Slopes": fitted_models[
+                "torch_res_relu_cellpos_hermite_slopes_4x4"
+            ],
+        }
 
 
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ from typing import Any, Literal
 
 import numpy as np
 import pandas as pd
+from scipy.spatial import cKDTree
 
 
 class MetricType(str, Enum):
@@ -18,6 +19,8 @@ class MetricType(str, Enum):
     MEAN_2D_M = "mean_2d_m"
     STD_2D_M = "std_2d_m"
     RMSE_2D_M = "rmse_2d_m"
+    CRMSE_2D_M = "crmse_2d_m"
+    IQR_2D_M = "iqr_2d_m"
     MIN_2D_M = "min_2d_m"
     MAX_2D_M = "max_2d_m"
     P50_2D_M = "p50_2d_m"
@@ -29,6 +32,10 @@ class MetricType(str, Enum):
     BIAS_E_M = "bias_e_m"
     RMSE_N_M = "rmse_n_m"
     RMSE_E_M = "rmse_e_m"
+    ROUGHNESS_GRAD_RMS_MM_KM = "roughness_grad_rms_mm_km"
+    ROUGHNESS_GRAD_P95_MM_KM = "roughness_grad_p95_mm_km"
+    LOCAL_JITTER_RATIO = "local_jitter_ratio"
+    LEARNABILITY_SCORE_MM = "learnability_score_mm"
     PASS_LT_1MM_PCT = "lt_1mm"
     PASS_LT_1CM_PCT = "lt_1cm"
     PASS_LT_5CM_PCT = "lt_5cm"
@@ -55,7 +62,17 @@ class MetricMeta:
     """Structured metadata describing display label, physical dimension, and formatting."""
 
     label: str
-    dimension: Literal["distance", "percent", "time", "rate", "bytes", "megabytes"]
+    dimension: Literal[
+        "distance",
+        "percent",
+        "time",
+        "rate",
+        "bytes",
+        "megabytes",
+        "gradient",
+        "ratio",
+        "score_mm",
+    ]
     is_integer: bool = False
 
 
@@ -63,6 +80,8 @@ METRIC_META: dict[MetricType, MetricMeta] = {
     MetricType.MEAN_2D_M: MetricMeta("Mean 2D Error (m)", "distance"),
     MetricType.STD_2D_M: MetricMeta("Std Dev 2D (m)", "distance"),
     MetricType.RMSE_2D_M: MetricMeta("RMSE 2D Error (m)", "distance"),
+    MetricType.CRMSE_2D_M: MetricMeta("Centered RMSE 2D (m)", "distance"),
+    MetricType.IQR_2D_M: MetricMeta("IQR 2D Error (m)", "distance"),
     MetricType.MIN_2D_M: MetricMeta("Min 2D Error (m)", "distance"),
     MetricType.MAX_2D_M: MetricMeta("Max 2D Error (m)", "distance"),
     MetricType.P50_2D_M: MetricMeta("P50 2D Error (m)", "distance"),
@@ -74,6 +93,14 @@ METRIC_META: dict[MetricType, MetricMeta] = {
     MetricType.BIAS_E_M: MetricMeta("Signed Bias dE (m)", "distance"),
     MetricType.RMSE_N_M: MetricMeta("RMSE Northing (m)", "distance"),
     MetricType.RMSE_E_M: MetricMeta("RMSE Easting (m)", "distance"),
+    MetricType.ROUGHNESS_GRAD_RMS_MM_KM: MetricMeta(
+        "Roughness Grad RMS (mm/km)", "gradient"
+    ),
+    MetricType.ROUGHNESS_GRAD_P95_MM_KM: MetricMeta(
+        "Roughness Grad P95 (mm/km)", "gradient"
+    ),
+    MetricType.LOCAL_JITTER_RATIO: MetricMeta("Local Jitter Ratio", "ratio"),
+    MetricType.LEARNABILITY_SCORE_MM: MetricMeta("Learnability Score (mm)", "score_mm"),
     MetricType.PASS_LT_1MM_PCT: MetricMeta("Pass < 1 mm (%)", "percent"),
     MetricType.PASS_LT_1CM_PCT: MetricMeta("Pass < 1 cm (%)", "percent"),
     MetricType.PASS_LT_5CM_PCT: MetricMeta("Pass < 5 cm (%)", "percent"),
@@ -124,6 +151,7 @@ class MetricGroup(str, Enum):
 
     PRECISION_CORE = "precision_core"
     PRECISION_FULL = "precision_full"
+    SURFACE_LEARNABILITY = "surface_learnability"
     PERFORMANCE_SPEED = "performance_speed"
     MEMORY_BREAKDOWN = "memory_breakdown"
     ALL_DIMENSIONS = "all_dimensions"
@@ -140,6 +168,8 @@ METRIC_GROUP_MEMBERS: dict[MetricGroup, tuple[MetricType, ...]] = {
         MetricType.MEAN_2D_M,
         MetricType.STD_2D_M,
         MetricType.RMSE_2D_M,
+        MetricType.CRMSE_2D_M,
+        MetricType.IQR_2D_M,
         MetricType.MIN_2D_M,
         MetricType.P50_2D_M,
         MetricType.P90_2D_M,
@@ -148,11 +178,24 @@ METRIC_GROUP_MEMBERS: dict[MetricGroup, tuple[MetricType, ...]] = {
         MetricType.MAX_2D_M,
         MetricType.BIAS_N_M,
         MetricType.BIAS_E_M,
+        MetricType.ROUGHNESS_GRAD_RMS_MM_KM,
+        MetricType.ROUGHNESS_GRAD_P95_MM_KM,
+        MetricType.LOCAL_JITTER_RATIO,
+        MetricType.LEARNABILITY_SCORE_MM,
         MetricType.PASS_LT_1MM_PCT,
         MetricType.PASS_LT_1CM_PCT,
         MetricType.PASS_LT_5CM_PCT,
         MetricType.PASS_LT_10CM_PCT,
         MetricType.PASS_LT_1M_PCT,
+    ),
+    MetricGroup.SURFACE_LEARNABILITY: (
+        MetricType.CRMSE_2D_M,
+        MetricType.IQR_2D_M,
+        MetricType.P95_2D_M,
+        MetricType.ROUGHNESS_GRAD_RMS_MM_KM,
+        MetricType.ROUGHNESS_GRAD_P95_MM_KM,
+        MetricType.LOCAL_JITTER_RATIO,
+        MetricType.LEARNABILITY_SCORE_MM,
     ),
     MetricGroup.PERFORMANCE_SPEED: (
         MetricType.EVAL_TIME_SEC,
@@ -234,6 +277,90 @@ def grs80_radii(lat_rad: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     return m_radius, n_radius
 
 
+def compute_spatial_roughness_stats(
+    err_df: pd.DataFrame,
+    k_neighbors: int = 4,
+    char_step_km: float = 2.75,
+) -> tuple[np.ndarray, dict[str, float]]:
+    """Compute k-nearest-neighbor local residual gradient energy and jitter ratio.
+
+    :param err_df: Error DataFrame containing ``st70_n``, ``st70_e``, ``err_n_m``, ``err_e_m``.
+    :type err_df: pd.DataFrame
+    :param k_neighbors: Number of spatial nearest neighbors per point.
+    :type k_neighbors: int
+    :param char_step_km: Characteristic sub-cell step length in km (default ``2.75`` km).
+    :type char_step_km: float
+    :return: Tuple ``(grad_2d_mm_km, stats_dict)``.
+    :rtype: tuple[np.ndarray, dict[str, float]]
+    """
+    n_rows = len(err_df)
+    nan = float("nan")
+    empty_stats: dict[str, float] = {
+        "roughness_grad_rms_mm_km": nan,
+        "roughness_grad_p95_mm_km": nan,
+        "local_jitter_ratio": nan,
+    }
+    grad_full = np.full(n_rows, np.nan, dtype=np.float64)
+
+    if (
+        n_rows < 2
+        or "st70_n" not in err_df.columns
+        or "st70_e" not in err_df.columns
+        or "err_n_m" not in err_df.columns
+        or "err_e_m" not in err_df.columns
+    ):
+        return grad_full, empty_stats
+
+    n_km = err_df["st70_n"].to_numpy(dtype=np.float64) * 1e-3
+    e_km = err_df["st70_e"].to_numpy(dtype=np.float64) * 1e-3
+    en_m = err_df["err_n_m"].to_numpy(dtype=np.float64)
+    ee_m = err_df["err_e_m"].to_numpy(dtype=np.float64)
+
+    valid_mask = (
+        np.isfinite(n_km) & np.isfinite(e_km) & np.isfinite(en_m) & np.isfinite(ee_m)
+    )
+    matched = int(np.sum(valid_mask))
+    if matched < 2:
+        return grad_full, empty_stats
+
+    coords_km = np.column_stack([n_km[valid_mask], e_km[valid_mask]])
+    en = en_m[valid_mask]
+    ee = ee_m[valid_mask]
+
+    k_query = min(k_neighbors + 1, matched)
+    tree = cKDTree(coords_km, balanced_tree=False)
+    dists, idxs = tree.query(coords_km, k=k_query, workers=-1)
+    if k_query == 2:
+        d_km = np.maximum(dists[:, 1:2], 1e-6)
+        nbrs = idxs[:, 1:2]
+    else:
+        d_km = np.maximum(dists[:, 1:], 1e-6)
+        nbrs = idxs[:, 1:]
+
+    diff_n_mm = (en[:, None] - en[nbrs]) * 1000.0
+    diff_e_mm = (ee[:, None] - ee[nbrs]) * 1000.0
+    diff_2d_mm = np.hypot(diff_n_mm, diff_e_mm)
+    grad_per_pt = np.mean(diff_2d_mm / d_km, axis=1)
+
+    mean_nbr_n = np.mean(en[nbrs], axis=1)
+    mean_nbr_e = np.mean(ee[nbrs], axis=1)
+    jitter_rms_m = float(
+        np.sqrt(np.mean((en - mean_nbr_n) ** 2 + (ee - mean_nbr_e) ** 2))
+    )
+    crmse_2d_m = float(np.sqrt(np.var(en) + np.var(ee)))
+    local_jitter_ratio = (
+        float(jitter_rms_m / crmse_2d_m) if crmse_2d_m > 1e-12 else 0.0
+    )
+
+    grad_full[valid_mask] = grad_per_pt
+    del char_step_km
+    return grad_full, {
+        "roughness_grad_rms_mm_km": float(np.sqrt(np.mean(grad_per_pt**2))),
+        "roughness_grad_p95_mm_km": float(np.percentile(grad_per_pt, 95.0)),
+        "local_jitter_ratio": local_jitter_ratio,
+    }
+
+
 def compute_shift_errors(
     df_ref: pd.DataFrame,
     pred_shifts: np.ndarray,
@@ -248,7 +375,8 @@ def compute_shift_errors(
     :param true_shifts: Ground-truth shifts ``[dn, de]`` in meters, shape ``(N, 2)``.
     :type true_shifts: np.ndarray
     :return: Copy of ``df_ref`` augmented with ``pred_dn_m``, ``pred_de_m``,
-        ``true_dn_m``, ``true_de_m``, ``err_n_m``, ``err_e_m``, and ``err_2d_m``.
+        ``true_dn_m``, ``true_de_m``, ``err_n_m``, ``err_e_m``, ``err_2d_m``,
+        and ``grad_2d_mm_km``.
     :rtype: pd.DataFrame
     :raises ValueError: If prediction or ground-truth length does not match ``df_ref``.
     """
@@ -270,6 +398,8 @@ def compute_shift_errors(
     out["err_n_m"] = err_n
     out["err_e_m"] = err_e
     out["err_2d_m"] = np.hypot(err_n, err_e)
+    grad_full, _ = compute_spatial_roughness_stats(out)
+    out["grad_2d_mm_km"] = grad_full
     return out
 
 
@@ -321,6 +451,8 @@ def compute_coordinate_errors(
     out["err_n_m"] = err_n
     out["err_e_m"] = err_e
     out["err_2d_m"] = np.hypot(err_n, err_e)
+    grad_full, _ = compute_spatial_roughness_stats(out)
+    out["grad_2d_mm_km"] = grad_full
     return out
 
 
@@ -351,6 +483,8 @@ def _summarize_slice(err_df: pd.DataFrame) -> dict[str, Any]:
             "mean_2d_m": nan,
             "std_2d_m": nan,
             "rmse_2d_m": nan,
+            "crmse_2d_m": nan,
+            "iqr_2d_m": nan,
             "min_2d_m": nan,
             "p50_2d_m": nan,
             "p90_2d_m": nan,
@@ -362,12 +496,35 @@ def _summarize_slice(err_df: pd.DataFrame) -> dict[str, Any]:
             "bias_e_m": nan,
             "rmse_n_m": nan,
             "rmse_e_m": nan,
+            "roughness_grad_rms_mm_km": nan,
+            "roughness_grad_p95_mm_km": nan,
+            "local_jitter_ratio": nan,
+            "learnability_score_mm": nan,
             "pass_rates_pct": dict.fromkeys(TOLERANCE_THRESHOLDS_M, 0.0),
         }
     else:
         e2d = e2d_raw[valid_mask]
         en = en_raw[valid_mask]
         ee = ee_raw[valid_mask]
+        crmse_2d_m = float(np.sqrt(np.var(en) + np.var(ee)))
+        p25_2d_m = float(np.percentile(e2d, 25.0))
+        p75_2d_m = float(np.percentile(e2d, 75.0))
+        iqr_2d_m = p75_2d_m - p25_2d_m
+        p95_2d_m = float(np.percentile(e2d, 95.0))
+
+        _, rough_stats = compute_spatial_roughness_stats(err_df)
+        grad_rms = rough_stats["roughness_grad_rms_mm_km"]
+        grad_p95 = rough_stats["roughness_grad_p95_mm_km"]
+        jitter_ratio = rough_stats["local_jitter_ratio"]
+        if np.isfinite(grad_rms):
+            learnability_score_mm = float(
+                0.50 * (crmse_2d_m * 1000.0)
+                + 0.30 * (2.75 * grad_rms)
+                + 0.20 * (p95_2d_m * 1000.0)
+            )
+        else:
+            learnability_score_mm = float("nan")
+
         summary = {
             "count": matched_count,
             "total_count": total_count,
@@ -376,10 +533,12 @@ def _summarize_slice(err_df: pd.DataFrame) -> dict[str, Any]:
             "mean_2d_m": float(np.mean(e2d)),
             "std_2d_m": float(np.std(e2d)),
             "rmse_2d_m": float(np.sqrt(np.mean(e2d**2))),
+            "crmse_2d_m": crmse_2d_m,
+            "iqr_2d_m": iqr_2d_m,
             "min_2d_m": float(np.min(e2d)),
             "p50_2d_m": float(np.percentile(e2d, 50.0)),
             "p90_2d_m": float(np.percentile(e2d, 90.0)),
-            "p95_2d_m": float(np.percentile(e2d, 95.0)),
+            "p95_2d_m": p95_2d_m,
             "p99_2d_m": float(np.percentile(e2d, 99.0)),
             "p99_9_2d_m": float(np.percentile(e2d, 99.9)),
             "max_2d_m": float(np.max(e2d)),
@@ -387,6 +546,10 @@ def _summarize_slice(err_df: pd.DataFrame) -> dict[str, Any]:
             "bias_e_m": float(np.mean(ee)),
             "rmse_n_m": float(np.sqrt(np.mean(en**2))),
             "rmse_e_m": float(np.sqrt(np.mean(ee**2))),
+            "roughness_grad_rms_mm_km": grad_rms,
+            "roughness_grad_p95_mm_km": grad_p95,
+            "local_jitter_ratio": jitter_ratio,
+            "learnability_score_mm": learnability_score_mm,
             "pass_rates_pct": {
                 key: float(100.0 * np.mean(e2d < thresh))
                 for key, thresh in TOLERANCE_THRESHOLDS_M.items()
@@ -440,6 +603,13 @@ def format_scorecard_table(summary: dict[str, Any], name: str, direction: str) -
             f"p99={summary['p99_2d_m']:.4f} m | max={summary['max_2d_m']:.4f} m"
         ),
         f"Signed Bias   : dN={summary['bias_n_m']:+.4f} m | dE={summary['bias_e_m']:+.4f} m",
+        (
+            f"Learnability  : cRMSE={summary.get('crmse_2d_m', float('nan')) * 1000.0:.2f} mm | "
+            f"IQR={summary.get('iqr_2d_m', float('nan')) * 1000.0:.2f} mm | "
+            f"RoughRMS={summary.get('roughness_grad_rms_mm_km', float('nan')):.2f} mm/km | "
+            f"Jitter={summary.get('local_jitter_ratio', float('nan')):.3f} | "
+            f"Score={summary.get('learnability_score_mm', float('nan')):.2f} mm"
+        ),
         (
             f"Pass Rates    : <1mm={pr['lt_1mm']:.1f}% | <1cm={pr['lt_1cm']:.1f}% | "
             f"<5cm={pr['lt_5cm']:.1f}% | <10cm={pr['lt_10cm']:.1f}% | <1m={pr['lt_1m']:.1f}%"

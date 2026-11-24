@@ -7,11 +7,10 @@ from typing import Any
 
 from src.core.base_unit import ExperimentModelSpec, GridShiftExperimentUnit
 from src.data import GridId
-from src.evaluation import EvaluationResult
 from src.models.base import BaseGridShiftModel
 from src.models.knn_regressor import KNNSpatialRegressor
 from src.models.mlp import MLPGridShiftModel
-from src.viz import PlotGroup, plot_transect_66km
+from src.viz import PlotGroup
 
 
 class MLPSpatialRegressorUnit(GridShiftExperimentUnit):
@@ -114,29 +113,21 @@ class MLPSpatialRegressorUnit(GridShiftExperimentUnit):
             ),
         ]
 
-    def after_run(
+    def get_extreme_scenario_models(
         self,
         fitted_models: dict[str, BaseGridShiftModel],
-        results: list[EvaluationResult],
-    ) -> dict[str, Any]:
-        transect_path = self.plots_dir / "cell_transect_66km_mlp.png"
+    ) -> dict[str, BaseGridShiftModel]:
         nodes_ds = self.load_grid(GridId.SPG_NODES_VALID)
         knn_ref = KNNSpatialRegressor(n_neighbors=4, weights="distance").fit(
             nodes_ds.coords, nodes_ds.true_shifts
         )
-
-        plot_transect_66km(
-            models={
-                "KNN K=4 IDW (11 km)": knn_ref,
-                "Raw MLP (11 km)": fitted_models["mlp_raw_11km"],
-                "Fourier MLP (11 km)": fitted_models["mlp_fourier_11km"],
-                "Fourier MLP (4x4, 2.7 km)": fitted_models["mlp_fourier_4x4"],
-                "Fourier MLP (8x8, 1.4 km)": fitted_models["mlp_fourier_8x8"],
-            },
-            out_path=transect_path,
-            title="Continuous Neural Interpolation Across Densities vs. KNN K=4 & Bicubic Ground Truth (66 km)",
-        )
-        return {"transect_plot": transect_path.name}
+        return {
+            "KNN K=4 IDW (11 km)": knn_ref,
+            "Raw MLP (11 km)": fitted_models["mlp_raw_11km"],
+            "Fourier MLP (11 km)": fitted_models["mlp_fourier_11km"],
+            "Fourier MLP (4x4, 2.7 km)": fitted_models["mlp_fourier_4x4"],
+            "Fourier MLP (8x8, 1.4 km)": fitted_models["mlp_fourier_8x8"],
+        }
 
 
 def main() -> None:

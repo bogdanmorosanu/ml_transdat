@@ -502,6 +502,20 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
     def _build_spg_tps_stage1(self) -> RBFSurfaceRegressor:
         return self._build_prefitted_tps_11km()
 
+    def get_extreme_scenario_models(
+        self,
+        fitted_models: dict[str, BaseGridShiftModel],
+    ) -> dict[str, BaseGridShiftModel]:
+        label_map = {
+            "T3_tps11km_plus_resnet_4x4": "T3 TPS11km + ResNet (4x4)",
+            "T3_bilinear_plus_resnet_4x4": "T3 Bilinear + ResNet (4x4)",
+            "T4_data_adaptive_hybrid": "T4 Adaptive Hybrid ResNet",
+            "T7_bilinear_plus_featgrid_8x8": "T7 Bilinear + FeatGrid (8x8)",
+        }
+        return {
+            lbl: fitted_models[k] for k, lbl in label_map.items() if k in fitted_models
+        }
+
     def after_run(
         self,
         fitted_models: dict[str, BaseGridShiftModel],

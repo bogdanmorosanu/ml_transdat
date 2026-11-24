@@ -25,8 +25,8 @@ flowchart LR
 | `src/data/` | Data & Grid Access | `GridId`, `GridDataset`, `GridManager`, `get_default_grid_manager`, lazy samplers, on-the-fly grid generators |
 | `src/geometry/` | Cell Geometry & Features | `CellPlane`, `CellPlane2D`, `extract_grid_cell_planes`, `ShapeCategory`, `CellShapeFeatureExtractor`, `compute_spg_cell_uv`, `encode_cyclic_cell_uv` |
 | `src/models/` | Transformation & ML Models | `BaseSpatialModel`, `BaseGridShiftModel`, `BaseCoordinateTransformer`, `ResidualCoordinateTransformer`, `_torch_trainer` (`train_torch_regressor`), `load_embedded_spg_helmert_params`, concrete estimators (`KNNSpatialRegressor`, `DecisionTreeSpatialRegressor`, `AdaptiveQuadtreeRegressor`, `MLPGridShiftModel`, `TorchMLPGridShiftModel`, `NeuralFeatureGridShiftModel`, `CellBilinearShiftModel`, `ParameterizedBicubicGridShiftModel`, `CompositeResidualShiftModel`, `HistGBRGridShiftModel`, `PolynomialSurfaceRegressor`, `RBFSurfaceRegressor`, `Helmert2DConformalShiftModel`, `TwoStepHelmert2DTransformer`, `PyprojEpsg3844Transformer`) |
-| `src/evaluation/` | Metrics & Benchmarking | `MetricType`, `MetricMeta`, `MetricGroup`, `EvaluationResult`, `ModelEvaluator` (`evaluate_models`, `tabulate_results`, `tabulate_delta_vs_baseline`, `compare_models`), `NaN`-safe scorecards & Markdown formatters |
-| `src/viz/` | Declarative Visualization | `PlotType`, `PlotGroup`, `PlotDispatcher` (`render_grouped` 1-row-per-model figures), matplotlib plotting functions (`plot_spatial_error_rows`, `plot_hist_ecdf_rows`, `plot_signed_scatter_rows`, `plot_subcell_heatmap_rows`, `plot_vector_quiver_rows`, `plot_multi_dataset_comparison`, `plot_model_comparison`, `plot_memory_breakdown_stacked`, `plot_speed_workloads`, `plot_surface_comparison_grids`) |
+| `src/evaluation/` | Metrics & Benchmarking | `MetricType`, `MetricMeta`, `MetricGroup` (`SURFACE_LEARNABILITY`), `compute_spatial_roughness_stats`, `EvaluationResult`, `ModelEvaluator` (`evaluate_models`, `tabulate_results`, `tabulate_delta_vs_baseline`, `compare_models`, `rank_surface_candidates`), `NaN`-safe scorecards & Markdown formatters |
+| `src/viz/` | Declarative Visualization | `PlotType`, `PlotGroup` (`SURFACE_DIAGNOSTIC`), `PlotDispatcher` (`render_grouped` 1-row-per-model figures), matplotlib plotting functions (`plot_spatial_error_rows`, `plot_hist_ecdf_rows`, `plot_signed_scatter_rows`, `plot_subcell_heatmap_rows`, `plot_vector_quiver_rows`, `plot_residual_roughness_rows`, `plot_extreme_scenarios_9cells`, `plot_surface_learnability_ranking`, `plot_multi_dataset_comparison`, `plot_model_comparison`, `plot_memory_breakdown_stacked`, `plot_speed_workloads`, `plot_surface_comparison_grids`) |
 | `src/core/` | Experiment & Benchmark Lifecycle | `ResearchUnit`, `ExperimentType`, `TransformationExperimentUnit`, `TransformationModelSpec`, `GridShiftExperimentUnit`, `AnalysisExperimentUnit`, `ExperimentModelSpec`, `BenchmarkSuite`, `BenchmarkModelSpec`, `specs_from_unit` |
 | `experiments/<slug>/` | Micro Research Units | Thin declarative `run_unit.py`, `report.md`, `unit_brief.json` (v2), `results/`, `plots/` (unified 1-row-per-model PNGs), gitignored `models/` (`.pkl` checkpoints) |
 | `benchmarks/<suite>/` | Macro Cross-Model Suites | `BenchmarkSuite` subclass `run_benchmark.py`, `summary_scorecard.md`, comparative `plots/`, `results/` |
@@ -75,16 +75,18 @@ Uses the **Template Method** pattern:
 - **Constants (`MetricType`, `MetricMeta`, `MetricGroup`)**: Defined in [`src/evaluation/metrics.py`](../src/evaluation/metrics.py).
   - Every `MetricType` carries structured [`MetricMeta`](../src/evaluation/metrics.py) (`label`, `dimension`, `is_integer`) and `format_metric_label(metric, precision_unit="mm")` handles unit conversion (`mm` default).
   - `_summarize_slice` is `NaN`-safe and reports `count` (matched), `total_count`, `unmatched_count`, and `coverage_pct`.
+  - **Stage-2 ML Surface Learnability (`MetricGroup.SURFACE_LEARNABILITY`)**: Automatically computed via `compute_spatial_roughness_stats` (`scipy.spatial.cKDTree`, `k=4` neighbors) on every evaluation: `CRMSE_2D_M` ($\sqrt{\text{Var}(e_N)+\text{Var}(e_E)}$), `IQR_2D_M`, `ROUGHNESS_GRAD_RMS_MM_KM`, `ROUGHNESS_GRAD_P95_MM_KM`, `LOCAL_JITTER_RATIO`, and composite `LEARNABILITY_SCORE_MM`.
 - **Evaluator (`ModelEvaluator`)**:
-  - `evaluate_models(models, dataset)` executes a single inference pass per model; `tabulate_results(results, metrics, precision_unit="mm")` projects any metric subset with zero re-inference.
+  - `evaluate_models(models, dataset)` executes a single inference pass per model; `tabulate_results(results, metrics, precision_unit="mm")` projects any metric subset with zero re-inference; `rank_surface_candidates(results)` ranks Stage-1 base surfaces by `Learnability Score (mm)`.
   - `EvaluationResult.to_scorecard_row(precision_unit="mm")` defaults to millimeters (`mm`).
 
 ---
 
 ## 5. Declarative Visualization Layer (`src/viz/`)
 
-- **Constants (`PlotType` & `PlotGroup`)**: Defined in [`src/viz/registry.py`](../src/viz/registry.py).
-- **Dispatcher (`PlotDispatcher`)**: `PlotDispatcher.render_grouped(...)` groups evaluation results by `(dataset_id, direction, plot_type)` into **one unified PNG per `PlotType`** (`{dataset_id}_{direction}_{plot_type}.png`) where **each model occupies its own row** (`plot_spatial_error_rows`, `plot_hist_ecdf_rows`, `plot_signed_scatter_rows`, `plot_subcell_heatmap_rows`, `plot_vector_quiver_rows`).
+- **Constants (`PlotType` & `PlotGroup`)**: Defined in [`src/viz/registry.py`](../src/viz/registry.py). Includes `PlotGroup.SURFACE_DIAGNOSTIC` (`SPATIAL_ERROR`, `HIST_ECDF`, `RESIDUAL_ROUGHNESS`).
+- **Dispatcher (`PlotDispatcher`)**: `PlotDispatcher.render_grouped(...)` groups evaluation results by `(dataset_id, direction, plot_type)` into **one unified PNG per `PlotType`** (`{dataset_id}_{direction}_{plot_type}.png`) where **each model occupies its own row** (`plot_spatial_error_rows`, `plot_hist_ecdf_rows`, `plot_signed_scatter_rows`, `plot_subcell_heatmap_rows`, `plot_vector_quiver_rows`, `plot_residual_roughness_rows`).
+- **9-Cell Extreme Scenario Transects & Learnability Ranking**: `plot_extreme_scenarios_9cells(...)` renders the canonical 99 km (9-cell: 4 left + target + 4 right) Group 1 (`Gradient & Linear`) and Group 2 (`Curvature & Kinks`) comparisons against `TransDatRO`. `plot_surface_learnability_ranking(...)` renders the `cRMSE` vs. `Roughness RMS` Pareto frontier and Top-K decomposed cost chart.
 - **Cross-Model & Cross-Dataset Plots**: `plot_model_comparison(..., precision_unit="mm")`, `plot_multi_dataset_comparison(...)` (zero-re-inference grouped bars), `plot_speed_workloads(...)`, and 2-panel `plot_memory_breakdown_stacked(...)` in [`src/viz/plots.py`](../src/viz/plots.py).
 
 ---
@@ -93,8 +95,8 @@ Uses the **Template Method** pattern:
 
 - [`GridShiftExperimentUnit`](../src/core/base_unit.py) automates the 2D grid-shift research unit lifecycle (`ExperimentType.GRID_SHIFT`):
   - Supports both trained models (`train_grid=GridId.SPG_NODES_VALID`) and pre-built lookup models (`train_grid=None`).
-  - Subclasses implement `get_model_specs() -> list[ExperimentModelSpec]` and optional `after_run(fitted_models, results)`.
-  - Automatically emits Schema v2 `unit_brief.json` with `key_metrics` and `benchmark_candidates`.
+  - Subclasses implement `get_model_specs() -> list[ExperimentModelSpec]` and optional `get_extreme_scenario_models(fitted_models)` / `after_run(fitted_models, results)`. When `render_extreme_scenarios=True` (default) and models are kept in memory, `run()` automatically generates `extreme_scenarios_gradient_and_linear_9cells.png` and `extreme_scenarios_curvature_and_kinks_9cells.png`.
+  - Automatically emits Schema v2 `unit_brief.json` with `key_metrics` (including surface learnability metrics) and `benchmark_candidates`.
 - [`AnalysisExperimentUnit`](../src/core/base_unit.py) automates exploratory, geometric, and feature-engineering units (`ExperimentType.ANALYSIS`), exporting shared tables to `data/features/`.
 - [`BenchmarkSuite`](../src/core/base_benchmark.py) automates 3-view cross-model suites (`summary_scorecard.md`, `plots/`, `results/benchmark_summary.json`), pulling validated models directly via `specs_from_unit(...)`.
 

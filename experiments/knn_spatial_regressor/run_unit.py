@@ -7,10 +7,9 @@ from typing import Any, Literal
 
 from src.core.base_unit import ExperimentModelSpec, GridShiftExperimentUnit
 from src.data import GridId
-from src.evaluation import EvaluationResult
 from src.models.base import BaseGridShiftModel
 from src.models.knn_regressor import KNNSpatialRegressor
-from src.viz import PlotGroup, plot_transect_66km
+from src.viz import PlotGroup
 
 
 class KnnSpatialRegressorUnit(GridShiftExperimentUnit):
@@ -61,23 +60,16 @@ class KnnSpatialRegressorUnit(GridShiftExperimentUnit):
             )
         return specs
 
-    def after_run(
+    def get_extreme_scenario_models(
         self,
         fitted_models: dict[str, BaseGridShiftModel],
-        results: list[EvaluationResult],
-    ) -> dict[str, Any]:
-        transect_path = self.plots_dir / "cell_transect_66km.png"
-        plot_transect_66km(
-            models={
-                "KNN K=1": fitted_models["k1_uniform"],
-                "KNN K=4 Uniform": fitted_models["k4_uniform"],
-                "KNN K=4 IDW": fitted_models["k4_distance"],
-                "KNN K=16 IDW": fitted_models["k16_distance"],
-            },
-            out_path=transect_path,
-            title="KNN Spatial Regressors vs. True Bicubic Across 6 SPG Cells (66 km)",
-        )
-        return {"transect_plot": transect_path.name}
+    ) -> dict[str, BaseGridShiftModel]:
+        return {
+            "KNN K=1": fitted_models["k1_uniform"],
+            "KNN K=4 Uniform": fitted_models["k4_uniform"],
+            "KNN K=4 IDW": fitted_models["k4_distance"],
+            "KNN K=16 IDW": fitted_models["k16_distance"],
+        }
 
 
 def main() -> None:

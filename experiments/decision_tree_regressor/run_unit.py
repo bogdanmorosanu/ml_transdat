@@ -7,11 +7,10 @@ from typing import Any
 
 from src.core.base_unit import ExperimentModelSpec, GridShiftExperimentUnit
 from src.data import GridId
-from src.evaluation import EvaluationResult
 from src.models.base import BaseGridShiftModel
 from src.models.decision_tree_regressor import DecisionTreeSpatialRegressor
 from src.models.knn_regressor import KNNSpatialRegressor
-from src.viz import PlotGroup, plot_transect_66km
+from src.viz import PlotGroup
 
 
 class DecisionTreeSpatialRegressorUnit(GridShiftExperimentUnit):
@@ -67,25 +66,18 @@ class DecisionTreeSpatialRegressorUnit(GridShiftExperimentUnit):
             ),
         ]
 
-    def after_run(
+    def get_extreme_scenario_models(
         self,
         fitted_models: dict[str, BaseGridShiftModel],
-        results: list[EvaluationResult],
-    ) -> dict[str, Any]:
-        transect_path = self.plots_dir / "transect_66km_decision_tree.png"
+    ) -> dict[str, BaseGridShiftModel]:
         nodes_ds = self.load_grid(GridId.SPG_NODES_VALID)
         knn_ref = KNNSpatialRegressor(n_neighbors=4, weights="distance").fit(
             nodes_ds.coords, nodes_ds.true_shifts
         )
-        plot_transect_66km(
-            models={
-                "Decision Tree (11 km nodes)": fitted_models["dt_base_11km"],
-                "KNN K=4 IDW (11 km nodes)": knn_ref,
-            },
-            out_path=transect_path,
-            title="Decision Tree Staircase vs. KNN K=4 IDW & True Bicubic (66 km Transect)",
-        )
-        return {"transect_plot": transect_path.name}
+        return {
+            "Decision Tree (11 km nodes)": fitted_models["dt_base_11km"],
+            "KNN K=4 IDW (11 km nodes)": knn_ref,
+        }
 
 
 def main() -> None:

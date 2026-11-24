@@ -15,7 +15,6 @@ from src.viz import (
     PlotGroup,
     plot_multi_dataset_comparison,
     plot_surface_comparison_grids,
-    plot_transect_66km,
 )
 
 
@@ -132,6 +131,24 @@ class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
             ),
         ]
 
+    def get_extreme_scenario_models(
+        self,
+        fitted_models: dict[str, BaseGridShiftModel],
+    ) -> dict[str, BaseGridShiftModel]:
+        train_ds = self.load_grid(GridId.SPG_NODES_VALID)
+        poly_deg1 = PolynomialSurfaceRegressor(degree=1, alpha=1e-8)
+        poly_deg1.fit(train_ds.coords, train_ds.true_shifts)
+        poly_deg12 = PolynomialSurfaceRegressor(degree=12, alpha=1e-8)
+        poly_deg12.fit(train_ds.coords, train_ds.true_shifts)
+        return {
+            "Flat Plane (Deg 1)": poly_deg1,
+            "Poly Deg 12 (11 km)": poly_deg12,
+            "TPS Base Exact": fitted_models["tps_base_exact"],
+            "TPS Base Smooth (2e-4)": fitted_models["tps_base_optimal_2e-4"],
+            "TPS Densified (4x4)": fitted_models["tps_densified_4x4"],
+            "Tuned MQ (eps=10)": fitted_models["mq_tuned_eps10"],
+        }
+
     def after_run(
         self,
         fitted_models: dict[str, BaseGridShiftModel],
@@ -146,23 +163,7 @@ class RBFSurfaceRegressorUnit(GridShiftExperimentUnit):
         poly_deg12 = PolynomialSurfaceRegressor(degree=12, alpha=1e-8)
         poly_deg12.fit(train_ds.coords, train_ds.true_shifts)
 
-        # 2. 66 km Transect Comparison Plot
-        transect_path = self.plots_dir / "cell_transect_66km_rbf.png"
-        plot_transect_66km(
-            models={
-                "Flat Plane (Deg 1)": poly_deg1,
-                "Poly Deg 12 (11 km)": poly_deg12,
-                "TPS Base Exact": fitted_models["tps_base_exact"],
-                "TPS Base Smooth (2e-4)": fitted_models["tps_base_optimal_2e-4"],
-                "TPS Densified (4x4)": fitted_models["tps_densified_4x4"],
-                "Tuned MQ (eps=10)": fitted_models["mq_tuned_eps10"],
-            },
-            out_path=transect_path,
-            title="Level 3 RBF & Thin Plate Spline Progression Across 66 km Transect vs. Ground Truth",
-        )
-        out_plots["transect_plot"] = transect_path.name
-
-        # 3. 3D Surface & 2D Contour Comparison Grids
+        # 2. 3D Surface & 2D Contour Comparison Grids
         p3d_path = self.plots_dir / "rbf_3d_surfaces_comparison.png"
         p2d_path = self.plots_dir / "rbf_2d_heatmaps_comparison.png"
         self._plot_surface_grids(p3d_path, p2d_path, fitted_models, poly_deg1, poly_deg12)

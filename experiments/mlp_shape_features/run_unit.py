@@ -7,10 +7,9 @@ from typing import Any
 
 from src.core.base_unit import ExperimentModelSpec, GridShiftExperimentUnit
 from src.data import GridId
-from src.evaluation import EvaluationResult
 from src.models.base import BaseGridShiftModel
 from src.models.mlp import MLPGridShiftModel
-from src.viz import PlotGroup, plot_transect_66km
+from src.viz import PlotGroup
 
 
 class MLPShapeFeaturesUnit(GridShiftExperimentUnit):
@@ -181,23 +180,18 @@ class MLPShapeFeaturesUnit(GridShiftExperimentUnit):
             ),
         ]
 
-    def after_run(
+    def get_extreme_scenario_models(
         self,
         fitted_models: dict[str, BaseGridShiftModel],
-        results: list[EvaluationResult],
-    ) -> dict[str, Any]:
-        transect_path = self.plots_dir / "cell_transect_66km_mlp_shape.png"
-        plot_transect_66km(
-            models={
-                "Fourier MLP (4x4, Baseline)": fitted_models["mlp_fourier_4x4"],
-                "Fourier MLP + 3mm Shape (4x4)": fitted_models["mlp_fourier_shape_3mm_4x4"],
-                "Fourier MLP + 5mm Shape (4x4)": fitted_models["mlp_fourier_shape_4x4"],
-                "Fourier MLP + 10mm Shape (4x4)": fitted_models["mlp_fourier_shape_10mm_4x4"],
-            },
-            out_path=transect_path,
-            title="Fourier MLP (4x4): Baseline vs. +5mm Per-Axis Shape Features (66 km Transect)",
-        )
-        return {"transect_plot": transect_path.name}
+    ) -> dict[str, BaseGridShiftModel]:
+        return {
+            "Fourier MLP (4x4, Baseline)": fitted_models["mlp_fourier_4x4"],
+            "Fourier MLP + 3mm Shape (4x4)": fitted_models["mlp_fourier_shape_3mm_4x4"],
+            "Fourier MLP + 5mm Shape (4x4)": fitted_models["mlp_fourier_shape_4x4"],
+            "Fourier MLP + 10mm Shape (4x4)": fitted_models[
+                "mlp_fourier_shape_10mm_4x4"
+            ],
+        }
 
 
 def main() -> None:

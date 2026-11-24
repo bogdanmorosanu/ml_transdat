@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from pytransdat import TransRO
+from pytransdat import TransRO, exceptions
 from pytransdat.trans_grid import Grid2D
 from src.evaluation.evaluator import EvaluationResult, extract_metric
 from src.evaluation.metrics import (
@@ -1395,6 +1395,629 @@ def plot_multi_dataset_comparison(
     ax.set_xticklabels(m_names, rotation=25, ha="right", fontsize=9.5, fontweight="bold")
     ax.grid(True, linestyle=":", alpha=0.5, axis="y")
     ax.legend(loc="upper right", framealpha=0.9)
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi)
+    plt.close(fig)
+    return out_path
+
+
+EXTREME_SCENARIOS_GROUP1_GRADIENT_LINEAR: tuple[dict[str, Any], ...] = (
+    {
+        "id": "steepest_fall",
+        "title": "Scenario 1A: Steepest Left-to-Right Fall (Row 23, Col 34, dN) — 99 km (9-Cell) Window",
+        "row": 23,
+        "col": 34,
+        "comp": "dN",
+        "desc": "Target cell [0, 1] drops -0.536 m across 11 km (4 cells left + target + 4 cells right).",
+    },
+    {
+        "id": "steepest_rise_de",
+        "title": "Scenario 1B: Steepest Left-to-Right Rise in Easting (Row 45, Col 38, dE) — 99 km (9-Cell) Window",
+        "row": 45,
+        "col": 38,
+        "comp": "dE",
+        "desc": "Target cell [0, 1] rises +0.453 m across 11 km (4 cells left + target + 4 cells right).",
+    },
+    {
+        "id": "flat_bending",
+        "title": "Scenario 1C: Flat Endpoints with High Internal Sag (Row 45, Col 35, dN) — 99 km (9-Cell) Window",
+        "row": 45,
+        "col": 35,
+        "comp": "dN",
+        "desc": "Bounding nodes differ by 1.5 mm; TransDatRO bows 38.0 mm internally.",
+    },
+)
+
+EXTREME_SCENARIOS_GROUP2_CURVATURE_KINKS: tuple[dict[str, Any], ...] = (
+    {
+        "id": "s_shape",
+        "title": "Scenario 2A: True S-Shape (Row 23, Col 36, dN) — 99 km (9-Cell) Window",
+        "row": 23,
+        "col": 36,
+        "comp": "dN",
+        "desc": "Sigmoidal inflection inside target cell [0, 1] (4 cells left + target + 4 cells right).",
+    },
+    {
+        "id": "bowl",
+        "title": "Scenario 2B: Strongest Bowl / Trough (Row 23, Col 35, dN) — 99 km (9-Cell) Window",
+        "row": 23,
+        "col": 35,
+        "comp": "dN",
+        "desc": "Deep trough dipping 74.7 mm below chord line inside target cell [0, 1].",
+    },
+    {
+        "id": "dome",
+        "title": "Scenario 2C: Strongest Dome / Peak (Row 3, Col 34, dN) — 99 km (9-Cell) Window",
+        "row": 3,
+        "col": 34,
+        "comp": "dN",
+        "desc": "Interior crest peaking 41.1 mm above chord line inside target cell [0, 1].",
+    },
+    {
+        "id": "worst_kink",
+        "title": "Scenario 2D: Worst-Case C1 Boundary Discontinuity (Row 10, Col 16, dN) — 99 km (9-Cell) Window",
+        "row": 10,
+        "col": 16,
+        "comp": "dN",
+        "desc": "Sharpest C1 slope break (0.788 m/step at col 17) across Romanian territory.",
+    },
+)
+
+
+def _eval_pytransdat_1d_safe(
+    grid: Grid2D,
+    n_pts: np.ndarray,
+    e_pts: np.ndarray,
+    comp: str,
+) -> np.ndarray:
+    """Evaluate pytransdat ``Grid2D`` along a 1D transect, returning NaN at NoData cells."""
+    out = np.full(len(e_pts), np.nan, dtype=np.float64)
+    for idx, (nv, ev) in enumerate(zip(n_pts, e_pts, strict=True)):
+        try:
+            dn, de = grid.interp([float(nv)], [float(ev)])
+            out[idx] = dn[0] if comp == "dN" else de[0]
+        except (exceptions.OutOfGridErr, exceptions.NoDataGridErr):
+            continue
+    return out
+
+
+def _draw_9cell_extreme_panel(
+    ax: plt.Axes,
+    grid: Grid2D,
+    models: Mapping[str, BaseGridShiftModel],
+    scenario: dict[str, Any],
+    pts_per_cell: int = 80,
+) -> None:
+    """Plot a 99 km (9-cell: 4 left + target [0, 1] + 4 right) extreme scenario comparison."""
+    row_idx, col_idx, comp = scenario["row"], scenario["col"], scenario["comp"]
+    comp_idx = 0 if comp == "dN" else 1
+    step = grid.e_step
+    n_fixed = grid.n_min + row_idx * grid.n_step
+    e_cell_start = grid.e_min + col_idx * step
+
+    eps = 1e-5
+    u_win = np.linspace(-4.0 + eps, 5.0 - eps, 9 * pts_per_cell + 1)
+    e_win = e_cell_start + u_win * step
+    x_win_km = e_win * 1e-3
+    n_win = np.full_like(e_win, n_fixed)
+    coords = np.column_stack([n_win, e_win])
+
+    ax.axvspan(
+        e_cell_start * 1e-3,
+        (e_cell_start + step) * 1e-3,
+        color="#fef3c7",
+        alpha=0.60,
+        zorder=0,
+        label=f"Target cell [0, 1] (cols {col_idx}–{col_idx + 1})",
+    )
+
+    y_ref = _eval_pytransdat_1d_safe(grid, n_win, e_win, comp)
+    ax.plot(
+        x_win_km,
+        y_ref,
+        color="#0f172a",
+        linewidth=2.4,
+        label="True Bicubic (TransDatRO)",
+        zorder=6,
+    )
+
+    palette = [
+        ("#0284c7", "-"),
+        ("#dc2626", "--"),
+        ("#16a34a", "-."),
+        ("#d97706", ":"),
+        ("#9333ea", "--"),
+        ("#0d9488", "-."),
+        ("#e11d48", ":"),
+    ]
+    in_cell_mask = (u_win >= 0.0) & (u_win <= 1.0) & np.isfinite(y_ref)
+    valid_ref = np.isfinite(y_ref)
+    diff_lines: list[str] = []
+
+    for idx, (label, model) in enumerate(models.items()):
+        color, ls = palette[idx % len(palette)]
+        y_vals = model.predict(coords)[:, comp_idx]
+        if np.any(valid_ref):
+            diff_win_mm = (y_vals[valid_ref] - y_ref[valid_ref]) * 1000.0
+            rms_win = float(np.sqrt(np.mean(diff_win_mm**2)))
+            max_win = float(np.max(np.abs(diff_win_mm)))
+            if np.any(in_cell_mask):
+                diff_cell_mm = (y_vals[in_cell_mask] - y_ref[in_cell_mask]) * 1000.0
+                rms_cell = float(np.sqrt(np.mean(diff_cell_mm**2)))
+                diff_lines.append(
+                    f"{label}: 99km RMS {rms_win:.1f}mm (Max {max_win:.1f}) | Cell {rms_cell:.1f}mm"
+                )
+            else:
+                diff_lines.append(f"{label}: 99km RMS {rms_win:.1f}mm (Max {max_win:.1f})")
+
+        ax.plot(
+            x_win_km,
+            y_vals,
+            color=color,
+            linestyle=ls,
+            linewidth=1.7,
+            alpha=0.92,
+            label=label,
+            zorder=5 - (idx % 3) * 0.2,
+        )
+
+    node_cols = list(range(col_idx - 4, col_idx + 6))
+    node_idxs = tuple(row_idx * grid.c_count + c for c in node_cols)
+    node_vals = grid.get_vs_at_idxs_cached(node_idxs)
+    node_x_km = [(grid.e_min + c * step) * 1e-3 for c in node_cols]
+    node_y = [
+        node_vals[idx][1] if comp == "dN" else node_vals[idx][0]
+        for idx in node_idxs
+    ]
+
+    for bx in node_x_km:
+        ax.axvline(bx, color="#94a3b8", linestyle=":", linewidth=0.8, zorder=1)
+    ax.scatter(
+        node_x_km,
+        node_y,
+        color="#dc2626",
+        edgecolor="white",
+        linewidth=1.0,
+        s=48,
+        zorder=7,
+        label="SPG Grid Nodes (11 km)",
+    )
+
+    for c_num, x_pt, y_pt in zip(node_cols, node_x_km, node_y, strict=True):
+        if not np.isfinite(y_pt) or abs(y_pt) > 100.0:
+            continue
+        is_target = c_num in (col_idx, col_idx + 1)
+        ax.annotate(
+            f"col {c_num}\n({y_pt:+.3f} m)" if is_target else f"{c_num}",
+            xy=(x_pt, y_pt),
+            xytext=(0, -16 if is_target else 8),
+            textcoords="offset points",
+            ha="center",
+            va="top" if is_target else "bottom",
+            fontsize=7.2 if is_target else 6.8,
+            fontweight="bold" if is_target else "normal",
+            color="#991b1b" if is_target else "#475569",
+            bbox=(
+                {
+                    "boxstyle": "round,pad=0.2",
+                    "fc": "#fee2e2",
+                    "ec": "#ef4444",
+                    "alpha": 0.85,
+                }
+                if is_target
+                else None
+            ),
+            zorder=8,
+        )
+
+    finite_nodes = [y for y in node_y if np.isfinite(y) and abs(y) < 100.0]
+    y_min = min([float(np.nanmin(y_ref))] + finite_nodes) if finite_nodes else float(np.nanmin(y_ref))
+    y_max = max([float(np.nanmax(y_ref))] + finite_nodes) if finite_nodes else float(np.nanmax(y_ref))
+    y_span = max(y_max - y_min, 0.05)
+    ax.set_ylim(y_min - 0.22 * y_span, y_max + 0.24 * y_span)
+    ax.set_xlim(x_win_km[0], x_win_km[-1])
+
+    if diff_lines:
+        ax.text(
+            0.012,
+            0.035,
+            "Diff vs. TransDatRO:\n" + "\n".join(diff_lines[:6]),
+            transform=ax.transAxes,
+            fontsize=7.0,
+            va="bottom",
+            ha="left",
+            bbox={
+                "boxstyle": "round,pad=0.35",
+                "fc": "white",
+                "ec": "#cbd5e1",
+                "alpha": 0.92,
+            },
+            zorder=9,
+        )
+
+    ax.set_title(f"{scenario['title']}\n{scenario['desc']}", fontsize=10.5, fontweight="bold")
+    ax.set_ylabel(f"{comp} Shift (m)")
+    ax.set_xlabel("Stereo 70 Easting (km)")
+    ax.grid(True, linestyle=":", linewidth=0.5, alpha=0.5)
+    ax.legend(fontsize=7.2, ncol=3, loc="upper right", framealpha=0.92)
+
+
+def plot_extreme_scenarios_9cells(
+    models: Mapping[str, BaseGridShiftModel],
+    out_dir: Path,
+    grid2d: Grid2D | None = None,
+    pts_per_cell: int = 80,
+    prefix: str = "",
+    dpi: int = 200,
+) -> tuple[Path, Path]:
+    """Render Group 1 (Gradient & Linear) and Group 2 (Curvature & Kinks) 9-cell (99 km) plots.
+
+    :param models: Mapping ``display_label -> fitted BaseGridShiftModel``.
+    :type models: Mapping[str, BaseGridShiftModel]
+    :param out_dir: Target output directory for the two PNG files.
+    :type out_dir: Path
+    :param grid2d: Optional ``Grid2D`` instance for true bicubic reference.
+    :type grid2d: Grid2D | None
+    :param pts_per_cell: Query samples per 11 km cell.
+    :type pts_per_cell: int
+    :param prefix: Optional filename prefix.
+    :type prefix: str
+    :param dpi: Output figure DPI.
+    :type dpi: int
+    :return: Tuple ``(group1_path, group2_path)``.
+    :rtype: tuple[Path, Path]
+    """
+    active_grid = grid2d if grid2d is not None else Grid2D()
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    fig1, axes1 = plt.subplots(
+        len(EXTREME_SCENARIOS_GROUP1_GRADIENT_LINEAR),
+        1,
+        figsize=(13.5, 4.6 * len(EXTREME_SCENARIOS_GROUP1_GRADIENT_LINEAR)),
+    )
+    for ax, scen in zip(axes1, EXTREME_SCENARIOS_GROUP1_GRADIENT_LINEAR, strict=True):
+        _draw_9cell_extreme_panel(ax, active_grid, models, scen, pts_per_cell=pts_per_cell)
+    fig1.suptitle(
+        "Group 1: Gradient & Linear Extreme Scenarios — 99 km (9-Cell) Window",
+        fontsize=13.0,
+        fontweight="bold",
+        y=0.995,
+    )
+    fig1.tight_layout()
+    path1 = out_dir / f"{prefix}extreme_scenarios_gradient_and_linear_9cells.png"
+    fig1.savefig(path1, dpi=dpi)
+    plt.close(fig1)
+
+    fig2, axes2 = plt.subplots(
+        len(EXTREME_SCENARIOS_GROUP2_CURVATURE_KINKS),
+        1,
+        figsize=(13.5, 4.6 * len(EXTREME_SCENARIOS_GROUP2_CURVATURE_KINKS)),
+    )
+    for ax, scen in zip(axes2, EXTREME_SCENARIOS_GROUP2_CURVATURE_KINKS, strict=True):
+        _draw_9cell_extreme_panel(ax, active_grid, models, scen, pts_per_cell=pts_per_cell)
+    fig2.suptitle(
+        "Group 2: Curvature & C1 Boundary Kink Extreme Scenarios — 99 km (9-Cell) Window",
+        fontsize=13.0,
+        fontweight="bold",
+        y=0.995,
+    )
+    fig2.tight_layout()
+    path2 = out_dir / f"{prefix}extreme_scenarios_curvature_and_kinks_9cells.png"
+    fig2.savefig(path2, dpi=dpi)
+    plt.close(fig2)
+
+    return path1, path2
+
+
+def _compute_empirical_variogram(
+    err_df: pd.DataFrame,
+    max_points: int = 8000,
+    max_lag_km: float = 22.0,
+    n_bins: int = 18,
+    seed: int = 42,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Compute binned RMS vector residual difference vs. spatial separation distance."""
+    from scipy.spatial import cKDTree
+
+    n_km = err_df["st70_n"].to_numpy(dtype=np.float64) * 1e-3
+    e_km = err_df["st70_e"].to_numpy(dtype=np.float64) * 1e-3
+    en_mm = err_df["err_n_m"].to_numpy(dtype=np.float64) * 1000.0
+    ee_mm = err_df["err_e_m"].to_numpy(dtype=np.float64) * 1000.0
+    valid = np.isfinite(n_km) & np.isfinite(e_km) & np.isfinite(en_mm) & np.isfinite(ee_mm)
+    idx_valid = np.flatnonzero(valid)
+    if len(idx_valid) < 20:
+        return np.array([]), np.array([])
+
+    if len(idx_valid) > max_points:
+        rng = np.random.default_rng(seed)
+        idx_sub = rng.choice(idx_valid, size=max_points, replace=False)
+    else:
+        idx_sub = idx_valid
+
+    coords = np.column_stack([n_km[idx_sub], e_km[idx_sub]])
+    en_s = en_mm[idx_sub]
+    ee_s = ee_mm[idx_sub]
+
+    tree = cKDTree(coords, balanced_tree=False)
+    pairs = tree.query_pairs(r=max_lag_km, output_type="ndarray")
+    if len(pairs) == 0:
+        return np.array([]), np.array([])
+    if len(pairs) > 250_000:
+        rng = np.random.default_rng(seed)
+        pairs = pairs[rng.choice(len(pairs), size=250_000, replace=False)]
+
+    i_idx = pairs[:, 0]
+    j_idx = pairs[:, 1]
+    d_km = np.hypot(coords[i_idx, 0] - coords[j_idx, 0], coords[i_idx, 1] - coords[j_idx, 1])
+    diff_sq = (en_s[i_idx] - en_s[j_idx]) ** 2 + (ee_s[i_idx] - ee_s[j_idx]) ** 2
+
+    bins = np.linspace(0.0, max_lag_km, n_bins + 1)
+    bin_ids = np.digitize(d_km, bins) - 1
+    centers: list[float] = []
+    rms_vals: list[float] = []
+    for b in range(n_bins):
+        mask = bin_ids == b
+        if np.sum(mask) >= 15:
+            centers.append(0.5 * (bins[b] + bins[b + 1]))
+            rms_vals.append(float(np.sqrt(np.mean(diff_sq[mask]))))
+    return np.asarray(centers), np.asarray(rms_vals)
+
+
+def plot_residual_roughness_rows(
+    results: Sequence[EvaluationResult],
+    out_path: Path,
+    dpi: int = 200,
+) -> Path:
+    """Plot an ``N x 3`` 1-row-per-model residual roughness & variogram diagnostic suite.
+
+    Panels per model:
+    - Col 1: Spatial Gradient Energy Map (||grad e|| in mm/km).
+    - Col 2: Empirical Multi-Scale Variogram Curve (RMS difference vs. separation km).
+    - Col 3: Distance-to-11km-Cell-Wall Error & Roughness Profile.
+    """
+    if not results:
+        raise ValueError("results must contain at least one EvaluationResult.")
+
+    grid2d = Grid2D()
+    n_models = len(results)
+    fig, axes = plt.subplots(n_models, 3, figsize=(17.5, 4.9 * n_models), squeeze=False)
+
+    for idx, res in enumerate(results):
+        df = res.err_df
+        s = res.summary
+        ax_map, ax_var, ax_wall = axes[idx, 0], axes[idx, 1], axes[idx, 2]
+
+        # Col 1: Spatial Gradient Energy Map
+        e_km = df["st70_e"].to_numpy(dtype=np.float64) * 1e-3
+        n_km = df["st70_n"].to_numpy(dtype=np.float64) * 1e-3
+        grad = (
+            df["grad_2d_mm_km"].to_numpy(dtype=np.float64)
+            if "grad_2d_mm_km" in df.columns
+            else np.zeros(len(df), dtype=np.float64)
+        )
+        valid_g = np.isfinite(grad)
+        vmax_g = float(np.percentile(grad[valid_g], 98.0)) if np.any(valid_g) else 1.0
+        vmax_g = max(vmax_g, 1e-3)
+        sc = ax_map.scatter(
+            e_km[valid_g],
+            n_km[valid_g],
+            c=grad[valid_g],
+            cmap="magma",
+            vmin=0.0,
+            vmax=vmax_g,
+            s=5.5,
+            marker="s",
+            edgecolors="none",
+            alpha=0.92,
+        )
+        cbar = fig.colorbar(sc, ax=ax_map, shrink=0.84, pad=0.02)
+        cbar.set_label("Local Gradient ||∇e|| (mm/km)")
+        ax_map.set_aspect("equal", adjustable="box")
+        ax_map.set_xlabel("Stereo 70 Easting (km)")
+        ax_map.set_ylabel("Stereo 70 Northing (km)")
+        ax_map.set_title(
+            f"{res.model_name} — Gradient Energy\n"
+            f"RoughRMS={s.get('roughness_grad_rms_mm_km', float('nan')):.2f} mm/km | "
+            f"Jitter={s.get('local_jitter_ratio', float('nan')):.3f}"
+        )
+        ax_map.grid(True, linestyle="--", linewidth=0.5, alpha=0.4)
+
+        # Col 2: Multi-Scale Empirical Variogram
+        lags, v_rms = _compute_empirical_variogram(df)
+        if len(lags) > 0:
+            ax_var.plot(lags, v_rms, "o-", color="#2563eb", linewidth=1.8, markersize=4.5)
+        ax_var.axvline(2.75, color="#059669", linestyle="--", linewidth=1.2, label="4x4 step (2.75 km)")
+        ax_var.axvline(11.0, color="#dc2626", linestyle=":", linewidth=1.4, label="SPG cell (11.0 km)")
+        ax_var.set_xlabel("Pair Separation Distance h (km)")
+        ax_var.set_ylabel("RMS Vector Difference (mm)")
+        ax_var.set_title(
+            f"{res.model_name} — Residual Structure Function\n"
+            f"cRMSE={s.get('crmse_2d_m', float('nan')) * 1000.0:.2f} mm | "
+            f"Score={s.get('learnability_score_mm', float('nan')):.2f} mm"
+        )
+        ax_var.legend(loc="lower right", fontsize=8.0, framealpha=0.9)
+        ax_var.grid(True, linestyle="--", linewidth=0.5, alpha=0.45)
+
+        # Col 3: Distance-to-11km-Cell-Wall Profile
+        u_mod = ((df["st70_n"].to_numpy(dtype=np.float64) - grid2d.n_min) / grid2d.n_step) % 1.0
+        v_mod = ((df["st70_e"].to_numpy(dtype=np.float64) - grid2d.e_min) / grid2d.e_step) % 1.0
+        d_wall_km = np.minimum(
+            np.minimum(u_mod, 1.0 - u_mod) * (grid2d.n_step * 1e-3),
+            np.minimum(v_mod, 1.0 - v_mod) * (grid2d.e_step * 1e-3),
+        )
+        e2d_mm = df["err_2d_m"].to_numpy(dtype=np.float64) * 1000.0
+        wall_bins = np.linspace(0.0, 5.5, 12)
+        w_ids = np.digitize(d_wall_km, wall_bins) - 1
+        w_centers: list[float] = []
+        w_err: list[float] = []
+        w_grad: list[float] = []
+        for b in range(len(wall_bins) - 1):
+            m = (w_ids == b) & valid_g & np.isfinite(e2d_mm)
+            if np.sum(m) >= 10:
+                w_centers.append(0.5 * (wall_bins[b] + wall_bins[b + 1]))
+                w_err.append(float(np.mean(e2d_mm[m])))
+                w_grad.append(float(np.sqrt(np.mean(grad[m] ** 2))))
+
+        ax_wall_r = ax_wall.twinx()
+        if w_centers:
+            l1 = ax_wall.plot(
+                w_centers, w_err, "s-", color="#2563eb", linewidth=1.8, markersize=4.2, label="Mean Error (mm)"
+            )
+            l2 = ax_wall_r.plot(
+                w_centers, w_grad, "o--", color="#dc2626", linewidth=1.6, markersize=4.0, label="RoughRMS (mm/km)"
+            )
+            lines = l1 + l2
+            labels = [str(ln.get_label()) for ln in lines]
+            ax_wall.legend(lines, labels, loc="upper right", fontsize=8.0, framealpha=0.9)
+
+        ax_wall.set_xlabel("Distance to Nearest 11 km SPG Cell Wall (km)")
+        ax_wall.set_ylabel("Mean 2D Error (mm)", color="#2563eb")
+        ax_wall_r.set_ylabel("Roughness Grad RMS (mm/km)", color="#dc2626")
+        ax_wall.set_title(f"{res.model_name} — Border vs. Cell-Center Profile")
+        ax_wall.grid(True, linestyle="--", linewidth=0.5, alpha=0.45)
+
+    ds_id = results[0].dataset_id
+    fig.suptitle(
+        f"Stage-2 ML Learnability: Residual Roughness & Structure ({ds_id})",
+        fontsize=13.0,
+        fontweight="bold",
+    )
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=dpi)
+    plt.close(fig)
+    return out_path
+
+
+def plot_surface_learnability_ranking(
+    results: Sequence[EvaluationResult],
+    out_path: Path,
+    dataset_id: str | None = None,
+    top_k: int = 15,
+    title: str | None = None,
+    dpi: int = 200,
+) -> Path:
+    """Plot 2-panel Pareto frontier (cRMSE vs. Roughness) and Top-K decomposed Learnability Cost."""
+    if not results:
+        raise ValueError("results must contain at least one EvaluationResult.")
+
+    target_ds = dataset_id
+    if target_ds is None:
+        non_train = [
+            r.dataset_id for r in results if r.dataset_id not in {"ro_grid_4x4", "spg_nodes_valid"}
+        ]
+        target_ds = non_train[0] if non_train else results[0].dataset_id
+
+    ds_results = [r for r in results if r.dataset_id == target_ds]
+    if not ds_results:
+        raise ValueError(f"No EvaluationResult entries found for dataset_id='{target_ds}'.")
+
+    ds_results_sorted = sorted(
+        ds_results,
+        key=lambda r: float(r.summary.get("learnability_score_mm", float("inf"))),
+    )
+
+    names = [r.model_name for r in ds_results_sorted]
+    crmse = np.array([float(r.summary.get("crmse_2d_m", 0.0)) * 1000.0 for r in ds_results_sorted])
+    rough = np.array([float(r.summary.get("roughness_grad_rms_mm_km", 0.0)) for r in ds_results_sorted])
+    p95 = np.array([float(r.summary.get("p95_2d_m", 0.0)) * 1000.0 for r in ds_results_sorted])
+    p99 = np.array([float(r.summary.get("p99_2d_m", 0.0)) * 1000.0 for r in ds_results_sorted])
+    scores = np.array([float(r.summary.get("learnability_score_mm", 0.0)) for r in ds_results_sorted])
+
+    fig, (ax_pareto, ax_bar) = plt.subplots(1, 2, figsize=(16.0, 6.8))
+
+    # Left: Pareto Frontier
+    sizes = np.clip(p99 * 6.0, 45.0, 420.0)
+    sc = ax_pareto.scatter(
+        crmse,
+        rough,
+        s=sizes,
+        c=scores,
+        cmap="viridis_r",
+        edgecolors="#0f172a",
+        linewidth=0.8,
+        alpha=0.88,
+        zorder=4,
+    )
+    cbar = fig.colorbar(sc, ax=ax_pareto, shrink=0.86, pad=0.02)
+    cbar.set_label("Learnability Score (mm, lower is better)")
+
+    # Compute Pareto-optimal points (minimize crmse and rough)
+    order_x = np.argsort(crmse)
+    pareto_idx: list[int] = []
+    best_y = float("inf")
+    for idx_pt in order_x:
+        if rough[idx_pt] <= best_y:
+            best_y = float(rough[idx_pt])
+            pareto_idx.append(int(idx_pt))
+    if len(pareto_idx) >= 2:
+        ax_pareto.plot(
+            crmse[pareto_idx],
+            rough[pareto_idx],
+            color="#dc2626",
+            linestyle="--",
+            linewidth=1.6,
+            label="Pareto Frontier (cRMSE vs. Roughness)",
+            zorder=5,
+        )
+
+    for i in range(min(len(names), 10)):
+        ax_pareto.annotate(
+            f"#{i + 1} {names[i]}",
+            xy=(crmse[i], rough[i]),
+            xytext=(6, 4),
+            textcoords="offset points",
+            fontsize=7.3,
+            fontweight="bold" if i < 3 else "normal",
+            color="#0f172a",
+            zorder=6,
+        )
+
+    ax_pareto.set_xlabel("Centered RMSE 2D (mm) [Residual Amplitude]")
+    ax_pareto.set_ylabel("Local Roughness Grad RMS (mm/km) [Slope Energy]")
+    ax_pareto.set_title(f"Amplitude vs. Roughness Pareto Frontier ({target_ds})\n(Bubble size ∝ P99 Spike)")
+    ax_pareto.grid(True, linestyle="--", linewidth=0.5, alpha=0.45)
+    if len(pareto_idx) >= 2:
+        ax_pareto.legend(loc="upper right", framealpha=0.9)
+
+    # Right: Top-K Decomposed Cost Bars
+    k_show = min(top_k, len(ds_results_sorted))
+    y_pos = np.arange(k_show)
+    c_part = 0.50 * crmse[:k_show]
+    r_part = 0.30 * (2.75 * rough[:k_show])
+    p_part = 0.20 * p95[:k_show]
+
+    ax_bar.barh(y_pos, c_part, color="#2563eb", label="0.50 × cRMSE (mm)")
+    ax_bar.barh(y_pos, r_part, left=c_part, color="#059669", label="0.30 × 2.75km·RoughRMS")
+    ax_bar.barh(y_pos, p_part, left=c_part + r_part, color="#d97706", label="0.20 × P95 (mm)")
+
+    for i in range(k_show):
+        tot = scores[i]
+        ax_bar.text(
+            tot + 0.02 * max(scores[:k_show]),
+            y_pos[i],
+            f"{tot:.2f} mm",
+            va="center",
+            ha="left",
+            fontsize=8.0,
+            fontweight="bold" if i < 3 else "normal",
+        )
+
+    ax_bar.set_yticks(y_pos)
+    ax_bar.set_yticklabels([f"#{i + 1} {names[i]}" for i in range(k_show)], fontsize=8.5)
+    ax_bar.invert_yaxis()
+    ax_bar.set_xlabel("Composite Learnability Score (mm, lower is better)")
+    ax_bar.set_title(f"Top-{k_show} Stage-1 Surface Ranking ({target_ds})")
+    ax_bar.set_xlim(0.0, max(scores[:k_show]) * 1.18 if k_show > 0 else 1.0)
+    ax_bar.legend(loc="lower right", fontsize=8.2, framealpha=0.9)
+    ax_bar.grid(True, axis="x", linestyle="--", linewidth=0.5, alpha=0.45)
+
+    fig.suptitle(
+        title or f"Stage-1 Surface Learnability Ranking ({target_ds})",
+        fontsize=13.0,
+        fontweight="bold",
+    )
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=dpi)
