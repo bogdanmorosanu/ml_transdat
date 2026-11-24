@@ -47,7 +47,7 @@ def specs_from_unit(
     when ``persist_model=True``.
     """
     probe_dir = unit_dir or Path("experiments") / "__probe__"
-    unit = unit_cls(probe_dir)
+    unit = unit_cls(probe_dir, probe_only=(unit_dir is None))
     out: list[BenchmarkModelSpec] = []
     for spec in unit.get_model_specs():
         if spec.benchmark_candidate and spec.benchmark_suite == suite:

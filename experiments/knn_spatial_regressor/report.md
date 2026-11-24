@@ -47,8 +47,9 @@ This unit evaluates the **K-Nearest Neighbors (KNN)** family for learning the 2D
 
 ## 4. Diagnostic Figures
 
-### 6-Cell Transect (66 km Span across 7 Nodes)
-![66 km Cell Transect](plots/cell_transect_66km.png)
+### 9-Cell (99 km) Extreme Scenario Transects
+![Gradient & Linear Extreme Scenarios](plots/extreme_scenarios_gradient_and_linear_9cells.png)
+![Curvature & Kink Extreme Scenarios](plots/extreme_scenarios_curvature_and_kinks_9cells.png)
 
 ### 2x3 Spatial Comparison Matrix (Uniform vs. Distance for K=4, 8, 16)
 ![Comparison Matrix](plots/comparison_spatial_matrix.png)

@@ -38,10 +38,10 @@ from src.models.torch_mlp import TorchMLPGridShiftModel, TorchMLPNet
 
 __all__ = [
     "AdaptiveQuadtreeRegressor",
+    "BSplineSurfaceRegressor",
     "BaseCoordinateTransformer",
     "BaseGridShiftModel",
     "BaseSpatialModel",
-    "BSplineSurfaceRegressor",
     "BicubicScheme",
     "CellBilinearShiftModel",
     "CompositeResidualShiftModel",

@@ -65,8 +65,9 @@ All errors are reported in millimeters ($\text{mm}$) on continuous points never 
 
 ## 5. Visual Diagnostics
 
-### 66 km Transect Across Control Nodes
-![66 km Transect Across Models](plots/cell_transect_66km_mlp.png)
+### 9-Cell (99 km) Extreme Scenario Transects
+![Gradient & Linear Extreme Scenarios](plots/extreme_scenarios_gradient_and_linear_9cells.png)
+![Curvature & Kink Extreme Scenarios](plots/extreme_scenarios_curvature_and_kinks_9cells.png)
 The 66 km transect across 6 SPG cells confirms:
 * **Raw MLP (11 km)** severely underfits, cutting straight through curves and missing cell peaks.
 * **Fourier MLP (11 km)** smoothly captures the general waveform but has slight offset drift.

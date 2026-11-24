@@ -25,6 +25,15 @@ from src.core.base_unit import AnalysisExperimentUnit
 from src.models.base import BaseGridShiftModel
 from src.models.composite_shift import CellBilinearShiftModel
 from src.models.grid_bicubic_variants import ParameterizedBicubicGridShiftModel
+from src.viz.scenarios import (
+    EXTREME_SCENARIOS_GROUP1_GRADIENT_LINEAR as GROUP1_SCENARIOS,
+)
+from src.viz.scenarios import (
+    EXTREME_SCENARIOS_GROUP2_CURVATURE_KINKS as GROUP2_SCENARIOS,
+)
+from src.viz.scenarios import (
+    eval_pytransdat_1d_safe as _eval_pytransdat_safe,
+)
 
 ALL_METHOD_SPECS: list[dict[str, Any]] = [
     {
@@ -93,85 +102,6 @@ ALL_METHOD_SPECS: list[dict[str, Any]] = [
 ]
 
 TOP3_KEYS = ("transdatro", "catmull_rom", "pchip", "natural_spline_c2")
-
-GROUP1_SCENARIOS: list[dict[str, Any]] = [
-    {
-        "id": "steepest_fall",
-        "title": "Scenario 1A: Steepest Left-to-Right Fall (Row 23, Col 34, dN) — 99 km (9-Cell) Window",
-        "row": 23,
-        "col": 34,
-        "comp": "dN",
-        "desc": "Target cell [0, 1] drops -0.536 m across 11 km (4 cells left + target + 4 cells right).",
-    },
-    {
-        "id": "steepest_rise_de",
-        "title": "Scenario 1B: Steepest Left-to-Right Rise in Easting (Row 45, Col 38, dE) — 99 km (9-Cell) Window",
-        "row": 45,
-        "col": 38,
-        "comp": "dE",
-        "desc": "Target cell [0, 1] rises +0.453 m across 11 km (4 cells left + target + 4 cells right).",
-    },
-    {
-        "id": "flat_bending",
-        "title": "Scenario 1C: Flat Endpoints with High Internal Sag (Row 45, Col 35, dN) — 99 km (9-Cell) Window",
-        "row": 45,
-        "col": 35,
-        "comp": "dN",
-        "desc": "Bounding nodes differ by 1.5 mm; TransDatRO bows 38.0 mm while PCHIP stays monotone.",
-    },
-]
-
-GROUP2_SCENARIOS: list[dict[str, Any]] = [
-    {
-        "id": "s_shape",
-        "title": "Scenario 2A: True S-Shape (Row 23, Col 36, dN) — 99 km (9-Cell) Window",
-        "row": 23,
-        "col": 36,
-        "comp": "dN",
-        "desc": "Sigmoidal inflection inside target cell [0, 1] (4 cells left + target + 4 cells right).",
-    },
-    {
-        "id": "bowl",
-        "title": "Scenario 2B: Strongest Bowl / Trough (Row 23, Col 35, dN) — 99 km (9-Cell) Window",
-        "row": 23,
-        "col": 35,
-        "comp": "dN",
-        "desc": "Deep trough dipping 74.7 mm below chord line inside target cell [0, 1].",
-    },
-    {
-        "id": "dome",
-        "title": "Scenario 2C: Strongest Dome / Peak (Row 3, Col 34, dN) — 99 km (9-Cell) Window",
-        "row": 3,
-        "col": 34,
-        "comp": "dN",
-        "desc": "Interior crest peaking 41.1 mm above chord line inside target cell [0, 1].",
-    },
-    {
-        "id": "worst_kink",
-        "title": "Scenario 2D: Worst-Case C¹ Boundary Discontinuity (Row 10, Col 16, dN) — 99 km (9-Cell) Window",
-        "row": 10,
-        "col": 16,
-        "comp": "dN",
-        "desc": "Sharpest C¹ slope break (0.788 m/step at col 17) across Romanian territory.",
-    },
-]
-
-
-def _eval_pytransdat_safe(
-    grid: Grid2D,
-    n_pts: np.ndarray,
-    e_pts: np.ndarray,
-    comp: str,
-) -> np.ndarray:
-    """Evaluate pytransdat Grid2D along a 1D array, returning NaN at NoData cells."""
-    out = np.full(len(e_pts), np.nan, dtype=np.float64)
-    for idx, (nv, ev) in enumerate(zip(n_pts, e_pts, strict=True)):
-        try:
-            dn, de = grid.interp([float(nv)], [float(ev)])
-            out[idx] = dn[0] if comp == "dN" else de[0]
-        except (exceptions.OutOfGridErr, exceptions.NoDataGridErr):
-            continue
-    return out
 
 
 class BicubicInterpolationForensicsUnit(AnalysisExperimentUnit):
@@ -690,14 +620,14 @@ class BicubicInterpolationForensicsUnit(AnalysisExperimentUnit):
         border_mask = (dist_u < 0.10) | (dist_v < 0.10)
 
         stage3_summary: dict[str, Any] = {
-            "n_interior_eval_points": int(len(coords)),
-            "n_interior_borders_checked": int(len(bn)),
+            "n_interior_eval_points": len(coords),
+            "n_interior_borders_checked": len(bn),
             "learnability_region": "rows 18..28, cols 28..38 (10x10 cells)",
             "methods": {},
         }
         stage4_summary: dict[str, Any] = {
-            "n_interior_eval_points": int(len(coords)),
-            "n_interior_borders_checked": int(len(bn)),
+            "n_interior_eval_points": len(coords),
+            "n_interior_borders_checked": len(bn),
             "ancpi_control_point_residual_std_mm": {"east": 41.5, "north": 45.6},
             "candidates": {},
         }

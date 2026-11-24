@@ -66,7 +66,7 @@ Evaluated on canonical nationwide test sets:
 
 * **3D Perspective Surface Progression** ([`plots/rbf_3d_surfaces_comparison.png`](plots/rbf_3d_surfaces_comparison.png)): 6-panel 3D visualization showing Ground Truth vs. Flat Plane (Level 1) vs. Polynomial (Level 2) vs. TPS Base Smooth ($8.6\,\text{mm}$) vs. TPS Densified ($3.7\,\text{mm}$ mean) vs. Tuned MQ.
 * **2D Plan-View Contours** ([`plots/rbf_2d_heatmaps_comparison.png`](plots/rbf_2d_heatmaps_comparison.png)): 6-panel plan-view map showing smooth continuous deformation contours across Romania.
-* **66 km Multi-Cell Transect** ([`plots/cell_transect_66km_rbf.png`](plots/cell_transect_66km_rbf.png)): 1D cross-section across 6 cells through the Banat dome comparing RBF and TPS models against bicubic ground truth.
+* **9-Cell (99 km) Extreme Scenario Transects** ([`plots/extreme_scenarios_gradient_and_linear_9cells.png`](plots/extreme_scenarios_gradient_and_linear_9cells.png), [`plots/extreme_scenarios_curvature_and_kinks_9cells.png`](plots/extreme_scenarios_curvature_and_kinks_9cells.png)): 99 km cross-sections across Group 1 (Gradient & Linear) and Group 2 (Curvature & $C^1$ Kinks) comparing RBF and TPS models against bicubic ground truth.
 * **Foundation & Kernel Comparison** ([`plots/rbf_foundation_and_smoothing.png`](plots/rbf_foundation_and_smoothing.png)): Quantitative bar chart comparing all 8 evaluated model configurations against the Level 2 Polynomial floor ($191.8\,\text{mm}$).
 
 ---

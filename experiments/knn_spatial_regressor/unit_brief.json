@@ -3,7 +3,7 @@
   "slug": "knn_spatial_regressor",
   "experiment_type": "grid_shift",
   "status": "completed",
-  "runtime_s": 19.867,
+  "runtime_s": 28.602,
   "key_metrics": [
     {
       "model": "k1_uniform",
@@ -12,13 +12,19 @@
       "count": 36435,
       "mean_2d_mm": 63.1465,
       "rmse_2d_mm": 83.7829,
+      "crmse_2d_mm": 83.7811,
+      "iqr_2d_mm": 56.0644,
       "p95_2d_mm": 162.4013,
       "max_2d_mm": 1037.0099,
+      "roughness_grad_rms_mm_km": 26.1051,
+      "roughness_grad_p95_mm_km": 47.6337,
+      "local_jitter_ratio": 0.6529,
+      "learnability_score_mm": 95.9076,
       "pass_lt_1cm_pct": 9.12,
-      "total_size_mb": 39.2432,
+      "total_size_mb": 39.2433,
       "fit_time_s": 0.0013,
-      "eval_time_s": 0.0405,
-      "throughput_pts_per_s": 898812.9
+      "eval_time_s": 0.0364,
+      "throughput_pts_per_s": 999903.9
     },
     {
       "model": "k4_uniform",
@@ -27,13 +33,19 @@
       "count": 36435,
       "mean_2d_mm": 47.0321,
       "rmse_2d_mm": 59.853,
+      "crmse_2d_mm": 59.8528,
+      "iqr_2d_mm": 37.9292,
       "p95_2d_mm": 113.6871,
       "max_2d_mm": 819.2702,
+      "roughness_grad_rms_mm_km": 17.6986,
+      "roughness_grad_p95_mm_km": 31.3399,
+      "local_jitter_ratio": 0.6238,
+      "learnability_score_mm": 67.2652,
       "pass_lt_1cm_pct": 5.97,
-      "total_size_mb": 39.2432,
+      "total_size_mb": 39.2433,
       "fit_time_s": 0.0016,
-      "eval_time_s": 0.0428,
-      "throughput_pts_per_s": 851768.6
+      "eval_time_s": 0.06,
+      "throughput_pts_per_s": 607079.0
     },
     {
       "model": "k4_distance",
@@ -42,13 +54,19 @@
       "count": 36435,
       "mean_2d_mm": 26.9671,
       "rmse_2d_mm": 35.3047,
+      "crmse_2d_mm": 35.3045,
+      "iqr_2d_mm": 23.0628,
       "p95_2d_mm": 67.859,
       "max_2d_mm": 478.2879,
+      "roughness_grad_rms_mm_km": 10.332,
+      "roughness_grad_p95_mm_km": 18.61,
+      "local_jitter_ratio": 0.6297,
+      "learnability_score_mm": 39.748,
       "pass_lt_1cm_pct": 19.3,
-      "total_size_mb": 39.2432,
+      "total_size_mb": 39.2433,
       "fit_time_s": 0.0011,
-      "eval_time_s": 0.0391,
-      "throughput_pts_per_s": 931191.3
+      "eval_time_s": 0.06,
+      "throughput_pts_per_s": 607649.0
     },
     {
       "model": "k4_distance",
@@ -57,13 +75,19 @@
       "count": 146258,
       "mean_2d_mm": 27.2168,
       "rmse_2d_mm": 34.6145,
+      "crmse_2d_mm": 34.6142,
+      "iqr_2d_mm": 21.831,
       "p95_2d_mm": 66.5853,
       "max_2d_mm": 497.2055,
+      "roughness_grad_rms_mm_km": 14.2748,
+      "roughness_grad_p95_mm_km": 26.1518,
+      "local_jitter_ratio": 0.4477,
+      "learnability_score_mm": 42.4009,
       "pass_lt_1cm_pct": 16.25,
-      "total_size_mb": 39.2432,
+      "total_size_mb": 39.2433,
       "fit_time_s": 0.0011,
-      "eval_time_s": 0.1616,
-      "throughput_pts_per_s": 904919.6
+      "eval_time_s": 0.228,
+      "throughput_pts_per_s": 641389.1
     },
     {
       "model": "k8_uniform",
@@ -72,13 +96,19 @@
       "count": 36435,
       "mean_2d_mm": 71.3628,
       "rmse_2d_mm": 87.4954,
+      "crmse_2d_mm": 87.4937,
+      "iqr_2d_mm": 55.6529,
       "p95_2d_mm": 167.2955,
       "max_2d_mm": 855.0636,
+      "roughness_grad_rms_mm_km": 14.2323,
+      "roughness_grad_p95_mm_km": 24.0434,
+      "local_jitter_ratio": 0.2965,
+      "learnability_score_mm": 88.9476,
       "pass_lt_1cm_pct": 2.28,
-      "total_size_mb": 39.2432,
+      "total_size_mb": 39.2433,
       "fit_time_s": 0.001,
-      "eval_time_s": 0.0555,
-      "throughput_pts_per_s": 656201.5
+      "eval_time_s": 0.0986,
+      "throughput_pts_per_s": 369636.2
     },
     {
       "model": "k8_distance",
@@ -87,13 +117,19 @@
       "count": 36435,
       "mean_2d_mm": 47.4086,
       "rmse_2d_mm": 60.1305,
+      "crmse_2d_mm": 60.129,
+      "iqr_2d_mm": 40.3416,
       "p95_2d_mm": 117.0992,
       "max_2d_mm": 675.7796,
+      "roughness_grad_rms_mm_km": 10.8938,
+      "roughness_grad_p95_mm_km": 19.6313,
+      "local_jitter_ratio": 0.3615,
+      "learnability_score_mm": 62.4717,
       "pass_lt_1cm_pct": 10.39,
-      "total_size_mb": 39.2432,
+      "total_size_mb": 39.2433,
       "fit_time_s": 0.0011,
-      "eval_time_s": 0.0546,
-      "throughput_pts_per_s": 666993.7
+      "eval_time_s": 0.0838,
+      "throughput_pts_per_s": 434987.6
     },
     {
       "model": "k16_uniform",
@@ -102,13 +138,19 @@
       "count": 36435,
       "mean_2d_mm": 106.926,
       "rmse_2d_mm": 131.8871,
+      "crmse_2d_mm": 131.8798,
+      "iqr_2d_mm": 82.7937,
       "p95_2d_mm": 256.1632,
       "max_2d_mm": 978.5233,
+      "roughness_grad_rms_mm_km": 15.1951,
+      "roughness_grad_p95_mm_km": 25.8859,
+      "local_jitter_ratio": 0.1723,
+      "learnability_score_mm": 129.7085,
       "pass_lt_1cm_pct": 1.17,
-      "total_size_mb": 39.2432,
+      "total_size_mb": 39.2433,
       "fit_time_s": 0.0011,
-      "eval_time_s": 0.0878,
-      "throughput_pts_per_s": 414924.8
+      "eval_time_s": 0.1238,
+      "throughput_pts_per_s": 294412.8
     },
     {
       "model": "k16_distance",
@@ -117,13 +159,19 @@
       "count": 36435,
       "mean_2d_mm": 72.5455,
       "rmse_2d_mm": 92.1409,
+      "crmse_2d_mm": 92.1365,
+      "iqr_2d_mm": 62.0981,
       "p95_2d_mm": 181.4807,
       "max_2d_mm": 809.6589,
+      "roughness_grad_rms_mm_km": 13.5478,
+      "roughness_grad_p95_mm_km": 24.3099,
+      "local_jitter_ratio": 0.292,
+      "learnability_score_mm": 93.5413,
       "pass_lt_1cm_pct": 8.07,
-      "total_size_mb": 39.2432,
+      "total_size_mb": 39.2433,
       "fit_time_s": 0.0011,
-      "eval_time_s": 0.0854,
-      "throughput_pts_per_s": 426728.8
+      "eval_time_s": 0.1397,
+      "throughput_pts_per_s": 260805.0
     }
   ],
   "artifacts": {
@@ -142,7 +190,8 @@
       "ro_grid_8x8_grid_shift_2d_signed_scatter.png",
       "ro_grid_8x8_grid_shift_2d_subcell_heatmap.png",
       "ro_grid_8x8_grid_shift_2d_vector_quiver.png",
-      "cell_transect_66km.png"
+      "extreme_scenarios_gradient_and_linear_9cells.png",
+      "extreme_scenarios_curvature_and_kinks_9cells.png"
     ]
   },
   "benchmark_candidates": [
@@ -175,7 +224,5 @@
       "extra": {}
     }
   ],
-  "extra": {
-    "transect_plot": "cell_transect_66km.png"
-  }
+  "extra": {}
 }

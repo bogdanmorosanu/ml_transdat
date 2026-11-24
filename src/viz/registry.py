@@ -14,7 +14,6 @@ class PlotType(str, Enum):
     SIGNED_SCATTER = "signed_scatter"
     SUBCELL_HEATMAP = "subcell_heatmap"
     VECTOR_QUIVER = "vector_quiver"
-    TRANSECT_66KM = "transect_66km"
     RESIDUAL_ROUGHNESS = "residual_roughness"
     EXTREME_SCENARIOS_9CELLS = "extreme_scenarios_9cells"
     SURFACE_LEARNABILITY_RANKING = "surface_learnability_ranking"

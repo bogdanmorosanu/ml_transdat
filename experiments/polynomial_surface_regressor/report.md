@@ -101,8 +101,9 @@ Using L1 Lasso regularization on Degree 5 and Degree 12 reveals the **mathematic
 ![Polynomial Degree Scaling](plots/polynomial_degree_scaling.png)
 The scaling curve confirms a steep exponential error reduction from Degree 1 ($42.8\,\text{cm}$) through Degree 8 ($21.6\,\text{cm}$), followed by asymptotic leveling off near $\sim 18\,\text{cm}$ as degree approaches 14.
 
-### 2. 66 km Transect Across SPG Control Cells
-![66 km Transect Across Polynomial Degrees](plots/cell_transect_66km_polynomial.png)
+### 2. 9-Cell (99 km) Extreme Scenario Transects
+![Gradient & Linear Extreme Scenarios](plots/extreme_scenarios_gradient_and_linear_9cells.png)
+![Curvature & Kink Extreme Scenarios](plots/extreme_scenarios_curvature_and_kinks_9cells.png)
 The transect clearly illustrates the geometric progression:
 * **Degree 1 (Flat Plane)** cuts straight through the landscape with zero curvature.
 * **Degrees 2 and 3** introduce macroscopic bowing that approximates the general trend line.

@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 from sklearn.neural_network import MLPRegressor
 
+from src.models._features import SpatialFeatureEncoder
 from src.models.base import BaseGridShiftModel
 
 
@@ -46,23 +46,7 @@ class MLPGridShiftModel(BaseGridShiftModel):
         scale_neighbor_features: bool = True,
         use_cell_center_distance: bool = False,
     ) -> None:
-        """Initialize the MLP neural network spatial regressor.
-
-        :param hidden_layer_sizes: Tuple representing neuron counts per hidden layer.
-        :param activation: Activation function ('relu', 'tanh', 'identity', 'logistic').
-        :param solver: Optimization solver ('lbfgs', 'adam', 'sgd').
-        :param alpha: L2 regularization penalty parameter.
-        :param max_iter: Maximum optimization iterations.
-        :param random_state: Reproducibility seed.
-        :param normalize_inputs: Whether to scale coordinates to [-1, 1].
-        :param use_fourier_features: Whether to expand inputs using Random Fourier Features.
-        :param fourier_scale: Standard deviation Gaussian scale for Fourier projection frequencies.
-        :param num_fourier_frequencies: Number of projection dimensions (generates 2 * frequencies features).
-        :param batch_size: Size of mini-batches for stochastic optimizers ('auto' or int).
-        :param learning_rate_init: Initial learning rate for Adam or SGD.
-        :param tol: Optimization convergence tolerance threshold.
-        :param n_iter_no_change: Maximum number of epochs without improvement before early stopping.
-        """
+        """Initialize the MLP neural network spatial regressor."""
         super().__init__()
         self.hidden_layer_sizes = tuple(hidden_layer_sizes)
         self.activation = activation
@@ -81,7 +65,6 @@ class MLPGridShiftModel(BaseGridShiftModel):
         self.use_shape_features = bool(use_shape_features)
         self.shape_tol_mm = float(shape_tol_mm)
         self.s_shape_weight = int(s_shape_weight)
-        self._shape_extractor: object | None = None
 
         if neighbor_feature_mode not in ("all", "slopes"):
             raise ValueError(
@@ -93,10 +76,21 @@ class MLPGridShiftModel(BaseGridShiftModel):
         self.neighbor_features_path = str(neighbor_features_path)
         self.scale_neighbor_features = bool(scale_neighbor_features)
         self.use_cell_center_distance = bool(use_cell_center_distance)
-        self._neighbor_extractor: Any = None
-        self._neighbor_col_indices: np.ndarray | None = None
-        self._neighbor_mean: np.ndarray | None = None
-        self._neighbor_std: np.ndarray | None = None
+
+        self._feature_encoder = SpatialFeatureEncoder(
+            normalize_inputs=self.normalize_inputs,
+            use_fourier_features=self.use_fourier_features,
+            fourier_scale=self.fourier_scale,
+            num_fourier_frequencies=self.num_fourier_frequencies,
+            random_state=self.random_state,
+            use_shape_features=self.use_shape_features,
+            shape_tol_mm=self.shape_tol_mm,
+            use_neighbor_features=self.use_neighbor_features,
+            neighbor_feature_mode=self.neighbor_feature_mode,
+            neighbor_features_path=self.neighbor_features_path,
+            scale_neighbor_features=self.scale_neighbor_features,
+            use_cell_center_distance=self.use_cell_center_distance,
+        )
 
         self._model = MLPRegressor(
             hidden_layer_sizes=self.hidden_layer_sizes,
@@ -110,137 +104,17 @@ class MLPGridShiftModel(BaseGridShiftModel):
             tol=self.tol,
             n_iter_no_change=self.n_iter_no_change,
         )
-        self._min_coords: np.ndarray | None = None
-        self._max_coords: np.ndarray | None = None
-        self._fourier_basis: np.ndarray | None = None
 
     def _transform_features(self, coords: np.ndarray) -> np.ndarray:
-        """Scale coordinates to [-1, 1] and optionally apply Fourier positional encoding."""
-        if self.normalize_inputs:
-            if self._min_coords is None or self._max_coords is None:
-                raise RuntimeError(
-                    "Model fitted state missing normalization parameters."
-                )
-            diff = self._max_coords - self._min_coords
-            diff[diff == 0.0] = 1.0
-            x_norm = 2.0 * (coords - self._min_coords) / diff - 1.0
-        else:
-            x_norm = coords
-
-        if not self.use_fourier_features:
-            x_spatial = x_norm
-        else:
-            if self._fourier_basis is None:
-                raise RuntimeError("Fourier projection matrix B is uninitialized.")
-
-            proj = 2.0 * np.pi * (x_norm @ self._fourier_basis)
-            x_spatial = np.concatenate([x_norm, np.sin(proj), np.cos(proj)], axis=1)
-
-        if self.use_shape_features:
-            if self._shape_extractor is None:
-                from src.geometry.shape_classifier import CellShapeFeatureExtractor
-
-                self._shape_extractor = CellShapeFeatureExtractor(
-                    default_tol_mm=self.shape_tol_mm
-                )
-
-            feats = self._shape_extractor.extract_features(  # type: ignore[union-attr]
-                coords[:, 0], coords[:, 1], tol_mm=self.shape_tol_mm
-            )
-            cat_dn = feats["cat_dn"]
-            cat_de = feats["cat_de"]
-            shape_onehot = np.column_stack(
-                [
-                    (cat_dn == 1).astype(np.float64),
-                    (cat_dn == 2).astype(np.float64),
-                    (cat_dn == 3).astype(np.float64),
-                    (cat_de == 1).astype(np.float64),
-                    (cat_de == 2).astype(np.float64),
-                    (cat_de == 3).astype(np.float64),
-                ]
-            )
-            x_spatial = np.concatenate([x_spatial, shape_onehot], axis=1)
-
-        if self.use_neighbor_features:
-            neighbor_feats = self._extract_neighbor_features(coords)
-            if self.scale_neighbor_features:
-                if self._neighbor_mean is None or self._neighbor_std is None:
-                    raise RuntimeError(
-                        "Model fitted state missing neighbor feature scaling parameters."
-                    )
-                neighbor_feats = (
-                    neighbor_feats - self._neighbor_mean
-                ) / self._neighbor_std
-            x_spatial = np.concatenate([x_spatial, neighbor_feats], axis=1)
-
-        if self.use_cell_center_distance:
-            self._ensure_neighbor_extractor()
-            center_dists = self._neighbor_extractor.lookup_center_distances(
-                coords[:, 0], coords[:, 1]
-            )
-            x_spatial = np.concatenate([x_spatial, center_dists], axis=1)
-
-        return x_spatial
-
-    def _ensure_neighbor_extractor(self) -> None:
-        """Lazily initialize the CellNeighborFeatureExtractor and column indices."""
-        if self._neighbor_extractor is None:
-            from src.geometry.neighbor_features import (
-                NEIGHBOR_FEATURE_COLS,
-                CellNeighborFeatureExtractor,
-            )
-
-            self._neighbor_extractor = CellNeighborFeatureExtractor(
-                self.neighbor_features_path
-            )
-            if self.neighbor_feature_mode == "slopes":
-                self._neighbor_col_indices = np.array(
-                    [i for i, c in enumerate(NEIGHBOR_FEATURE_COLS) if "slope" in c],
-                    dtype=np.int64,
-                )
-            else:
-                self._neighbor_col_indices = np.arange(
-                    len(NEIGHBOR_FEATURE_COLS), dtype=np.int64
-                )
-
-    def _extract_neighbor_features(self, coords: np.ndarray) -> np.ndarray:
-        """Extract selected 3x3 neighbor features (all 40 or 32 slopes) with NaN->0 fallback."""
-        self._ensure_neighbor_extractor()
-        feats = self._neighbor_extractor.lookup_points(coords[:, 0], coords[:, 1])
-        feats = feats[:, self._neighbor_col_indices]
-        return np.nan_to_num(feats, nan=0.0)
+        """Scale coordinates to [-1, 1] and apply configured spatial encodings."""
+        return self._feature_encoder.transform(coords)
 
     def _fit_impl(self, coords: np.ndarray, shifts: np.ndarray) -> None:
         """Fit the MLP regressor on (coords, shifts)."""
-        if self.normalize_inputs:
-            self._min_coords = np.min(coords, axis=0)
-            self._max_coords = np.max(coords, axis=0)
-
-        if self.use_fourier_features:
-            rng = np.random.RandomState(self.random_state)
-            self._fourier_basis = (
-                rng.randn(2, self.num_fourier_frequencies) * self.fourier_scale
-            )
-
-        if self.use_neighbor_features and self.scale_neighbor_features:
-            raw_neighbor = self._extract_neighbor_features(coords)
-            self._neighbor_mean = np.mean(raw_neighbor, axis=0)
-            std = np.std(raw_neighbor, axis=0)
-            std[std == 0.0] = 1.0
-            self._neighbor_std = std
-
-        x_feats = self._transform_features(coords)
+        x_feats = self._feature_encoder.fit_transform(coords)
         fit_x, fit_y = x_feats, shifts
         if self.s_shape_weight > 1:
-            if self._shape_extractor is None:
-                from src.geometry.shape_classifier import CellShapeFeatureExtractor
-
-                self._shape_extractor = CellShapeFeatureExtractor(
-                    default_tol_mm=self.shape_tol_mm
-                )
-            feats = self._shape_extractor.extract_features(  # type: ignore[union-attr]
-                coords[:, 0], coords[:, 1], tol_mm=self.shape_tol_mm
-            )
+            feats = self._feature_encoder.extract_shape_categories(coords)
             s_mask = feats["cat_2d"] == 3
             if np.any(s_mask):
                 extra_x = np.repeat(x_feats[s_mask], self.s_shape_weight - 1, axis=0)
@@ -256,7 +130,7 @@ class MLPGridShiftModel(BaseGridShiftModel):
 
     def _predict_impl(self, coords: np.ndarray) -> np.ndarray:
         """Predict shift_n and shift_e for given query coordinates."""
-        x_feats = self._transform_features(coords)
+        x_feats = self._feature_encoder.transform(coords)
         preds = self._model.predict(x_feats)
         return np.asarray(preds, dtype=np.float64)
 
@@ -266,12 +140,6 @@ class MLPGridShiftModel(BaseGridShiftModel):
     def _grid_lookup_bytes(self) -> int:
         """MLP is a parametric neural network; it has zero external lookup tables."""
         return 0
-
-    def __getstate__(self) -> dict[str, Any]:
-        state = self.__dict__.copy()
-        state["_shape_extractor"] = None
-        state["_neighbor_extractor"] = None
-        return state
 
     @property
     def total_parameters(self) -> int:

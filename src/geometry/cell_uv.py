@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 
 from pytransdat.spg_reader import SpgReader
+from src.data.spg_cache import get_default_spg_reader
 
 
 @functools.lru_cache(maxsize=8)
@@ -21,7 +22,7 @@ def get_spg_grid_bounds(
     :return: Tuple ``(min_e, max_e, min_n, max_n, step_e, step_n)`` in meters.
     :rtype: tuple[float, float, float, float, float, float]
     """
-    reader = SpgReader(str(spg_path)) if spg_path is not None else SpgReader()
+    reader = SpgReader(str(spg_path)) if spg_path is not None else get_default_spg_reader()
     min_e, max_e, min_n, max_n, step_e, step_n = reader.shift_bounds
     return (
         float(min_e),

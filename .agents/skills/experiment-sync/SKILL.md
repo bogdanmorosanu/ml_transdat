@@ -31,8 +31,9 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.<slug>.run_unit
 ```
 Verify:
 - `unit_brief.json` exists and conforms to **Schema v2** (`schema_version == "2.0"`, `slug`, `experiment_type`, `status`, `runtime_s`, `key_metrics`, `artifacts`, `benchmark_candidates`, `extra`), including the surface learnability fields (`crmse_2d_mm`, `iqr_2d_mm`, `roughness_grad_rms_mm_km`, `local_jitter_ratio`, `learnability_score_mm`).
-- `results/` and `plots/` contain the expected scorecards, **unified multi-model row diagnostic figures** (`{dataset_id}_{direction}_{plot_type}.png`, 1 row per model—no per-model diagnostic PNGs), and—for `grid_shift` units with `keep_in_memory=True` models—the canonical 9-cell extreme scenario plots (`extreme_scenarios_gradient_and_linear_9cells.png` and `extreme_scenarios_curvature_and_kinks_9cells.png`).
+- `results/` and `plots/` contain the expected scorecards, **unified multi-model row diagnostic figures** (`{dataset_id}_{direction}_{plot_type}.png`, 1 row per model—no per-model diagnostic PNGs), and—for `grid_shift` units with `keep_in_memory=True` models—the canonical 9-cell extreme scenario plots (`extreme_scenarios_gradient_and_linear_9cells.png` and `extreme_scenarios_curvature_and_kinks_9cells.png`, configured via `extreme_scenario_label` on `ExperimentModelSpec` or `get_extreme_scenario_models()`).
 - `models/*.pkl` checkpoints exist for trained models (`persist_model=True`) and are ignored by Git.
+- Automated architectural guardrails pass: `D:\anaconda3\envs\ml_transdat\python.exe -m unittest tests/test_architecture_invariants.py -v`.
 
 ### Step 3: Synchronize Human Report (`report.md`)
 - Ensure `experiments/<slug>/report.md` exists and follows the category baseline template from `experiments/GEMINI.md`:

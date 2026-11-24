@@ -3,7 +3,7 @@
   "slug": "bicubic_boundary_analysis",
   "experiment_type": "analysis",
   "status": "completed",
-  "runtime_s": 3.593,
+  "runtime_s": 4.158,
   "key_metrics": {
     "transect_length_km": 198.0,
     "transect_cells": 18,

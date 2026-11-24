@@ -24,7 +24,7 @@ Models are benchmarked against `pytransdat` on accuracy (**$\le 1\text{ cm}$** a
 ## 2. Repository Structure
 
 - [`pytransdat/`](pytransdat/): Immutable pure-Python reference implementation incorporating `pytransdat/grids/rom_grid3d_25.09.spg` (see [`docs/core_engine.md`](docs/core_engine.md) for API usage examples).
-- [`src/`](src/): Reusable ML & evaluation pipeline (`src/core/` for samplers, metrics, visualization; `src/models/` for candidate model implementations).
+- [`src/`](src/): Reusable ML & evaluation pipeline (`src/core/`, `src/data/`, `src/geometry/`, `src/models/`, `src/evaluation/`, `src/viz/`; see [`docs/architecture.md`](docs/architecture.md)).
 - [`experiments/`](experiments/): Self-contained slug-based research units (`experiments/<slug>/`), indexed in [`experiments/README.md`](experiments/README.md).
 - [`data/`](data/): Canonical spatial grids (`data/grids/spg_nodes_valid.parquet`, `ro_grid_4x4.parquet`, `ro_grid_8x8.parquet`) and directional trajectory benchmarks (`data/benchmarks/ro_corridor_snw.parquet`).
 - [`docs/`](docs/): Living mathematical documentation ([`core_engine.md`](docs/core_engine.md), [`grid.md`](docs/grid.md)) and scientific research graph ([`docs/research/roadmap.md`](docs/research/roadmap.md), [`docs/research/narrative.md`](docs/research/narrative.md)).

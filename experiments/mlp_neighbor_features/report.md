@@ -47,7 +47,7 @@ This unit tests whether injecting the **40 continuous $3 \times 3$ cell neighbor
 ---
 
 ## 4. Visual Diagnostics
-- [`plots/cell_transect_66km_mlp_neighbor.png`](plots/cell_transect_66km_mlp_neighbor.png): 66 km transect comparing the baseline Fourier MLP against the center-distance and neighbor-feature variants.
+- [`plots/extreme_scenarios_gradient_and_linear_9cells.png`](plots/extreme_scenarios_gradient_and_linear_9cells.png) & [`plots/extreme_scenarios_curvature_and_kinks_9cells.png`](plots/extreme_scenarios_curvature_and_kinks_9cells.png): 9-cell (99 km) extreme scenario transects comparing the baseline Fourier MLP against the center-distance and neighbor-feature variants.
 
 ---
 

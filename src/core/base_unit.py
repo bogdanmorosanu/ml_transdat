@@ -19,10 +19,10 @@ import pandas as pd
 from src.data.catalog import GridDataset, GridId, GridManager
 from src.evaluation.evaluator import EvaluationResult, ModelEvaluator
 from src.evaluation.metrics import dataframe_to_markdown, format_scorecard_table
-from src.models.base import BaseCoordinateTransformer, BaseGridShiftModel
+from src.models.base import BaseCoordinateTransformer, BaseGridShiftModel, BaseSpatialModel
 from src.viz.dispatcher import PlotDispatcher
-from src.viz.plots import plot_extreme_scenarios_9cells
 from src.viz.registry import PlotGroup, PlotSpec, PlotType
+from src.viz.scenarios import plot_extreme_scenarios_9cells
 
 
 class ExperimentType(str, Enum):
@@ -57,25 +57,28 @@ def _to_json_safe(val: Any) -> Any:
 def _extract_model_config(model: Any) -> dict[str, Any]:
     """Inspect a model instance to capture its class path and constructor hyperparameters."""
     cls = type(model)
-    sig = inspect.signature(cls.__init__)
-    params: dict[str, Any] = {}
-    for param_name, param in sig.parameters.items():
-        if param_name == "self":
-            continue
-        if param.kind in (
-            inspect.Parameter.VAR_POSITIONAL,
-            inspect.Parameter.VAR_KEYWORD,
-        ):
-            continue
-        if hasattr(model, param_name):
-            raw_val = getattr(model, param_name)
-        elif hasattr(model, f"_{param_name}"):
-            raw_val = getattr(model, f"_{param_name}")
-        elif param.default is not inspect.Parameter.empty:
-            raw_val = param.default
-        else:
-            raw_val = "<unset>"
-        params[param_name] = _to_json_safe(raw_val)
+    if isinstance(model, BaseSpatialModel):
+        params = _to_json_safe(model.get_config_dict())
+    else:
+        sig = inspect.signature(cls.__init__)
+        params = {}
+        for param_name, param in sig.parameters.items():
+            if param_name == "self":
+                continue
+            if param.kind in (
+                inspect.Parameter.VAR_POSITIONAL,
+                inspect.Parameter.VAR_KEYWORD,
+            ):
+                continue
+            if hasattr(model, param_name):
+                raw_val = getattr(model, param_name)
+            elif hasattr(model, f"_{param_name}"):
+                raw_val = getattr(model, f"_{param_name}")
+            elif param.default is not inspect.Parameter.empty:
+                raw_val = param.default
+            else:
+                raw_val = "<unset>"
+            params[param_name] = _to_json_safe(raw_val)
 
     return {
         "model_class": f"{cls.__module__}.{cls.__qualname__}",
@@ -136,15 +139,17 @@ class ResearchUnit(abc.ABC):
 
     SCHEMA_VERSION: str = "2.0"
 
-    def __init__(self, unit_dir: Path) -> None:
+    def __init__(self, unit_dir: Path, *, probe_only: bool = False) -> None:
         self.unit_dir = Path(unit_dir)
+        self._probe_only = bool(probe_only)
         self.results_dir = self.unit_dir / "results"
         self.plots_dir = self.unit_dir / "plots"
         self.data_dir = self.unit_dir / "data"
         self.models_dir = self.unit_dir / "models"
 
-        self.results_dir.mkdir(parents=True, exist_ok=True)
-        self.plots_dir.mkdir(parents=True, exist_ok=True)
+        if not self._probe_only:
+            self.results_dir.mkdir(parents=True, exist_ok=True)
+            self.plots_dir.mkdir(parents=True, exist_ok=True)
 
     @property
     @abc.abstractmethod
@@ -205,8 +210,14 @@ class TransformationExperimentUnit(ResearchUnit):
     :class:`PlotDispatcher`, and scorecard serialization.
     """
 
-    def __init__(self, unit_dir: Path, cache_grids: bool = True) -> None:
-        super().__init__(unit_dir)
+    def __init__(
+        self,
+        unit_dir: Path,
+        cache_grids: bool = True,
+        *,
+        probe_only: bool = False,
+    ) -> None:
+        super().__init__(unit_dir, probe_only=probe_only)
         self.grid_manager = GridManager(cache_enabled=cache_grids)
         self.evaluator = ModelEvaluator()
         self.plotter = PlotDispatcher()
@@ -318,7 +329,6 @@ class TransformationExperimentUnit(ResearchUnit):
         eval_result: EvaluationResult,
         plots: PlotSpec = PlotGroup.STANDARD_DIAGNOSTIC,
         dpi: int = 200,
-        transect_models: dict[str, BaseGridShiftModel] | None = None,
     ) -> dict[PlotType, Path]:
         """Convenience wrapper around :meth:`PlotDispatcher.render`."""
         return self.plotter.render(
@@ -326,7 +336,6 @@ class TransformationExperimentUnit(ResearchUnit):
             out_dir=self.plots_dir,
             plots=plots,
             dpi=dpi,
-            transect_models=transect_models,
         )
 
     def get_transformer_specs(self) -> list[TransformationModelSpec]:
@@ -409,6 +418,7 @@ class TransformationModelSpec:
     benchmark_candidate: bool = False
     benchmark_suite: str | None = None
     benchmark_label: str | None = None
+    extreme_scenario_label: str | None = None
     extra: dict[str, Any] = field(default_factory=dict)
 
     def to_benchmark_candidate_dict(self) -> dict[str, Any]:
@@ -444,6 +454,7 @@ class ExperimentModelSpec:
     benchmark_candidate: bool = False
     benchmark_suite: str | None = None
     benchmark_label: str | None = None
+    extreme_scenario_label: str | None = None
     extra: dict[str, Any] = field(default_factory=dict)
 
     def model_cache_path(self, unit_dir: Path) -> Path:
@@ -492,6 +503,14 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
         fitted_models: dict[str, BaseGridShiftModel],
     ) -> dict[str, BaseGridShiftModel]:
         """Return ``display_label -> model`` mapping for 9-cell extreme scenario plots."""
+        specs = self.get_model_specs()
+        labeled = {
+            s.extreme_scenario_label: fitted_models[s.name]
+            for s in specs
+            if s.extreme_scenario_label and s.name in fitted_models
+        }
+        if labeled:
+            return labeled
         return dict(fitted_models)
 
     def after_run(
@@ -607,8 +626,14 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
 class AnalysisExperimentUnit(ResearchUnit):
     """Template Method orchestrator for exploratory, geometric, and feature-engineering units."""
 
-    def __init__(self, unit_dir: Path, cache_grids: bool = True) -> None:
-        super().__init__(unit_dir)
+    def __init__(
+        self,
+        unit_dir: Path,
+        cache_grids: bool = True,
+        *,
+        probe_only: bool = False,
+    ) -> None:
+        super().__init__(unit_dir, probe_only=probe_only)
         self.grid_manager = GridManager(cache_enabled=cache_grids)
         self.plotter = PlotDispatcher()
         self.data_features_dir = Path("data/features")

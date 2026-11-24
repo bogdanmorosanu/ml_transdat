@@ -21,6 +21,10 @@ import numpy as np
 
 from pytransdat.trans_grid import Grid2D
 from src.core.base_unit import AnalysisExperimentUnit
+from src.viz.scenarios import (
+    EXTREME_SCENARIOS_GROUP1_GRADIENT_LINEAR,
+    EXTREME_SCENARIOS_GROUP2_CURVATURE_KINKS,
+)
 
 
 def _plot_easting_transect(
@@ -333,69 +337,8 @@ def _plot_extended_scenario(
 
 def _save_grouped_extreme_scenarios(grid: Grid2D, out_dir: Path) -> None:
     """Generates two separate grouped output plots for extreme scenarios."""
-    # Group 1: Gradient & Linear Extremes (Steepest Fall, Steepest Rise, Flat Bending)
-    group1_scenarios: list[dict[str, Any]] = [
-        {
-            "id": "steepest_fall",
-            "title": "Scenario 1A: Steepest Left-to-Right Fall (Row 23, Col 34, dN) — -0.536 m Drop",
-            "row": 23,
-            "col": 34,
-            "comp": "dN",
-            "desc": "Maximum downward drop across an 11 km cell width from -0.185 m to -0.722 m.",
-        },
-        {
-            "id": "steepest_rise_de",
-            "title": "Scenario 1B: Steepest Left-to-Right Rise in Easting (Row 45, Col 38, dE) — +0.453 m Jump",
-            "row": 45,
-            "col": 38,
-            "comp": "dE",
-            "desc": "Largest horizontal Easting jump across an 11 km cell width from -0.668 m to -0.215 m.",
-        },
-        {
-            "id": "flat_bending",
-            "title": "Scenario 1C: Flat Endpoints with High Internal Sag (Row 45, Col 35, dN) — 38.0 mm Bowing",
-            "row": 45,
-            "col": 35,
-            "comp": "dN",
-            "desc": "Cell endpoints differ by only 1.5 mm, yet bicubic curve bows by 38.0 mm due to external stencil slopes.",
-        },
-    ]
-
-    # Group 2: Curvature & Boundary Discontinuity Extremes (S-Shape, Bowl, Dome, Worst Kink)
-    group2_scenarios: list[dict[str, Any]] = [
-        {
-            "id": "s_shape",
-            "title": "Scenario 2A: True S-Shape (Row 23, Col 36, dN) — Sigmoidal Inflection",
-            "row": 23,
-            "col": 36,
-            "comp": "dN",
-            "desc": "Inflection point u_inf=0.48 with opposite curvature signs at endpoints (magnified to true vertical scale).",
-        },
-        {
-            "id": "bowl",
-            "title": "Scenario 2B: Strongest Bowl / Trough (Row 23, Col 35, dN) — 74.7 mm Sagitta",
-            "row": 23,
-            "col": 35,
-            "comp": "dN",
-            "desc": "Extreme interior trough dipping 74.7 mm below chord line between nodes.",
-        },
-        {
-            "id": "dome",
-            "title": "Scenario 2C: Strongest Dome / Peak (Row 3, Col 34, dN) — 41.1 mm Crown",
-            "row": 3,
-            "col": 34,
-            "comp": "dN",
-            "desc": "Interior crest peaking 41.1 mm above the boundary chord line.",
-        },
-        {
-            "id": "worst_kink",
-            "title": "Scenario 2D: Worst-Case C1 Boundary Discontinuity (Row 10, Col 16, dN) — 0.788 m/step Break",
-            "row": 10,
-            "col": 16,
-            "comp": "dN",
-            "desc": "Sharpest slope crease across an 11 km boundary in active Romanian territory.",
-        },
-    ]
+    group1_scenarios = EXTREME_SCENARIOS_GROUP1_GRADIENT_LINEAR
+    group2_scenarios = EXTREME_SCENARIOS_GROUP2_CURVATURE_KINKS
 
     # Plot Group 1
     fig1, axes1 = plt.subplots(len(group1_scenarios), 1, figsize=(12, 4.3 * len(group1_scenarios)))

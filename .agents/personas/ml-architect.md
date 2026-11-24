@@ -20,7 +20,9 @@
    - Strictly follow [`.agents/rules/python-style.md`](../rules/python-style.md): full type annotations, reST docstrings with array/tensor shapes, workspace-relative paths only, and explicit exception handling (no bare `except:`).
 5. **DRY Refactoring Trigger**:
    - If two experiments share a pattern (training loop, scaling, evaluation, plotting), extract it into `src/` instead of copying code.
-6. **Unified Row Plotting & Synced Model Caching**:
+   - Reuse shared primitives: `SpatialFeatureEncoder` (`src/models/_features.py`) for neural coordinate/RFF/neighbor encoding, `get_default_grid2d()` / `get_default_spg_reader()` (`src/data/spg_cache.py`) for cached `.spg` access, `extreme_scenario_label` on `ExperimentModelSpec`, and `src/viz/{diagnostics,scenarios,surfaces,benchmarks}.py` for plotting.
+6. **Unified Row Plotting, Synced Model Caching & Automated Guardrails**:
    - Always render diagnostic plots via `PlotDispatcher.render_grouped` (1 unified PNG per `(dataset_id, direction, plot_type)`, 1 row per model).
    - Keep `persist_model=True` default on `ExperimentModelSpec` so `load_or_fit` caches fitted `.pkl` checkpoints in gitignored `experiments/<slug>/models/` with SHA-256 code+param+grid fingerprints.
    - Never re-run `.predict()` in `after_run()` on datasets already evaluated in `results`.
+   - Enforce `ruff check` (pinned in `pyproject.toml`) and `tests/test_architecture_invariants.py` before concluding any session.

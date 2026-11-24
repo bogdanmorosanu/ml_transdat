@@ -11,10 +11,10 @@ flowchart LR
     EXP["experiments/&lt;slug&gt;/run_unit.py<br>(Single-Hypothesis Research Units)"] --> CORE["src/core/<br>Experiment Orchestrators"]
     BENCH["benchmarks/&lt;suite&gt;/run_benchmark.py<br>(Cross-Model Comparisons)"] --> EVAL
     BENCH --> VIZ
-    CORE --> DATA["src/data/<br>GridManager, GridDataset, GridId"]
+    CORE --> DATA["src/data/<br>GridManager, GridDataset, GridId, regions, spg_cache"]
     CORE --> MODELS["src/models/<br>BaseSpatialModel, BaseGridShiftModel, BaseCoordinateTransformer"]
     CORE --> EVAL["src/evaluation/<br>ModelEvaluator, MetricType, MetricMeta"]
-    CORE --> VIZ["src/viz/<br>PlotDispatcher, PlotType, PlotGroup"]
+    CORE --> VIZ["src/viz/<br>PlotDispatcher, diagnostics, scenarios, surfaces, benchmarks"]
     MODELS --> EVAL
     DATA --> EVAL
     EVAL --> VIZ
@@ -22,11 +22,11 @@ flowchart LR
 
 | Directory | Responsibility | What Belongs Here |
 | :--- | :--- | :--- |
-| `src/data/` | Data & Grid Access | `GridId`, `GridDataset`, `GridManager`, `get_default_grid_manager`, lazy samplers, on-the-fly grid generators |
+| `src/data/` | Data & Grid Access | `GridId`, `GridDataset`, `GridManager`, `get_default_grid_manager`, `regions` (`CellRegion`, `find_worst_case_region`, `concat_datasets`), `spg_cache` (`get_default_grid2d`, `get_default_spg_reader`), lazy samplers, on-the-fly grid generators |
 | `src/geometry/` | Cell Geometry & Features | `CellPlane`, `CellPlane2D`, `extract_grid_cell_planes`, `ShapeCategory`, `CellShapeFeatureExtractor`, `compute_spg_cell_uv`, `encode_cyclic_cell_uv` |
-| `src/models/` | Transformation & ML Models | `BaseSpatialModel`, `BaseGridShiftModel`, `BaseCoordinateTransformer`, `ResidualCoordinateTransformer`, `_torch_trainer` (`train_torch_regressor`), `load_embedded_spg_helmert_params`, concrete estimators (`KNNSpatialRegressor`, `DecisionTreeSpatialRegressor`, `AdaptiveQuadtreeRegressor`, `MLPGridShiftModel`, `TorchMLPGridShiftModel`, `NeuralFeatureGridShiftModel`, `CellBilinearShiftModel`, `ParameterizedBicubicGridShiftModel`, `CompositeResidualShiftModel`, `HistGBRGridShiftModel`, `PolynomialSurfaceRegressor`, `RBFSurfaceRegressor`, `BSplineSurfaceRegressor`, `LocalPolynomialSurfaceRegressor`, `Helmert2DConformalShiftModel`, `TwoStepHelmert2DTransformer`, `PyprojEpsg3844Transformer`) |
+| `src/models/` | Transformation & ML Models | `BaseSpatialModel`, `BaseGridShiftModel`, `BaseCoordinateTransformer`, `ResidualCoordinateTransformer`, `_features` (`SpatialFeatureEncoder`), `_torch_trainer` (`train_torch_regressor`), `load_embedded_spg_helmert_params`, concrete estimators (`KNNSpatialRegressor`, `DecisionTreeSpatialRegressor`, `AdaptiveQuadtreeRegressor`, `MLPGridShiftModel`, `TorchMLPGridShiftModel`, `NeuralFeatureGridShiftModel`, `CellBilinearShiftModel`, `ParameterizedBicubicGridShiftModel`, `CompositeResidualShiftModel`, `HistGBRGridShiftModel`, `PolynomialSurfaceRegressor`, `RBFSurfaceRegressor`, `BSplineSurfaceRegressor`, `LocalPolynomialSurfaceRegressor`, `Helmert2DConformalShiftModel`, `TwoStepHelmert2DTransformer`, `PyprojEpsg3844Transformer`) |
 | `src/evaluation/` | Metrics & Benchmarking | `MetricType`, `MetricMeta`, `MetricGroup` (`SURFACE_LEARNABILITY`), `compute_spatial_roughness_stats`, `EvaluationResult`, `ModelEvaluator` (`evaluate_models`, `tabulate_results`, `tabulate_delta_vs_baseline`, `compare_models`, `rank_surface_candidates`), `NaN`-safe scorecards & Markdown formatters |
-| `src/viz/` | Declarative Visualization | `PlotType`, `PlotGroup` (`SURFACE_DIAGNOSTIC`), `PlotDispatcher` (`render_grouped` 1-row-per-model figures), matplotlib plotting functions (`plot_spatial_error_rows`, `plot_hist_ecdf_rows`, `plot_signed_scatter_rows`, `plot_subcell_heatmap_rows`, `plot_vector_quiver_rows`, `plot_residual_roughness_rows`, `plot_extreme_scenarios_9cells`, `plot_surface_learnability_ranking`, `plot_multi_dataset_comparison`, `plot_model_comparison`, `plot_memory_breakdown_stacked`, `plot_speed_workloads`, `plot_surface_comparison_grids`) |
+| `src/viz/` | Declarative Visualization | `registry` (`PlotType`, `PlotGroup`), `dispatcher` (`PlotDispatcher.render_grouped`), `diagnostics` (`plot_spatial_error_rows`, `plot_hist_ecdf_rows`, `plot_signed_scatter_rows`, `plot_subcell_heatmap_rows`, `plot_vector_quiver_rows`, `plot_point_distribution`), `scenarios` (`plot_extreme_scenarios_9cells`, `eval_pytransdat_1d_safe`), `surfaces` (`plot_residual_roughness_rows`, `plot_surface_learnability_ranking`, `plot_surface_comparison_grids`), `benchmarks` (`plot_multi_dataset_comparison`, `plot_model_comparison`, `plot_memory_breakdown_stacked`, `plot_speed_workloads`) |
 | `src/core/` | Experiment & Benchmark Lifecycle | `ResearchUnit`, `ExperimentType`, `TransformationExperimentUnit`, `TransformationModelSpec`, `GridShiftExperimentUnit`, `AnalysisExperimentUnit`, `ExperimentModelSpec`, `BenchmarkSuite`, `BenchmarkModelSpec`, `specs_from_unit` |
 | `experiments/<slug>/` | Micro Research Units | Thin declarative `run_unit.py`, `report.md`, `unit_brief.json` (v2), `results/`, `plots/` (unified 1-row-per-model PNGs), gitignored `models/` (`.pkl` checkpoints) |
 | `benchmarks/<suite>/` | Macro Cross-Model Suites | `BenchmarkSuite` subclass `run_benchmark.py`, `summary_scorecard.md`, comparative `plots/`, `results/` |
@@ -88,7 +88,7 @@ Uses the **Template Method** pattern:
 - **Constants (`PlotType` & `PlotGroup`)**: Defined in [`src/viz/registry.py`](../src/viz/registry.py). Includes `PlotGroup.SURFACE_DIAGNOSTIC` (`SPATIAL_ERROR`, `HIST_ECDF`, `RESIDUAL_ROUGHNESS`).
 - **Dispatcher (`PlotDispatcher`)**: `PlotDispatcher.render_grouped(...)` groups evaluation results by `(dataset_id, direction, plot_type)` into **one unified PNG per `PlotType`** (`{dataset_id}_{direction}_{plot_type}.png`) where **each model occupies its own row** (`plot_spatial_error_rows`, `plot_hist_ecdf_rows`, `plot_signed_scatter_rows`, `plot_subcell_heatmap_rows`, `plot_vector_quiver_rows`, `plot_residual_roughness_rows`).
 - **9-Cell Extreme Scenario Transects & Learnability Ranking**: `plot_extreme_scenarios_9cells(...)` renders the canonical 99 km (9-cell: 4 left + target + 4 right) Group 1 (`Gradient & Linear`) and Group 2 (`Curvature & Kinks`) comparisons against `TransDatRO`. `plot_surface_learnability_ranking(...)` renders the `cRMSE` vs. `Roughness RMS` Pareto frontier and Top-K decomposed cost chart.
-- **Cross-Model & Cross-Dataset Plots**: `plot_model_comparison(..., precision_unit="mm")`, `plot_multi_dataset_comparison(...)` (zero-re-inference grouped bars), `plot_speed_workloads(...)`, and 2-panel `plot_memory_breakdown_stacked(...)` in [`src/viz/plots.py`](../src/viz/plots.py).
+- **Cross-Model & Cross-Dataset Plots**: `plot_model_comparison(..., precision_unit="mm")`, `plot_multi_dataset_comparison(...)` (zero-re-inference grouped bars), `plot_speed_workloads(...)`, and 2-panel `plot_memory_breakdown_stacked(...)` in [`src/viz/benchmarks.py`](../src/viz/benchmarks.py).
 
 ---
 

@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
 
-from src.data import CellRegion, GridDataset, GridId, GridManager
+from src.data import CellRegion, GridDataset, GridId, GridManager, concat_datasets
 from src.evaluation import ModelEvaluator
 from src.models import (
     BaseGridShiftModel,
@@ -221,14 +221,6 @@ def build_family_catalog() -> dict[str, list[CandidateSpec]]:
     return catalog
 
 
-def _concat_regions(ds_a: GridDataset, ds_b: GridDataset) -> GridDataset:
-    """Combine two regional GridDataset slices, deduplicating by coordinates."""
-    df_cat = pd.concat([ds_a.df, ds_b.df], ignore_index=True).drop_duplicates(
-        subset=["st70_n", "st70_e"]
-    )
-    return GridDataset(grid_id=ds_a.grid_id, df=df_cat.reset_index(drop=True), metadata=dict(ds_a.metadata))
-
-
 def _eval_pair(
     spec: CandidateSpec,
     train_coords: np.ndarray,
@@ -303,14 +295,14 @@ def main() -> None:
             gm.get_region(GridId.RO_TEST_ADAPTIVE_1MM_MID, box10_int),
         ),
         "box10_dual": (
-            _concat_regions(
+            concat_datasets([
                 gm.get_region(GridId.RO_TEST_UNIFORM_16X16, box10_int),
                 gm.get_region(GridId.RO_TEST_UNIFORM_16X16, box10_banat),
-            ),
-            _concat_regions(
+            ]),
+            concat_datasets([
                 gm.get_region(GridId.RO_TEST_ADAPTIVE_1MM_MID, box10_int),
                 gm.get_region(GridId.RO_TEST_ADAPTIVE_1MM_MID, box10_banat),
-            ),
+            ]),
         ),
         "box20_west": (
             gm.get_region(GridId.RO_TEST_UNIFORM_16X16, box20_west),

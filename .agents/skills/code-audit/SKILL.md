@@ -13,12 +13,12 @@ Executes static analysis, formatting checks, architectural boundary checks, and 
 ## Audit Workflow
 
 ### 1. Python Code Hygiene & Ruff Lint
-Run Ruff lint and format checks from the designated environment:
+Run Ruff lint and automated architecture invariant tests from the designated environment:
 ```powershell
-D:\anaconda3\envs\ml_transdat\python.exe -m ruff check .
-D:\anaconda3\envs\ml_transdat\python.exe -m ruff format --check .
+D:\anaconda3\envs\ml_transdat\python.exe -m ruff check src benchmarks experiments tests scripts
+D:\anaconda3\envs\ml_transdat\python.exe -m unittest tests/test_architecture_invariants.py -v
 ```
-*(If Ruff is not installed in the environment, skip external linting and inspect manually).*
+*(Config is pinned in `pyproject.toml`.)*
 
 ### 2. Architectural Boundary Check (`experiments/GEMINI.md`)
 - Verify that `experiments/<slug>/` contains **only** orchestration (`run_unit.py`), reports, outputs (`results/`, `plots/`), and gitignored `models/`—no reusable model classes, fitting algorithms, samplers, metrics, or visualizers duplicated outside `src/`.

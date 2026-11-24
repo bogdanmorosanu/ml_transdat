@@ -58,8 +58,8 @@ def extract_cell_neighbor_features(
     """
     reader = SpgReader(spg_path) if spg_path is not None else SpgReader()
     grid_min_e, grid_max_e, grid_min_n, grid_max_n, step_e, step_n = reader.shift_bounds
-    n_cols = int(round((grid_max_e - grid_min_e) / step_e)) + 1
-    n_rows = int(round((grid_max_n - grid_min_n) / step_n)) + 1
+    n_cols = round((grid_max_e - grid_min_e) / step_e) + 1
+    n_rows = round((grid_max_n - grid_min_n) / step_n) + 1
 
     dn = np.asarray(reader.shift_n_flat, dtype=np.float64).reshape((n_rows, n_cols))
     de = np.asarray(reader.shift_e_flat, dtype=np.float64).reshape((n_rows, n_cols))

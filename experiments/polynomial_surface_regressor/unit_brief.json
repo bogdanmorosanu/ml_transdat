@@ -318,10 +318,11 @@
       "ro_test_adaptive_3mm_mid_grid_shift_2d_spatial_error.png",
       "ro_test_adaptive_3mm_mid_grid_shift_2d_hist_ecdf.png",
       "ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png",
-      "cell_transect_66km_polynomial.png",
       "polynomial_degree_scaling.png",
       "polynomial_3d_surfaces_comparison.png",
-      "polynomial_2d_heatmaps_comparison.png"
+      "polynomial_2d_heatmaps_comparison.png",
+      "extreme_scenarios_gradient_and_linear_9cells.png",
+      "extreme_scenarios_curvature_and_kinks_9cells.png"
     ]
   },
   "benchmark_candidates": [
@@ -439,7 +440,6 @@
     }
   ],
   "extra": {
-    "transect_plot": "cell_transect_66km_polynomial.png",
     "degree_scaling_plot": "polynomial_degree_scaling.png",
     "surfaces_3d_plot": "polynomial_3d_surfaces_comparison.png",
     "heatmaps_2d_plot": "polynomial_2d_heatmaps_comparison.png"

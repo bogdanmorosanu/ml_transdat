@@ -124,7 +124,8 @@
       "ro_corridor_snw_grid_shift_2d_spatial_error.png",
       "ro_corridor_snw_grid_shift_2d_hist_ecdf.png",
       "ro_corridor_snw_grid_shift_2d_signed_scatter.png",
-      "transect_66km_decision_tree.png"
+      "extreme_scenarios_gradient_and_linear_9cells.png",
+      "extreme_scenarios_curvature_and_kinks_9cells.png"
     ]
   },
   "benchmark_candidates": [
@@ -161,7 +162,5 @@
       "extra": {}
     }
   ],
-  "extra": {
-    "transect_plot": "transect_66km_decision_tree.png"
-  }
+  "extra": {}
 }

@@ -55,7 +55,7 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
             degree=1,
             smoothing=2e-4,
         )
-        if self.unit_dir.name == "__probe__":
+        if self._probe_only:
             return tps
         tps.load_or_fit(
             lambda: (
@@ -69,7 +69,7 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
         return tps
 
     def get_model_specs(self) -> list[ExperimentModelSpec]:
-        tps_11km = self._build_spg_tps_stage1()
+        tps_11km = self._build_prefitted_tps_11km()
         return [
             # ------------------------------------------------------------------
             # B0: Anchor Champion Baseline (torch_res_relu_cellpos_4x4)
@@ -498,9 +498,6 @@ class SubmillimeterExplorationUnit(GridShiftExperimentUnit):
                 benchmark_label="Bilinear + Neural Feature Grid (8x8)",
             ),
         ]
-
-    def _build_spg_tps_stage1(self) -> RBFSurfaceRegressor:
-        return self._build_prefitted_tps_11km()
 
     def get_extreme_scenario_models(
         self,

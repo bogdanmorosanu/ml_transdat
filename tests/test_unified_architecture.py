@@ -123,11 +123,11 @@ class TestUnifiedArchitecture(unittest.TestCase):
 
     def test_plot_registry_and_dispatcher(self) -> None:
         resolved = resolve_plot_types(
-            [PlotGroup.MINIMAL, PlotType.TRANSECT_66KM, PlotType.SPATIAL_ERROR]
+            [PlotGroup.MINIMAL, PlotType.VECTOR_QUIVER, PlotType.SPATIAL_ERROR]
         )
         self.assertEqual(
             resolved,
-            [PlotType.SPATIAL_ERROR, PlotType.HIST_ECDF, PlotType.TRANSECT_66KM],
+            [PlotType.SPATIAL_ERROR, PlotType.HIST_ECDF, PlotType.VECTOR_QUIVER],
         )
 
         gm = get_default_grid_manager()
@@ -142,13 +142,12 @@ class TestUnifiedArchitecture(unittest.TestCase):
             paths = dispatcher.render(
                 res,
                 out_dir=Path(tmpdir),
-                plots=[PlotGroup.MINIMAL, PlotType.TRANSECT_66KM],
+                plots=[PlotGroup.MINIMAL, PlotType.VECTOR_QUIVER],
                 dpi=80,
-                transect_models={"DT depth=6": dt},
             )
             self.assertIn(PlotType.SPATIAL_ERROR, paths)
             self.assertIn(PlotType.HIST_ECDF, paths)
-            self.assertIn(PlotType.TRANSECT_66KM, paths)
+            self.assertIn(PlotType.VECTOR_QUIVER, paths)
             for p in paths.values():
                 self.assertTrue(p.is_file())
 
@@ -164,10 +163,6 @@ class TestUnifiedArchitecture(unittest.TestCase):
             with self.assertRaises(ValueError):
                 dispatcher.render(
                     res, out_dir=Path(tmpdir), plots=PlotType.MODEL_COMPARISON
-                )
-            with self.assertRaises(ValueError):
-                dispatcher.render(
-                    res, out_dir=Path(tmpdir), plots=PlotType.TRANSECT_66KM
                 )
 
     def test_quadtree_vectorized_matches_exact_and_handles_nan(self) -> None:

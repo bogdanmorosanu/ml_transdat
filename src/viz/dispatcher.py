@@ -7,17 +7,15 @@ from pathlib import Path
 from typing import Any
 
 from src.evaluation.evaluator import EvaluationResult
-from src.models.base import BaseGridShiftModel
-from src.viz.plots import (
+from src.viz.diagnostics import (
     plot_hist_ecdf_rows,
-    plot_residual_roughness_rows,
     plot_signed_scatter_rows,
     plot_spatial_error_rows,
     plot_subcell_heatmap_rows,
-    plot_transect_66km,
     plot_vector_quiver_rows,
 )
 from src.viz.registry import PlotGroup, PlotSpec, PlotType, resolve_plot_types
+from src.viz.surfaces import plot_residual_roughness_rows
 
 _GroupedPlotHandler = Callable[
     [Sequence[EvaluationResult], Path, int, dict[str, Any]],
@@ -103,7 +101,6 @@ class PlotDispatcher:
         out_dir: Path,
         dpi: int = 200,
         extra_context: dict[str, Any] | None = None,
-        transect_models: dict[str, BaseGridShiftModel] | None = None,
     ) -> list[Path]:
         """Group evaluation results by ``(dataset_id, direction, plot_type)`` into 1-row-per-model PNGs.
 
@@ -115,8 +112,6 @@ class PlotDispatcher:
         :type dpi: int
         :param extra_context: Optional extra keyword parameters for specific plots.
         :type extra_context: dict[str, Any] | None
-        :param transect_models: Optional dict of models for :attr:`PlotType.TRANSECT_66KM`.
-        :type transect_models: dict[str, BaseGridShiftModel] | None
         :return: Ordered list of rendered PNG file paths.
         :rtype: list[Path]
         :raises ValueError: If an unsupported :class:`PlotType` is requested.
@@ -125,15 +120,11 @@ class PlotDispatcher:
         ctx = extra_context or {}
 
         buckets: dict[tuple[str, str, PlotType], list[EvaluationResult]] = {}
-        transect_requested = False
 
         for eval_res, spec in items:
             if spec is None:
                 continue
             for p_type in resolve_plot_types(spec):
-                if p_type == PlotType.TRANSECT_66KM:
-                    transect_requested = True
-                    continue
                 if p_type not in _GROUPED_HANDLERS:
                     raise ValueError(
                         f"PlotType.{p_type.name} is not supported by PlotDispatcher.render_grouped()."
@@ -151,16 +142,6 @@ class PlotDispatcher:
                 for res in group_results:
                     res.extra.setdefault("plots", {})[p_type.value] = saved_path.name
 
-        if transect_requested:
-            if not transect_models:
-                raise ValueError(
-                    "PlotType.TRANSECT_66KM requires non-empty `transect_models`."
-                )
-            t_path = out_dir / f"{PlotType.TRANSECT_66KM.value}.png"
-            rendered_paths.append(
-                plot_transect_66km(models=transect_models, out_path=t_path, dpi=dpi)
-            )
-
         return rendered_paths
 
     def render(
@@ -169,7 +150,6 @@ class PlotDispatcher:
         out_dir: Path,
         plots: PlotSpec = PlotGroup.STANDARD_DIAGNOSTIC,
         dpi: int = 200,
-        transect_models: dict[str, BaseGridShiftModel] | None = None,
         extra_context: dict[str, Any] | None = None,
         include_dataset_id: bool = True,
     ) -> dict[PlotType, Path]:
@@ -180,7 +160,6 @@ class PlotDispatcher:
             out_dir=out_dir,
             dpi=dpi,
             extra_context=extra_context,
-            transect_models=transect_models,
         )
         out: dict[PlotType, Path] = {}
         for p_key, fname in eval_result.extra.get("plots", {}).items():

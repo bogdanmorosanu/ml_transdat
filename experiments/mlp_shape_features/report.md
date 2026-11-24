@@ -47,7 +47,7 @@ This unit tests whether adding the **per-axis cell shape categories** (`cat_dn`,
 ---
 
 ## 4. Visual Diagnostics
-- [`plots/cell_transect_66km_mlp_shape.png`](plots/cell_transect_66km_mlp_shape.png): 66 km transect comparing the baseline Fourier MLP against the 3 mm, 5 mm, and 10 mm shape-feature variants.
+- [`plots/extreme_scenarios_gradient_and_linear_9cells.png`](plots/extreme_scenarios_gradient_and_linear_9cells.png) & [`plots/extreme_scenarios_curvature_and_kinks_9cells.png`](plots/extreme_scenarios_curvature_and_kinks_9cells.png): 9-cell (99 km) extreme scenario transects comparing the baseline Fourier MLP against the 3 mm, 5 mm, and 10 mm shape-feature variants.
 
 ---
 

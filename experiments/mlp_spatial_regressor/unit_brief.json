@@ -140,7 +140,8 @@
       "ro_test_adaptive_3mm_mid_grid_shift_2d_signed_scatter.png",
       "ro_test_uniform_4x4_grid_shift_2d_vector_quiver.png",
       "ro_test_adaptive_3mm_mid_grid_shift_2d_vector_quiver.png",
-      "cell_transect_66km_mlp.png"
+      "extreme_scenarios_gradient_and_linear_9cells.png",
+      "extreme_scenarios_curvature_and_kinks_9cells.png"
     ]
   },
   "benchmark_candidates": [
@@ -180,7 +181,5 @@
       "extra": {}
     }
   ],
-  "extra": {
-    "transect_plot": "cell_transect_66km_mlp.png"
-  }
+  "extra": {}
 }
