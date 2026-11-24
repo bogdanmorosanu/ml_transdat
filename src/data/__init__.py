@@ -1,6 +1,13 @@
 """Data management, grid catalog, and spatial samplers for ``ml_transdat``."""
 
-from src.data.catalog import GridDataset, GridId, GridManager, get_default_grid_manager
+from src.data.catalog import (
+    CellRegion,
+    GridDataset,
+    GridId,
+    GridManager,
+    find_worst_case_region,
+    get_default_grid_manager,
+)
 from src.data.samplers import (
     DEFAULT_SUBGRID_OFFSETS_4X4,
     DEFAULT_SUBGRID_OFFSETS_8X8,
@@ -22,10 +29,12 @@ __all__ = [
     "DEFAULT_SUBGRID_OFFSETS_4X4",
     "DEFAULT_SUBGRID_OFFSETS_8X8",
     "DEFAULT_SUBGRID_OFFSETS_16X16",
+    "CellRegion",
     "GridDataset",
     "GridId",
     "GridManager",
     "build_grid_candidates",
+    "find_worst_case_region",
     "generate_adaptive_midpoints_df",
     "generate_densified_grid_df",
     "generate_single_cell_workload_df",

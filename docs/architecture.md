@@ -45,6 +45,7 @@ flowchart LR
 - **Dataset Access Modes**:
   - Full arrays: `dataset.coords` (`(N, 2)` `[st70_n, st70_e]`), `dataset.true_shifts` (`(N, 2)` `[dn, de]`), `dataset.etrs89_rad` (`(N, 2)`).
   - Generator streaming: `GridManager.iter_chunks(grid_id, batch_size)` streams uncached densified grids cell-by-cell lazily via `iter_densified_grid_chunks` without materializing full DataFrames.
+  - Cell-aligned regional subgrids: `CellRegion(row_start, col_start, n_rows, n_cols)` + `GridDataset.slice_region(region)` / `GridManager.get_region(grid_id, region)` extract exact `.spg`-aligned rectangular windows (with `.padded(pad_cells)` for training halos and `find_worst_case_region(size_cells)` for proxy benchmarking).
 
 ---
 

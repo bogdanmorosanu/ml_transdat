@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -24,6 +24,7 @@ from src.data.samplers import (
     generate_single_cell_workload_df,
     generate_spg_nodes_df,
     generate_stratified_continuous_df,
+    get_valid_spg_cells,
     iter_adaptive_midpoint_chunks,
     iter_densified_grid_chunks,
     iter_stratified_continuous_chunks,
@@ -166,6 +167,86 @@ _GRID_REGISTRY: dict[GridId, _GridSpec] = {
 }
 
 
+@dataclass(frozen=True)
+class CellRegion:
+    """SPG cell-aligned rectangular region for spatial subgrid extraction.
+
+    :param row_start: Starting SPG cell row index (0-based).
+    :param col_start: Starting SPG cell column index (0-based).
+    :param n_rows: Number of SPG cells along Northing.
+    :param n_cols: Number of SPG cells along Easting.
+    :param name: Optional human-readable identifier for this region.
+    """
+
+    row_start: int
+    col_start: int
+    n_rows: int
+    n_cols: int
+    name: str = ""
+
+    def __post_init__(self) -> None:
+        if self.row_start < 0 or self.col_start < 0:
+            raise ValueError(
+                f"row_start and col_start must be >= 0, got ({self.row_start}, {self.col_start})"
+            )
+        if self.n_rows <= 0 or self.n_cols <= 0:
+            raise ValueError(
+                f"n_rows and n_cols must be > 0, got ({self.n_rows}, {self.n_cols})"
+            )
+
+    def bounds_st70(
+        self, grid2d: Grid2D | None = None
+    ) -> tuple[float, float, float, float]:
+        """Return exact SPG-aligned ``(n_min, n_max, e_min, e_max)`` bounds in meters."""
+        g = grid2d if grid2d is not None else Grid2D()
+        n_min = float(g.n_min + self.row_start * g.n_step)
+        n_max = float(g.n_min + (self.row_start + self.n_rows) * g.n_step)
+        e_min = float(g.e_min + self.col_start * g.e_step)
+        e_max = float(g.e_min + (self.col_start + self.n_cols) * g.e_step)
+        return (n_min, n_max, e_min, e_max)
+
+    def padded(
+        self, pad_cells: int = 2, grid2d: Grid2D | None = None
+    ) -> CellRegion:
+        """Return a halo-expanded :class:`CellRegion` clamped to valid SPG grid bounds."""
+        if pad_cells < 0:
+            raise ValueError(f"pad_cells must be >= 0, got {pad_cells}")
+        g = grid2d if grid2d is not None else Grid2D()
+        max_rows = g.r_count - 1
+        max_cols = g.c_count - 1
+        r0 = max(0, self.row_start - pad_cells)
+        c0 = max(0, self.col_start - pad_cells)
+        r1 = min(max_rows, self.row_start + self.n_rows + pad_cells)
+        c1 = min(max_cols, self.col_start + self.n_cols + pad_cells)
+        pad_name = f"{self.name}_pad{pad_cells}" if self.name else ""
+        return CellRegion(
+            row_start=r0,
+            col_start=c0,
+            n_rows=r1 - r0,
+            n_cols=c1 - c0,
+            name=pad_name,
+        )
+
+    @classmethod
+    def from_center(
+        cls,
+        center_row: int,
+        center_col: int,
+        n_rows: int,
+        n_cols: int,
+        *,
+        name: str = "",
+        grid2d: Grid2D | None = None,
+    ) -> CellRegion:
+        """Create a :class:`CellRegion` centered at ``(center_row, center_col)``."""
+        g = grid2d if grid2d is not None else Grid2D()
+        max_rows = g.r_count - 1
+        max_cols = g.c_count - 1
+        r0 = max(0, min(max_rows - n_rows, center_row - n_rows // 2))
+        c0 = max(0, min(max_cols - n_cols, center_col - n_cols // 2))
+        return cls(row_start=r0, col_start=c0, n_rows=n_rows, n_cols=n_cols, name=name)
+
+
 @dataclass
 class GridDataset:
     """Unified container for spatial grid and benchmark datasets.
@@ -240,6 +321,54 @@ class GridDataset:
             end = min(start + batch_size, total)
             yield coords_all[start:end], shifts_all[start:end]
 
+    def slice_region(
+        self,
+        region: CellRegion,
+        *,
+        include_upper_boundary: bool = True,
+        grid2d: Grid2D | None = None,
+    ) -> GridDataset:
+        """Extract a cell-aligned spatial subgrid preserving exact grid step and shifts.
+
+        :param region: Target :class:`CellRegion` specifying the SPG cell window.
+        :type region: CellRegion
+        :param include_upper_boundary: Include points lying on the upper ``n_max``/``e_max`` edges.
+        :type include_upper_boundary: bool
+        :param grid2d: Optional pre-initialized ``Grid2D`` instance.
+        :type grid2d: Grid2D | None
+        :return: New :class:`GridDataset` containing only points inside ``region``.
+        :rtype: GridDataset
+        """
+        n_min, n_max, e_min, e_max = region.bounds_st70(grid2d)
+        eps = 1e-6
+        st_n = self.df["st70_n"]
+        st_e = self.df["st70_e"]
+        if include_upper_boundary:
+            mask = (
+                (st_n >= n_min - eps)
+                & (st_n <= n_max + eps)
+                & (st_e >= e_min - eps)
+                & (st_e <= e_max + eps)
+            )
+        else:
+            mask = (
+                (st_n >= n_min - eps)
+                & (st_n < n_max - eps)
+                & (st_e >= e_min - eps)
+                & (st_e < e_max - eps)
+            )
+        sub_df = self.df.loc[mask].reset_index(drop=True)
+        meta = dict(self.metadata)
+        meta["region"] = {
+            "name": region.name,
+            "row_start": region.row_start,
+            "col_start": region.col_start,
+            "n_rows": region.n_rows,
+            "n_cols": region.n_cols,
+            "bounds_st70": (n_min, n_max, e_min, e_max),
+        }
+        return GridDataset(grid_id=self.grid_id, df=sub_df, metadata=meta)
+
 
 class GridManager:
     """Unified registry and loader for static and on-the-fly grids.
@@ -257,10 +386,38 @@ class GridManager:
         self._cache_enabled = cache_enabled
         self._disk_cache_dir = disk_cache_dir
         self._cache: dict[GridId, GridDataset] = {}
+        self._region_cache: dict[tuple[GridId, CellRegion, bool], GridDataset] = {}
 
     def clear_cache(self) -> None:
-        """Clear all in-memory cached datasets."""
+        """Clear all in-memory cached datasets and regional slices."""
         self._cache.clear()
+        self._region_cache.clear()
+
+    def get_region(
+        self,
+        grid_id: GridId | str,
+        region: CellRegion,
+        *,
+        include_upper_boundary: bool = True,
+        force_regenerate: bool = False,
+    ) -> GridDataset:
+        """Retrieve a cell-aligned :class:`GridDataset` slice for ``region``."""
+        gid = GridId(grid_id)
+        cache_key = (gid, region, include_upper_boundary)
+        if (
+            self._cache_enabled
+            and not force_regenerate
+            and cache_key in self._region_cache
+        ):
+            return self._region_cache[cache_key]
+
+        full_ds = self.get(gid, force_regenerate=force_regenerate)
+        sub_ds = full_ds.slice_region(
+            region, include_upper_boundary=include_upper_boundary
+        )
+        if self._cache_enabled:
+            self._region_cache[cache_key] = sub_ds
+        return sub_ds
 
     def get(
         self,
@@ -402,3 +559,98 @@ def get_default_grid_manager() -> GridManager:
     if _DEFAULT_GRID_MANAGER is None:
         _DEFAULT_GRID_MANAGER = GridManager()
     return _DEFAULT_GRID_MANAGER
+
+
+def find_worst_case_region(
+    size_cells: int,
+    *,
+    min_valid_fraction: float = 0.80,
+    pad_cells: int = 2,
+    priority_cells: Sequence[tuple[int, int]] | None = None,
+    manager: GridManager | None = None,
+) -> CellRegion:
+    """Find the worst-case ``size_cells x size_cells`` SPG window in Romania.
+
+    Ranks candidate windows (with ``pad_cells`` margin inside the SPG grid) by
+    high-curvature ``RO_TEST_ADAPTIVE_1MM_MID`` point density and optional
+    ``priority_cells`` coverage, subject to valid-cell fill ratio.
+
+    :param size_cells: Square window width/height in 11 km SPG cells.
+    :type size_cells: int
+    :param min_valid_fraction: Minimum fraction of valid SPG cells required in the window.
+    :type min_valid_fraction: float
+    :param pad_cells: Margin of cells kept around the window for training halos.
+    :type pad_cells: int
+    :param priority_cells: Optional ``(row, col)`` cells given a density bonus.
+    :type priority_cells: Sequence[tuple[int, int]] | None
+    :param manager: Optional :class:`GridManager` instance.
+    :type manager: GridManager | None
+    :return: Highest-scoring :class:`CellRegion`.
+    :rtype: CellRegion
+    """
+    if size_cells <= 0:
+        raise ValueError(f"size_cells must be positive, got {size_cells}")
+
+    gm = manager if manager is not None else get_default_grid_manager()
+    grid2d = Grid2D()
+    max_rows = grid2d.r_count - 1
+    max_cols = grid2d.c_count - 1
+
+    valid_mask = np.zeros((max_rows, max_cols), dtype=np.float64)
+    for r, c in get_valid_spg_cells():
+        if 0 <= r < max_rows and 0 <= c < max_cols:
+            valid_mask[r, c] = 1.0
+
+    adapt_ds = gm.get(GridId.RO_TEST_ADAPTIVE_1MM_MID)
+    coords = adapt_ds.coords
+    rows = np.floor((coords[:, 0] - grid2d.n_min) / grid2d.n_step).astype(np.int64)
+    cols = np.floor((coords[:, 1] - grid2d.e_min) / grid2d.e_step).astype(np.int64)
+    in_bounds = (rows >= 0) & (rows < max_rows) & (cols >= 0) & (cols < max_cols)
+    density = np.zeros((max_rows, max_cols), dtype=np.float64)
+    np.add.at(density, (rows[in_bounds], cols[in_bounds]), 1.0)
+
+    if priority_cells:
+        bonus_per_cell = max(float(np.max(density)) * 0.5, 500.0)
+        for pr, pc in priority_cells:
+            if 0 <= pr < max_rows and 0 <= pc < max_cols:
+                density[pr, pc] += bonus_per_cell
+
+    r_lim = max_rows - size_cells - pad_cells
+    c_lim = max_cols - size_cells - pad_cells
+    r_start_min = min(pad_cells, max(0, r_lim))
+    c_start_min = min(pad_cells, max(0, c_lim))
+
+    best_coords: tuple[int, int] | None = None
+    best_score = -1.0
+    fallback_coords: tuple[int, int] = (r_start_min, c_start_min)
+    fallback_valid = -1.0
+    fallback_score = -1.0
+
+    n_total = float(size_cells * size_cells)
+    for r0 in range(r_start_min, max(r_start_min + 1, r_lim + 1)):
+        for c0 in range(c_start_min, max(c_start_min + 1, c_lim + 1)):
+            v_frac = float(
+                np.sum(valid_mask[r0 : r0 + size_cells, c0 : c0 + size_cells]) / n_total
+            )
+            w_score = float(
+                np.sum(density[r0 : r0 + size_cells, c0 : c0 + size_cells])
+            )
+            if v_frac >= min_valid_fraction:
+                if w_score > best_score:
+                    best_score = w_score
+                    best_coords = (r0, c0)
+            elif v_frac > fallback_valid or (
+                abs(v_frac - fallback_valid) < 1e-9 and w_score > fallback_score
+            ):
+                fallback_valid = v_frac
+                fallback_score = w_score
+                fallback_coords = (r0, c0)
+
+    chosen_r, chosen_c = best_coords if best_coords is not None else fallback_coords
+    return CellRegion(
+        row_start=chosen_r,
+        col_start=chosen_c,
+        n_rows=size_cells,
+        n_cols=size_cells,
+        name=f"worst_case_{size_cells}x{size_cells}",
+    )
