@@ -1,0 +1,17 @@
+family,name,status,fit_s,total_s,u16_crmse_mm,u16_rough_rms,u16_score_mm,a1_crmse_mm,a1_rough_rms,a1_score_mm,overall_score_mm,params_json,subgrid
+tps,tps_deg2_k16_s1e-5,ok,0.0072,0.961,4.701,3.245,6.976,4.828,7.127,10.271,8.623,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 16, ""smoothing"": 1e-05}",box10_interior
+tps,tps_deg2_k16_s0,ok,0.0071,0.939,4.784,3.193,7.028,4.942,7.164,10.439,8.733,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 16, ""smoothing"": 0.0}",box10_interior
+tps,tps_deg2_k25_s1e-5,ok,0.0069,1.553,4.853,3.386,7.233,4.937,7.219,10.465,8.849,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 25, ""smoothing"": 1e-05}",box10_interior
+tps,tps_deg1_k25_s1e-5,ok,0.0071,1.464,4.912,3.359,7.257,4.948,7.191,10.455,8.856,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 1e-05}",box10_interior
+tps,tps_deg1_k16_s1e-5,ok,0.0071,0.959,4.914,3.343,7.255,4.974,7.175,10.469,8.862,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 1e-05}",box10_interior
+tps,tps_deg1_k25_s0,ok,0.0075,1.624,5.303,3.477,7.713,5.393,7.095,10.779,9.246,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0}",box10_interior
+tps,tps_deg1_k16_s0,ok,0.007,0.902,5.231,3.441,7.66,5.374,7.228,10.912,9.286,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0}",box10_interior
+tps,tps_deg2_k25_s0,ok,0.0071,1.565,5.326,3.509,7.77,5.419,7.119,10.834,9.302,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 25, ""smoothing"": 0.0}",box10_interior
+tps,tps_deg2_k25_s1e-4,ok,0.0072,1.563,6.372,4.32,9.169,9.29,8.228,14.744,11.957,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 25, ""smoothing"": 0.0001}",box10_interior
+tps,tps_deg1_k16_s1e-4,ok,0.0068,0.961,5.7,4.383,8.671,10.244,8.369,15.713,12.192,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0001}",box10_interior
+tps,tps_deg1_k25_s1e-4,ok,0.007,1.571,6.197,4.427,9.101,9.948,8.391,15.449,12.275,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0001}",box10_interior
+tps,tps_deg2_k16_s1e-4,ok,0.0092,0.97,6.173,5.177,9.806,8.723,9.129,15.071,12.438,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 16, ""smoothing"": 0.0001}",box10_interior
+tps,tps_deg2_k16_s5e-4,ok,0.0073,1.023,7.494,6.752,12.276,11.417,11.083,18.979,15.628,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 16, ""smoothing"": 0.0005}",box10_interior
+tps,tps_deg2_k25_s5e-4,ok,0.007,1.594,8.882,5.905,12.643,13.061,9.889,19.334,15.988,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 25, ""smoothing"": 0.0005}",box10_interior
+tps,tps_deg1_k25_s5e-4,ok,0.007,1.492,11.196,5.856,14.901,20.598,9.923,25.782,20.342,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0005}",box10_interior
+tps,tps_deg1_k16_s5e-4,ok,0.0066,1.008,11.843,5.567,15.249,21.445,9.526,26.294,20.772,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0005}",box10_interior

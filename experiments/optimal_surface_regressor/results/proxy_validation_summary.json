@@ -1,0 +1,245 @@
+{
+  "full_country": {
+    "scores_mm": {
+      "tps_deg2_k25_s1e-5": 16.531,
+      "matern52_k16_eps10_s0": 18.348,
+      "matern52_k25_eps10_s1e-4": 18.47,
+      "tps_deg2_k25_s1e-4": 18.953,
+      "matern52_k25_eps2p0_s0": 19.257,
+      "tps_deg1_k16_s1e-5": 19.726
+    },
+    "rank_order": [
+      "tps_deg2_k25_s1e-5",
+      "matern52_k16_eps10_s0",
+      "matern52_k25_eps10_s1e-4",
+      "tps_deg2_k25_s1e-4",
+      "matern52_k25_eps2p0_s0",
+      "tps_deg1_k16_s1e-5"
+    ],
+    "eval_time_s": {
+      "tps_deg2_k25_s1e-5": 29.659813599995687,
+      "tps_deg1_k16_s1e-5": 17.336490199988475,
+      "tps_deg2_k25_s1e-4": 30.04627169999003,
+      "matern52_k16_eps10_s0": 19.886574400006793,
+      "matern52_k25_eps2p0_s0": 44.60301900000195,
+      "matern52_k25_eps10_s1e-4": 45.24720189999789
+    },
+    "total_time_s": 186.779
+  },
+  "regions": {
+    "10x10": {
+      "stats": {
+        "name": "worst_case_10x10",
+        "row_start": 19,
+        "col_start": 28,
+        "n_rows": 10,
+        "n_cols": 10,
+        "valid_pct": 100.0,
+        "extreme_cells_count": 3,
+        "extreme_cells": [
+          [
+            23,
+            34
+          ],
+          [
+            23,
+            36
+          ],
+          [
+            23,
+            35
+          ]
+        ],
+        "train_padded_pts": 3249,
+        "u16_pts": 25600,
+        "a1_pts": 31485
+      },
+      "mode_a": {
+        "time_s": 12.194,
+        "speedup_x": 15.32,
+        "spearman_rho": 0.2,
+        "rank_order": [
+          "tps_deg2_k25_s1e-5",
+          "tps_deg1_k16_s1e-5",
+          "matern52_k16_eps10_s0",
+          "matern52_k25_eps2p0_s0",
+          "tps_deg2_k25_s1e-4",
+          "matern52_k25_eps10_s1e-4"
+        ],
+        "scores_mm": {
+          "tps_deg2_k25_s1e-5": 8.849,
+          "tps_deg1_k16_s1e-5": 8.862,
+          "matern52_k16_eps10_s0": 9.116,
+          "matern52_k25_eps2p0_s0": 9.627,
+          "tps_deg2_k25_s1e-4": 11.957,
+          "matern52_k25_eps10_s1e-4": 14.413
+        }
+      },
+      "mode_b": {
+        "time_s": 9.846,
+        "speedup_x": 18.97,
+        "spearman_rho": -0.2,
+        "rank_order": [
+          "tps_deg2_k25_s1e-4",
+          "tps_deg1_k16_s1e-5",
+          "tps_deg2_k25_s1e-5",
+          "matern52_k16_eps10_s0",
+          "matern52_k25_eps2p0_s0",
+          "matern52_k25_eps10_s1e-4"
+        ],
+        "scores_mm": {
+          "tps_deg2_k25_s1e-4": 9.011,
+          "tps_deg1_k16_s1e-5": 9.251,
+          "tps_deg2_k25_s1e-5": 9.263,
+          "matern52_k16_eps10_s0": 9.645,
+          "matern52_k25_eps2p0_s0": 9.787,
+          "matern52_k25_eps10_s1e-4": 10.077
+        }
+      }
+    },
+    "20x20": {
+      "stats": {
+        "name": "worst_case_20x20",
+        "row_start": 3,
+        "col_start": 15,
+        "n_rows": 20,
+        "n_cols": 20,
+        "valid_pct": 96.0,
+        "extreme_cells_count": 2,
+        "extreme_cells": [
+          [
+            3,
+            34
+          ],
+          [
+            10,
+            16
+          ]
+        ],
+        "train_padded_pts": 8400,
+        "u16_pts": 98304,
+        "a1_pts": 97436
+      },
+      "mode_a": {
+        "time_s": 34.689,
+        "speedup_x": 5.38,
+        "spearman_rho": 0.3714,
+        "rank_order": [
+          "matern52_k16_eps10_s0",
+          "tps_deg2_k25_s1e-5",
+          "tps_deg1_k16_s1e-5",
+          "matern52_k25_eps2p0_s0",
+          "tps_deg2_k25_s1e-4",
+          "matern52_k25_eps10_s1e-4"
+        ],
+        "scores_mm": {
+          "matern52_k16_eps10_s0": 7.501,
+          "tps_deg2_k25_s1e-5": 7.647,
+          "tps_deg1_k16_s1e-5": 7.71,
+          "matern52_k25_eps2p0_s0": 7.718,
+          "tps_deg2_k25_s1e-4": 10.085,
+          "matern52_k25_eps10_s1e-4": 11.5
+        }
+      },
+      "mode_b": {
+        "time_s": 34.442,
+        "speedup_x": 5.42,
+        "spearman_rho": -0.3143,
+        "rank_order": [
+          "tps_deg2_k25_s1e-4",
+          "matern52_k25_eps2p0_s0",
+          "tps_deg2_k25_s1e-5",
+          "tps_deg1_k16_s1e-5",
+          "matern52_k25_eps10_s1e-4",
+          "matern52_k16_eps10_s0"
+        ],
+        "scores_mm": {
+          "tps_deg2_k25_s1e-4": 7.65,
+          "matern52_k25_eps2p0_s0": 7.785,
+          "tps_deg2_k25_s1e-5": 7.861,
+          "tps_deg1_k16_s1e-5": 7.884,
+          "matern52_k25_eps10_s1e-4": 8.06,
+          "matern52_k16_eps10_s0": 8.28
+        }
+      }
+    },
+    "30x30": {
+      "stats": {
+        "name": "worst_case_30x30",
+        "row_start": 2,
+        "col_start": 15,
+        "n_rows": 30,
+        "n_cols": 30,
+        "valid_pct": 96.8,
+        "extreme_cells_count": 5,
+        "extreme_cells": [
+          [
+            23,
+            34
+          ],
+          [
+            23,
+            36
+          ],
+          [
+            23,
+            35
+          ],
+          [
+            3,
+            34
+          ],
+          [
+            10,
+            16
+          ]
+        ],
+        "train_padded_pts": 16916,
+        "u16_pts": 222976,
+        "a1_pts": 195521
+      },
+      "mode_a": {
+        "time_s": 80.384,
+        "speedup_x": 2.32,
+        "spearman_rho": 0.2,
+        "rank_order": [
+          "tps_deg2_k25_s1e-5",
+          "tps_deg1_k16_s1e-5",
+          "matern52_k16_eps10_s0",
+          "matern52_k25_eps2p0_s0",
+          "tps_deg2_k25_s1e-4",
+          "matern52_k25_eps10_s1e-4"
+        ],
+        "scores_mm": {
+          "tps_deg2_k25_s1e-5": 7.346,
+          "tps_deg1_k16_s1e-5": 7.431,
+          "matern52_k16_eps10_s0": 7.631,
+          "matern52_k25_eps2p0_s0": 7.654,
+          "tps_deg2_k25_s1e-4": 9.695,
+          "matern52_k25_eps10_s1e-4": 11.057
+        }
+      },
+      "mode_b": {
+        "time_s": 83.781,
+        "speedup_x": 2.23,
+        "spearman_rho": 0.3769,
+        "rank_order": [
+          "matern52_k25_eps10_s1e-4",
+          "tps_deg2_k25_s1e-5",
+          "tps_deg1_k16_s1e-5",
+          "tps_deg2_k25_s1e-4",
+          "matern52_k16_eps10_s0",
+          "matern52_k25_eps2p0_s0"
+        ],
+        "scores_mm": {
+          "matern52_k25_eps10_s1e-4": 7.255,
+          "tps_deg2_k25_s1e-5": 7.503,
+          "tps_deg1_k16_s1e-5": 7.564,
+          "tps_deg2_k25_s1e-4": 7.564,
+          "matern52_k16_eps10_s0": 7.598,
+          "matern52_k25_eps2p0_s0": 7.709
+        }
+      }
+    }
+  }
+}

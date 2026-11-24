@@ -1,0 +1,19 @@
+family,name,status,fit_s,total_s,u16_crmse_mm,u16_rough_rms,u16_score_mm,a1_crmse_mm,a1_rough_rms,a1_score_mm,overall_score_mm,params_json,subgrid
+polyharmonic,cubic_k16_s0,ok,0.0096,3.092,3.962,2.609,5.825,4.704,5.943,9.227,7.526,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0}",box20_west
+polyharmonic,cubic_k25_s0,ok,0.0074,5.283,4.408,2.851,6.407,5.04,5.793,9.381,7.894,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0}",box20_west
+polyharmonic,linear_k16_s1e-5,ok,0.007,3.225,3.265,2.386,4.942,6.32,6.828,10.932,7.937,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 1e-05}",box20_west
+polyharmonic,linear_k16_s0,ok,0.0073,3.142,3.267,2.386,4.945,6.317,6.827,10.929,7.937,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0}",box20_west
+polyharmonic,linear_k16_s1e-4,ok,0.0077,3.233,3.244,2.387,4.922,6.353,6.835,10.968,7.945,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0001}",box20_west
+polyharmonic,quintic_k25_s0,ok,0.0078,5.112,4.328,2.776,6.288,4.994,6.359,9.806,8.047,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0}",box20_west
+polyharmonic,linear_k25_s0,ok,0.0073,4.941,3.426,2.426,5.105,7.318,6.71,11.622,8.364,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0}",box20_west
+polyharmonic,linear_k25_s1e-5,ok,0.0075,5.046,3.425,2.426,5.104,7.322,6.711,11.626,8.365,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 1e-05}",box20_west
+polyharmonic,linear_k25_s1e-4,ok,0.0072,4.92,3.415,2.432,5.097,7.36,6.721,11.661,8.379,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0001}",box20_west
+polyharmonic,quintic_k16_s0,ok,0.0085,3.255,3.672,2.487,5.447,4.944,8.153,11.367,8.407,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0}",box20_west
+polyharmonic,cubic_k25_s1e-5,ok,0.0074,5.01,8.654,4.919,11.745,17.223,8.645,22.29,17.018,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 1e-05}",box20_west
+polyharmonic,cubic_k16_s1e-5,ok,0.007,3.165,9.414,4.472,12.072,18.273,8.316,23.022,17.547,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 1e-05}",box20_west
+polyharmonic,cubic_k16_s1e-4,ok,0.0071,3.24,15.27,6.152,18.645,27.167,12.751,34.333,26.489,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0001}",box20_west
+polyharmonic,cubic_k25_s1e-4,ok,0.0079,5.205,19.008,5.638,21.424,31.945,10.479,36.791,29.107,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0001}",box20_west
+polyharmonic,quintic_k16_s1e-4,ok,0.0084,4.31,16.586,6.806,20.365,29.277,15.314,38.222,29.294,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0001}",box20_west
+polyharmonic,quintic_k16_s1e-5,ok,0.0087,3.466,16.605,6.818,20.393,29.314,15.424,38.344,29.369,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 1e-05}",box20_west
+polyharmonic,quintic_k25_s1e-4,ok,0.0087,4.913,23.87,6.993,26.786,38.274,14.748,45.76,36.273,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0001}",box20_west
+polyharmonic,quintic_k25_s1e-5,ok,0.008,4.964,24.007,7.056,26.96,38.506,15.194,46.341,36.65,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 1e-05}",box20_west

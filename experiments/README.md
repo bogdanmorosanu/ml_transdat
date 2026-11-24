@@ -27,6 +27,7 @@ This directory contains modular, self-contained scientific experiments evaluatin
 | [`submillimeter_exploration/`](submillimeter_exploration/) | `grid_shift` | **Multi-Track Sub-Millimeter Exploration**: Screens 7 improvement tracks (two-stage residuals, adaptive datasets, harmonics, Huber/L-BFGS, learnable 2D feature grids, SIREN/Matérn/HistGBR, and bidirectional verification). | `Validated` | `T7_bilinear_plus_featgrid_8x8` reaches **`0.77 mm`** uniform mean / **`0.84 mm`** corridor RMSE (`78.3% < 1 mm`, `0.66 MB`); zero-lookup `T4_data_adaptive_hybrid` cuts adaptive RMSE by 94% (`44.18` $\to$ `2.59 mm`). |
 | [`bicubic_boundary_analysis/`](bicubic_boundary_analysis/) | `analysis` | **Bicubic Cell Boundary Extension Analysis**: Visualizes `pytransdat` `Grid.BiInterp` polynomials extended across neighboring cells (`[-1, 2]` / `[-2, 3]`), Hermite tangents, and grouped extreme scenarios suite (Gradient/Linear & Curvature/Kinks), cross-verified against Avramiuc et al. (2009). | `Validated` | Confirmed `Grid.BiInterp` matches published `TransDatRO` one-sided 3-point finite-difference formulas verbatim; $C^1$ slope kinks at 11 km borders are inherent to the specification. Grouped 7 extreme scenarios with true vertical-axis scaling. |
 | [`bicubic_interpolation_forensics/`](bicubic_interpolation_forensics/) | `analysis` | **Bicubic Interpolation Forensics & 11 km Alternatives**: Audits all 4 ANCPI/published PDFs, proves 100% code parity (`2.22e-15 m`), traces Wikipedia + 1-sided edge-stencil origins, and evaluates 6 alternative 11 km interpolators & Top-3 candidates (`Catmull-Rom`, `PCHIP`, `Natural Spline C²`). | `Validated` | Proved `TransDatRO`'s $C^1$ kinks (up to `1.071 m/step`) cause a `5.6x–11.5x` smooth-ML learnability penalty (`7.674 mm` TPS-RBF RMSE vs. `1.364 mm` Catmull-Rom & `0.667 mm` Natural Spline). Ranked Top 3 smooth replacements. |
+| [`optimal_surface_regressor/`](optimal_surface_regressor/) | `grid_shift` | **Optimal Surface Regressor (10-Family Learnability Benchmark)**: 4-stage screening (Stage 0 subgrid calibration, Stage 1 174-config sweep, Stage 2 Top-3 Full-RO promotion, Stage 3 Champions) across 10 surface families ranked by Stage-2 ML Learnability Score. | `Validated` | Top 4 Champions: `cubic_k25_s0` (`16.015 mm`), `tps_deg2_k25_s1e-5` (`16.531 mm`), `lpoly_deg2_k16_tric` (`16.696 mm`), `matern32_k16_eps5_s1e-5` (`17.387 mm`). |
 
 ---
 
@@ -101,4 +102,7 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.bicubic_boundary_analysi
 
 # 17. Bicubic Interpolation Forensics & 11 km Alternatives (analysis)
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.bicubic_interpolation_forensics.run_unit
+
+# 18. Optimal Surface Regressor — 10-Family Learnability Benchmark (grid_shift)
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.optimal_surface_regressor.run_unit
 ```

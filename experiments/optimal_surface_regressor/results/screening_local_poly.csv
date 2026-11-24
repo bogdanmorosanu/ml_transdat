@@ -1,0 +1,13 @@
+family,name,status,fit_s,total_s,u16_crmse_mm,u16_rough_rms,u16_score_mm,a1_crmse_mm,a1_rough_rms,a1_score_mm,overall_score_mm,params_json,subgrid
+local_poly,lpoly_deg2_k16_tric,ok,0.0057,0.483,4.808,3.306,7.161,4.582,6.016,9.18,8.171,"{""degree"": 2, ""neighbors"": 16, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg3_k16_tric,ok,0.0056,0.695,4.657,2.969,6.721,4.762,7.082,10.198,8.459,"{""degree"": 3, ""neighbors"": 16, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg2_k16_gaus,ok,0.0061,0.459,6.358,5.286,10.071,9.006,9.119,15.289,12.68,"{""degree"": 2, ""neighbors"": 16, ""weight"": ""gaussian""}",box10_interior
+local_poly,lpoly_deg3_k16_gaus,ok,0.0056,0.7,6.116,5.856,10.292,8.815,10.165,15.965,13.128,"{""degree"": 3, ""neighbors"": 16, ""weight"": ""gaussian""}",box10_interior
+local_poly,lpoly_deg2_k25_tric,ok,0.0056,0.69,6.972,5.324,10.613,10.899,9.306,17.029,13.821,"{""degree"": 2, ""neighbors"": 25, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg3_k25_tric,ok,0.0059,1.077,7.061,5.345,10.724,10.941,9.138,16.943,13.833,"{""degree"": 3, ""neighbors"": 25, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg3_k25_gaus,ok,0.0064,1.093,7.953,5.441,11.467,12.05,8.948,17.705,14.586,"{""degree"": 3, ""neighbors"": 25, ""weight"": ""gaussian""}",box10_interior
+local_poly,lpoly_deg2_k25_gaus,ok,0.0057,0.637,8.028,5.281,11.399,12.138,9.33,18.109,14.754,"{""degree"": 2, ""neighbors"": 25, ""weight"": ""gaussian""}",box10_interior
+local_poly,lpoly_deg2_k36_tric,ok,0.0055,0.921,8.552,5.366,11.917,13.078,8.951,18.566,15.241,"{""degree"": 2, ""neighbors"": 36, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg3_k36_tric,ok,0.0061,1.521,8.538,5.36,11.9,13.064,9.019,18.611,15.256,"{""degree"": 3, ""neighbors"": 36, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg3_k36_gaus,ok,0.0059,1.571,10.241,6.288,14.162,16.408,10.011,22.284,18.223,"{""degree"": 3, ""neighbors"": 36, ""weight"": ""gaussian""}",box10_interior
+local_poly,lpoly_deg2_k36_gaus,ok,0.0061,0.885,10.268,6.393,14.292,16.458,10.348,22.608,18.45,"{""degree"": 2, ""neighbors"": 36, ""weight"": ""gaussian""}",box10_interior

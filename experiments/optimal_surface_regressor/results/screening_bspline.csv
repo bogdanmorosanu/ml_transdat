@@ -1,0 +1,11 @@
+family,name,status,fit_s,total_s,u16_crmse_mm,u16_rough_rms,u16_score_mm,a1_crmse_mm,a1_rough_rms,a1_score_mm,overall_score_mm,params_json,subgrid
+bspline,bspline_deg5_s0p001,ok,175.4456,175.769,61.076,7.883,65.934,84.218,18.239,99.243,82.588,"{""degree"": 5, ""smoothing"": 0.001}",box20_west
+bspline,bspline_deg5_s0p05,ok,180.2493,180.564,57.782,7.162,64.229,85.539,17.594,103.636,83.932,"{""degree"": 5, ""smoothing"": 0.05}",box20_west
+bspline,bspline_deg5_s0p01,ok,168.3598,168.664,78.058,8.012,85.259,86.16,18.556,103.629,94.444,"{""degree"": 5, ""smoothing"": 0.01}",box20_west
+bspline,bspline_deg5_s0p0001,ok,174.3585,174.678,84.071,7.838,91.153,99.922,18.114,120.908,106.03,"{""degree"": 5, ""smoothing"": 0.0001}",box20_west
+bspline,bspline_deg5_s0p1,ok,182.0782,182.417,107.439,8.661,112.311,130.415,18.147,149.866,131.088,"{""degree"": 5, ""smoothing"": 0.1}",box20_west
+bspline,bspline_deg3_s0p1,ok,498.0513,498.438,22.671,23.597,34.318,278.847,558.843,607.111,320.715,"{""degree"": 3, ""smoothing"": 0.1}",box20_west
+bspline,bspline_deg3_s0p05,ok,503.4188,503.722,29.842,32.498,45.247,386.959,781.246,844.704,444.975,"{""degree"": 3, ""smoothing"": 0.05}",box20_west
+bspline,bspline_deg3_s0p01,ok,518.2063,518.484,46.09,51.74,69.246,618.549,1257.044,1353.118,711.182,"{""degree"": 3, ""smoothing"": 0.01}",box20_west
+bspline,bspline_deg3_s0p001,ok,434.089,434.402,56.139,62.332,83.048,743.138,1511.42,1625.339,854.194,"{""degree"": 3, ""smoothing"": 0.001}",box20_west
+bspline,bspline_deg3_s0p0001,ok,450.2892,450.567,72.93,83.382,108.772,999.479,2035.309,2185.642,1147.207,"{""degree"": 3, ""smoothing"": 0.0001}",box20_west

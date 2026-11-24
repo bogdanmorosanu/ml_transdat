@@ -7,6 +7,7 @@ from src.models.base import (
     MemoryBreakdown,
     ResidualCoordinateTransformer,
 )
+from src.models.bspline_surface import BSplineSurfaceRegressor
 from src.models.composite_shift import (
     CellBilinearShiftModel,
     CompositeResidualShiftModel,
@@ -26,6 +27,7 @@ from src.models.helmert2d import (
 )
 from src.models.hist_gbr import HistGBRGridShiftModel
 from src.models.knn_regressor import KNNSpatialRegressor
+from src.models.local_poly_surface import LocalPolynomialSurfaceRegressor
 from src.models.mlp import MLPGridShiftModel
 from src.models.neural_feature_grid import NeuralFeatureGridShiftModel
 from src.models.polynomial_surface import PolynomialSurfaceRegressor
@@ -39,6 +41,7 @@ __all__ = [
     "BaseCoordinateTransformer",
     "BaseGridShiftModel",
     "BaseSpatialModel",
+    "BSplineSurfaceRegressor",
     "BicubicScheme",
     "CellBilinearShiftModel",
     "CompositeResidualShiftModel",
@@ -48,6 +51,7 @@ __all__ = [
     "Helmert2DParams",
     "HistGBRGridShiftModel",
     "KNNSpatialRegressor",
+    "LocalPolynomialSurfaceRegressor",
     "MLPGridShiftModel",
     "MemoryBreakdown",
     "NeuralFeatureGridShiftModel",

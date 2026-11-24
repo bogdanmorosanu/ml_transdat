@@ -1,0 +1,177 @@
+family,name,status,fit_s,total_s,u16_crmse_mm,u16_rough_rms,u16_score_mm,a1_crmse_mm,a1_rough_rms,a1_score_mm,overall_score_mm,params_json,subgrid
+tps,tps_deg1_k16_s0,ok,0.007,0.902,5.231,3.441,7.66,5.374,7.228,10.912,9.286,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0}",box10_interior
+tps,tps_deg1_k16_s1e-5,ok,0.0071,0.959,4.914,3.343,7.255,4.974,7.175,10.469,8.862,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 1e-05}",box10_interior
+tps,tps_deg1_k16_s1e-4,ok,0.0068,0.961,5.7,4.383,8.671,10.244,8.369,15.713,12.192,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0001}",box10_interior
+tps,tps_deg1_k16_s5e-4,ok,0.0066,1.008,11.843,5.567,15.249,21.445,9.526,26.294,20.772,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0005}",box10_interior
+tps,tps_deg1_k25_s0,ok,0.0075,1.624,5.303,3.477,7.713,5.393,7.095,10.779,9.246,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0}",box10_interior
+tps,tps_deg1_k25_s1e-5,ok,0.0071,1.464,4.912,3.359,7.257,4.948,7.191,10.455,8.856,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 1e-05}",box10_interior
+tps,tps_deg1_k25_s1e-4,ok,0.007,1.571,6.197,4.427,9.101,9.948,8.391,15.449,12.275,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0001}",box10_interior
+tps,tps_deg1_k25_s5e-4,ok,0.007,1.492,11.196,5.856,14.901,20.598,9.923,25.782,20.342,"{""kernel"": ""thin_plate_spline"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0005}",box10_interior
+tps,tps_deg2_k16_s0,ok,0.0071,0.939,4.784,3.193,7.028,4.942,7.164,10.439,8.733,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 16, ""smoothing"": 0.0}",box10_interior
+tps,tps_deg2_k16_s1e-5,ok,0.0072,0.961,4.701,3.245,6.976,4.828,7.127,10.271,8.623,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 16, ""smoothing"": 1e-05}",box10_interior
+tps,tps_deg2_k16_s1e-4,ok,0.0092,0.97,6.173,5.177,9.806,8.723,9.129,15.071,12.438,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 16, ""smoothing"": 0.0001}",box10_interior
+tps,tps_deg2_k16_s5e-4,ok,0.0073,1.023,7.494,6.752,12.276,11.417,11.083,18.979,15.628,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 16, ""smoothing"": 0.0005}",box10_interior
+tps,tps_deg2_k25_s0,ok,0.0071,1.565,5.326,3.509,7.77,5.419,7.119,10.834,9.302,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 25, ""smoothing"": 0.0}",box10_interior
+tps,tps_deg2_k25_s1e-5,ok,0.0069,1.553,4.853,3.386,7.233,4.937,7.219,10.465,8.849,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 25, ""smoothing"": 1e-05}",box10_interior
+tps,tps_deg2_k25_s1e-4,ok,0.0072,1.563,6.372,4.32,9.169,9.29,8.228,14.744,11.957,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 25, ""smoothing"": 0.0001}",box10_interior
+tps,tps_deg2_k25_s5e-4,ok,0.007,1.594,8.882,5.905,12.643,13.061,9.889,19.334,15.988,"{""kernel"": ""thin_plate_spline"", ""degree"": 2, ""neighbors"": 25, ""smoothing"": 0.0005}",box10_interior
+matern,matern32_k16_eps2_s0,ok,0.0079,3.557,3.979,2.617,5.849,4.729,5.908,9.22,7.534,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 2.0, ""smoothing"": 0.0}",box20_west
+matern,matern32_k16_eps2_s1e-5,ok,0.0068,3.508,4.531,3.673,7.124,7.626,7.014,12.492,9.808,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 2.0, ""smoothing"": 1e-05}",box20_west
+matern,matern32_k16_eps2_s1e-4,ok,0.0067,3.336,8.491,4.369,11.164,16.814,8.082,21.529,16.346,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 2.0, ""smoothing"": 0.0001}",box20_west
+matern,matern32_k16_eps5_s0,ok,0.0067,3.222,4.003,2.63,5.881,4.758,5.894,9.224,7.553,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 0.0}",box20_west
+matern,matern32_k16_eps5_s1e-5,ok,0.0064,3.062,3.904,2.562,5.722,4.557,5.847,9.004,7.363,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box20_west
+matern,matern32_k16_eps5_s1e-4,ok,0.0063,3.017,4.304,3.381,6.691,6.572,6.681,11.29,8.99,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box20_west
+matern,matern32_k16_eps10_s0,ok,0.0065,3.023,4.036,2.653,5.93,4.778,5.944,9.279,7.604,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 0.0}",box20_west
+matern,matern32_k16_eps10_s1e-5,ok,0.0061,3.013,4.016,2.632,5.895,4.731,5.93,9.226,7.56,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box20_west
+matern,matern32_k16_eps10_s1e-4,ok,0.0068,3.049,3.926,2.584,5.759,4.554,5.888,9.013,7.386,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box20_west
+matern,matern32_k16_eps25_s0,ok,0.0063,3.117,4.154,2.771,6.126,6.034,6.675,10.8,8.463,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 0.0}",box20_west
+matern,matern32_k16_eps25_s1e-5,ok,0.0065,3.703,4.152,2.769,6.123,6.032,6.673,10.797,8.46,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box20_west
+matern,matern32_k16_eps25_s1e-4,ok,0.0088,3.365,4.139,2.751,6.094,6.014,6.653,10.757,8.426,"{""kernel"": ""matern32"", ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box20_west
+matern,matern32_k25_eps2_s0,ok,0.0062,6.895,4.407,2.851,6.405,5.044,5.762,9.365,7.885,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 2.0, ""smoothing"": 0.0}",box20_west
+matern,matern32_k25_eps2_s1e-5,ok,0.0064,6.78,4.963,3.374,7.207,7.662,6.606,12.173,9.69,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 2.0, ""smoothing"": 1e-05}",box20_west
+matern,matern32_k25_eps2_s1e-4,ok,0.0064,6.808,7.903,4.78,10.946,15.671,8.317,20.665,15.805,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 2.0, ""smoothing"": 0.0001}",box20_west
+matern,matern32_k25_eps5_s0,ok,0.0063,6.764,4.406,2.851,6.404,5.042,5.735,9.35,7.877,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 0.0}",box20_west
+matern,matern32_k25_eps5_s1e-5,ok,0.0063,6.788,4.089,2.747,6.032,4.622,5.774,8.997,7.515,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box20_west
+matern,matern32_k25_eps5_s1e-4,ok,0.0064,6.771,4.536,3.13,6.652,6.594,6.337,10.997,8.824,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box20_west
+matern,matern32_k25_eps10_s0,ok,0.0069,7.127,4.404,2.852,6.4,5.019,5.728,9.341,7.871,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 0.0}",box20_west
+matern,matern32_k25_eps10_s1e-5,ok,0.0066,7.385,4.35,2.831,6.335,4.936,5.729,9.269,7.802,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box20_west
+matern,matern32_k25_eps10_s1e-4,ok,0.0071,7.23,4.044,2.734,5.981,4.563,5.779,8.952,7.467,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box20_west
+matern,matern32_k25_eps25_s0,ok,0.0063,6.796,4.443,2.877,6.448,6.188,5.975,10.412,8.43,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 0.0}",box20_west
+matern,matern32_k25_eps25_s1e-5,ok,0.0063,6.873,4.439,2.875,6.442,6.184,5.975,10.409,8.425,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box20_west
+matern,matern32_k25_eps25_s1e-4,ok,0.0065,6.984,4.405,2.861,6.398,6.149,5.975,10.372,8.385,"{""kernel"": ""matern32"", ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box20_west
+matern,matern52_k16_eps2_s0,ok,0.0066,3.41,3.756,2.515,5.552,4.33,6.783,9.59,7.571,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 2.0, ""smoothing"": 0.0}",box20_west
+matern,matern52_k16_eps2_s1e-5,ok,0.0061,3.486,11.623,4.879,14.381,21.571,8.857,26.351,20.366,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 2.0, ""smoothing"": 1e-05}",box20_west
+matern,matern52_k16_eps2_s1e-4,ok,0.0065,3.392,15.762,6.362,19.251,27.88,12.843,35.019,27.135,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 2.0, ""smoothing"": 0.0001}",box20_west
+matern,matern52_k16_eps5_s0,ok,0.0069,3.534,3.804,2.545,5.622,4.387,6.602,9.492,7.557,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 0.0}",box20_west
+matern,matern52_k16_eps5_s1e-5,ok,0.0064,3.435,5.734,4.941,9.253,9.927,8.673,15.891,12.572,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box20_west
+matern,matern52_k16_eps5_s1e-4,ok,0.0065,3.374,7.765,4.602,10.725,15.578,8.205,20.495,15.61,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box20_west
+matern,matern52_k16_eps10_s0,ok,0.0068,3.387,3.844,2.568,5.68,4.413,6.375,9.323,7.501,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 0.0}",box20_west
+matern,matern52_k16_eps10_s1e-5,ok,0.0063,3.314,4.117,3.136,6.333,5.257,6.687,10.201,8.267,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box20_west
+matern,matern52_k16_eps10_s1e-4,ok,0.0062,3.28,5.446,4.577,8.702,8.896,8.032,14.463,11.582,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box20_west
+matern,matern52_k16_eps25_s0,ok,0.0065,3.315,3.968,2.654,5.863,4.928,6.64,10.061,7.962,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 0.0}",box20_west
+matern,matern52_k16_eps25_s1e-5,ok,0.0063,3.314,3.957,2.639,5.841,4.901,6.626,10.028,7.934,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box20_west
+matern,matern52_k16_eps25_s1e-4,ok,0.0062,3.299,3.905,2.574,5.735,4.758,6.525,9.811,7.773,"{""kernel"": ""matern52"", ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box20_west
+matern,matern52_k25_eps2_s0,ok,0.0062,7.486,4.306,2.786,6.269,4.637,5.957,9.166,7.718,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 2.0, ""smoothing"": 0.0}",box20_west
+matern,matern52_k25_eps2_s1e-5,ok,0.0076,7.389,10.847,5.266,14.006,20.6,9.275,25.759,19.882,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 2.0, ""smoothing"": 1e-05}",box20_west
+matern,matern52_k25_eps2_s1e-4,ok,0.0068,7.769,20.25,5.854,22.694,33.446,10.663,38.273,30.483,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 2.0, ""smoothing"": 0.0001}",box20_west
+matern,matern52_k25_eps5_s0,ok,0.0068,7.516,4.377,2.814,6.356,4.756,5.914,9.222,7.789,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 0.0}",box20_west
+matern,matern52_k25_eps5_s1e-5,ok,0.0064,7.459,6.965,4.482,9.855,10.84,7.577,15.776,12.816,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box20_west
+matern,matern52_k25_eps5_s1e-4,ok,0.0065,7.373,8.009,5.087,11.277,14.52,8.65,19.886,15.581,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box20_west
+matern,matern52_k25_eps10_s0,ok,0.0064,7.647,4.398,2.829,6.384,4.775,5.835,9.16,7.772,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 0.0}",box20_west
+matern,matern52_k25_eps10_s1e-5,ok,0.0064,7.587,4.18,3.101,6.379,5.176,6.181,9.73,8.054,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box20_west
+matern,matern52_k25_eps10_s1e-4,ok,0.0065,7.577,6.197,4.033,8.823,9.495,7.053,14.178,11.5,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box20_west
+matern,matern52_k25_eps25_s0,ok,0.0063,7.367,4.47,2.882,6.481,5.135,5.857,9.553,8.017,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 0.0}",box20_west
+matern,matern52_k25_eps25_s1e-5,ok,0.0065,7.856,4.442,2.872,6.446,5.087,5.853,9.511,7.979,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box20_west
+matern,matern52_k25_eps25_s1e-4,ok,0.0065,8.151,4.244,2.817,6.224,4.796,5.849,9.265,7.744,"{""kernel"": ""matern52"", ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box20_west
+multiquadric,mq_deg1_k16_eps5_s1e-5,ok,0.007,0.897,8.644,6.191,12.826,16.329,10.252,22.502,17.664,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg1_k16_eps5_s1e-4,ok,0.0072,0.889,16.327,6.744,20.239,28.25,11.117,33.444,26.841,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,mq_deg1_k16_eps10_s1e-5,ok,0.009,0.851,7.794,6.792,12.588,12.457,11.064,19.867,16.227,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg1_k16_eps10_s1e-4,ok,0.0071,0.921,8.008,6.34,12.384,14.838,10.461,21.381,16.883,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,mq_deg1_k16_eps25_s1e-5,ok,0.0069,0.861,4.959,3.538,7.445,5.176,7.667,11.001,9.223,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg1_k16_eps25_s1e-4,ok,0.0076,0.875,6.625,5.618,10.558,9.369,9.839,16.237,13.397,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,mq_deg1_k25_eps5_s1e-5,ok,0.0071,1.437,10.268,6.853,14.655,16.738,11.094,23.482,19.068,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg1_k25_eps5_s1e-4,ok,0.0069,1.361,16.13,6.875,20.154,28.077,11.029,33.199,26.677,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,mq_deg1_k25_eps10_s1e-5,ok,0.0069,1.394,9.783,6.338,13.812,14.258,9.777,20.277,17.044,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg1_k25_eps10_s1e-4,ok,0.007,1.364,10.063,6.69,14.342,15.768,10.694,22.323,18.332,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,mq_deg1_k25_eps25_s1e-5,ok,0.0068,1.418,5.337,4.011,8.189,5.203,7.61,11.066,9.628,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg1_k25_eps25_s1e-4,ok,0.0073,1.488,6.894,4.922,10.215,9.623,8.565,15.341,12.778,"{""kernel"": ""multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,mq_deg2_k16_eps5_s1e-5,ok,0.0071,0.912,8.05,7.465,13.372,12.457,12.024,20.663,17.018,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg2_k16_eps5_s1e-4,ok,0.0068,0.98,8.053,7.479,13.387,12.458,12.044,20.68,17.033,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,mq_deg2_k16_eps10_s1e-5,ok,0.0069,0.945,7.909,6.96,12.825,12.379,11.313,20.023,16.424,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg2_k16_eps10_s1e-4,ok,0.0069,0.92,8.033,7.392,13.296,12.448,11.918,20.57,16.933,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,mq_deg2_k16_eps25_s1e-5,ok,0.007,0.908,4.723,3.324,7.066,4.856,7.57,10.672,8.869,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg2_k16_eps25_s1e-4,ok,0.0068,0.934,6.127,5.211,9.787,8.935,9.403,15.486,12.636,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,mq_deg2_k25_eps5_s1e-5,ok,0.0069,1.466,10.21,6.989,14.705,14.748,11.371,22.013,18.359,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg2_k25_eps5_s1e-4,ok,0.0072,1.387,10.229,7.043,14.767,14.766,11.505,22.136,18.452,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,mq_deg2_k25_eps10_s1e-5,ok,0.0067,1.553,9.686,6.279,13.674,14.268,9.754,20.258,16.966,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg2_k25_eps10_s1e-4,ok,0.0089,1.915,10.109,6.766,14.44,14.656,10.858,21.504,17.972,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,mq_deg2_k25_eps25_s1e-5,ok,0.0075,1.551,5.314,4.075,8.226,5.139,7.624,11.029,9.628,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,mq_deg2_k25_eps25_s1e-4,ok,0.0078,1.519,6.392,4.92,9.792,9.058,8.536,14.83,12.311,"{""kernel"": ""multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg1_k16_eps5_s1e-5,ok,0.008,1.045,7.745,6.678,12.429,13.629,10.928,20.703,16.566,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg1_k16_eps5_s1e-4,ok,0.007,0.922,12.319,6.008,16.041,22.383,9.874,27.385,21.713,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg1_k16_eps10_s1e-5,ok,0.007,0.923,7.662,6.602,12.306,12.031,10.934,19.418,15.862,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg1_k16_eps10_s1e-4,ok,0.008,1.044,7.665,6.635,12.334,12.959,10.844,20.072,16.203,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg1_k16_eps25_s1e-5,ok,0.0069,0.887,5.053,3.407,7.459,5.212,7.513,10.977,9.218,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg1_k16_eps25_s1e-4,ok,0.0069,0.902,5.346,3.964,8.103,5.866,8.011,11.833,9.968,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg1_k25_eps5_s1e-5,ok,0.0069,1.373,10.093,6.755,14.418,15.274,10.825,22.012,18.215,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg1_k25_eps5_s1e-4,ok,0.0068,1.575,11.678,6.856,16.063,20.91,11.109,27.001,21.532,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg1_k25_eps10_s1e-5,ok,0.0073,1.424,9.242,6.078,13.121,13.557,9.372,19.336,16.228,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg1_k25_eps10_s1e-4,ok,0.0072,1.472,9.865,6.397,13.919,14.536,9.99,20.69,17.305,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg1_k25_eps25_s1e-5,ok,0.0113,1.543,5.442,3.574,7.904,5.488,7.109,10.835,9.369,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg1_k25_eps25_s1e-4,ok,0.0071,1.423,5.506,4.127,8.435,5.676,7.744,11.513,9.974,"{""kernel"": ""inverse_multiquadric"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg2_k16_eps5_s1e-5,ok,0.0071,0.941,8.038,7.408,13.314,12.453,11.94,20.592,16.953,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg2_k16_eps5_s1e-4,ok,0.007,0.958,8.052,7.473,13.38,12.457,12.035,20.673,17.027,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg2_k16_eps10_s1e-5,ok,0.0094,1.063,7.606,6.587,12.25,12.037,10.952,19.441,15.845,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg2_k16_eps10_s1e-4,ok,0.0071,1.002,7.965,7.145,13.027,12.406,11.564,20.248,16.637,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg2_k16_eps25_s1e-5,ok,0.0077,0.894,4.849,3.31,7.194,5.04,7.627,10.909,9.052,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg2_k16_eps25_s1e-4,ok,0.0072,0.892,4.787,3.508,7.254,5.183,7.676,10.963,9.109,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg2_k25_eps5_s1e-5,ok,0.0072,1.424,10.138,6.809,14.5,14.683,10.943,21.594,18.047,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg2_k25_eps5_s1e-4,ok,0.0067,1.417,10.22,7.018,14.739,14.758,11.444,22.079,18.409,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 5.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg2_k25_eps10_s1e-5,ok,0.0071,1.413,8.705,5.759,12.392,13.311,9.139,18.918,15.655,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg2_k25_eps10_s1e-4,ok,0.0069,1.41,9.824,6.368,13.856,14.395,10.014,20.587,17.221,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+multiquadric,imq_deg2_k25_eps25_s1e-5,ok,0.0071,1.438,5.408,3.54,7.854,5.466,7.085,10.808,9.331,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+multiquadric,imq_deg2_k25_eps25_s1e-4,ok,0.007,1.512,5.366,4.187,8.372,5.383,7.732,11.291,9.831,"{""kernel"": ""inverse_multiquadric"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg1_k16_eps10_s1e-5,ok,0.0082,0.98,7.805,6.73,12.543,12.344,11.046,19.775,16.159,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg1_k16_eps10_s1e-4,ok,0.0073,1.032,7.753,6.86,12.61,12.883,11.165,20.28,16.445,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg1_k16_eps25_s1e-5,ok,0.0088,0.994,5.009,3.749,7.661,5.407,7.886,11.359,9.51,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg1_k16_eps25_s1e-4,ok,0.007,0.978,6.732,6.141,11.071,9.608,10.653,17.086,14.079,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg1_k16_eps40_s1e-5,ok,0.008,1.009,5.236,3.598,7.79,5.569,7.48,11.236,9.513,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 40.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg1_k16_eps40_s1e-4,ok,0.0085,0.964,5.11,3.412,7.516,5.187,7.477,10.936,9.226,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 16, ""epsilon"": 40.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg1_k25_eps10_s1e-5,ok,0.0078,1.558,9.812,6.529,13.986,14.253,9.772,20.263,17.125,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg1_k25_eps10_s1e-4,ok,0.0069,1.499,10.0,6.543,14.156,14.737,10.291,21.109,17.633,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg1_k25_eps25_s1e-5,ok,0.0073,1.54,5.523,4.582,8.877,5.428,8.442,11.99,10.434,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg1_k25_eps25_s1e-4,ok,0.0079,1.646,7.112,5.087,10.548,10.009,8.662,15.746,13.147,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg1_k25_eps40_s1e-5,ok,0.007,1.635,5.477,3.53,7.906,5.676,7.078,10.968,9.437,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 40.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg1_k25_eps40_s1e-4,ok,0.0077,1.703,5.364,3.654,7.889,5.323,7.25,10.814,9.352,"{""kernel"": ""gaussian"", ""degree"": 1, ""neighbors"": 25, ""epsilon"": 40.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg2_k16_eps10_s1e-5,ok,0.0102,1.112,7.81,6.757,12.57,12.355,11.099,19.83,16.2,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg2_k16_eps10_s1e-4,ok,0.0076,1.011,8.005,7.266,13.165,12.442,11.735,20.417,16.791,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg2_k16_eps25_s1e-5,ok,0.0077,1.091,4.743,3.266,7.055,4.833,7.545,10.658,8.857,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg2_k16_eps25_s1e-4,ok,0.0087,1.012,5.583,4.808,8.964,7.661,9.11,14.164,11.564,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg2_k16_eps40_s1e-5,ok,0.0077,0.951,4.908,3.341,7.279,5.188,7.578,10.982,9.13,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 40.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg2_k16_eps40_s1e-4,ok,0.0085,0.977,4.843,3.309,7.186,5.025,7.62,10.887,9.037,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 16, ""epsilon"": 40.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg2_k25_eps10_s1e-5,ok,0.0072,1.63,9.594,6.368,13.663,14.183,9.639,20.085,16.874,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg2_k25_eps10_s1e-4,ok,0.0071,1.617,10.008,6.552,14.171,14.564,10.342,21.009,17.59,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 10.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg2_k25_eps25_s1e-5,ok,0.007,1.619,5.552,4.989,9.248,5.346,8.862,12.292,10.77,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg2_k25_eps25_s1e-4,ok,0.0075,1.669,6.181,5.082,9.788,7.837,8.534,13.854,11.821,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 25.0, ""smoothing"": 0.0001}",box10_interior
+gaussian,gauss_deg2_k25_eps40_s1e-5,ok,0.0074,1.738,5.429,3.481,7.831,5.624,7.051,10.91,9.371,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 40.0, ""smoothing"": 1e-05}",box10_interior
+gaussian,gauss_deg2_k25_eps40_s1e-4,ok,0.0082,1.769,5.35,3.671,7.902,5.34,7.199,10.794,9.348,"{""kernel"": ""gaussian"", ""degree"": 2, ""neighbors"": 25, ""epsilon"": 40.0, ""smoothing"": 0.0001}",box10_interior
+polyharmonic,linear_k16_s0,ok,0.0073,3.142,3.267,2.386,4.945,6.317,6.827,10.929,7.937,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0}",box20_west
+polyharmonic,linear_k16_s1e-5,ok,0.007,3.225,3.265,2.386,4.942,6.32,6.828,10.932,7.937,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 1e-05}",box20_west
+polyharmonic,linear_k16_s1e-4,ok,0.0077,3.233,3.244,2.387,4.922,6.353,6.835,10.968,7.945,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0001}",box20_west
+polyharmonic,linear_k25_s0,ok,0.0073,4.941,3.426,2.426,5.105,7.318,6.71,11.622,8.364,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0}",box20_west
+polyharmonic,linear_k25_s1e-5,ok,0.0075,5.046,3.425,2.426,5.104,7.322,6.711,11.626,8.365,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 1e-05}",box20_west
+polyharmonic,linear_k25_s1e-4,ok,0.0072,4.92,3.415,2.432,5.097,7.36,6.721,11.661,8.379,"{""kernel"": ""linear"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0001}",box20_west
+polyharmonic,cubic_k16_s0,ok,0.0096,3.092,3.962,2.609,5.825,4.704,5.943,9.227,7.526,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0}",box20_west
+polyharmonic,cubic_k16_s1e-5,ok,0.007,3.165,9.414,4.472,12.072,18.273,8.316,23.022,17.547,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 1e-05}",box20_west
+polyharmonic,cubic_k16_s1e-4,ok,0.0071,3.24,15.27,6.152,18.645,27.167,12.751,34.333,26.489,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0001}",box20_west
+polyharmonic,cubic_k25_s0,ok,0.0074,5.283,4.408,2.851,6.407,5.04,5.793,9.381,7.894,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0}",box20_west
+polyharmonic,cubic_k25_s1e-5,ok,0.0074,5.01,8.654,4.919,11.745,17.223,8.645,22.29,17.018,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 1e-05}",box20_west
+polyharmonic,cubic_k25_s1e-4,ok,0.0079,5.205,19.008,5.638,21.424,31.945,10.479,36.791,29.107,"{""kernel"": ""cubic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0001}",box20_west
+polyharmonic,quintic_k16_s0,ok,0.0085,3.255,3.672,2.487,5.447,4.944,8.153,11.367,8.407,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0}",box20_west
+polyharmonic,quintic_k16_s1e-5,ok,0.0087,3.466,16.605,6.818,20.393,29.314,15.424,38.344,29.369,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 1e-05}",box20_west
+polyharmonic,quintic_k16_s1e-4,ok,0.0084,4.31,16.586,6.806,20.365,29.277,15.314,38.222,29.294,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 16, ""smoothing"": 0.0001}",box20_west
+polyharmonic,quintic_k25_s0,ok,0.0078,5.112,4.328,2.776,6.288,4.994,6.359,9.806,8.047,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0}",box20_west
+polyharmonic,quintic_k25_s1e-5,ok,0.008,4.964,24.007,7.056,26.96,38.506,15.194,46.341,36.65,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 1e-05}",box20_west
+polyharmonic,quintic_k25_s1e-4,ok,0.0087,4.913,23.87,6.993,26.786,38.274,14.748,45.76,36.273,"{""kernel"": ""quintic"", ""degree"": 1, ""neighbors"": 25, ""smoothing"": 0.0001}",box20_west
+bspline,bspline_deg3_s0p0001,ok,450.2892,450.567,72.93,83.382,108.772,999.479,2035.309,2185.642,1147.207,"{""degree"": 3, ""smoothing"": 0.0001}",box20_west
+bspline,bspline_deg3_s0p001,ok,434.089,434.402,56.139,62.332,83.048,743.138,1511.42,1625.339,854.194,"{""degree"": 3, ""smoothing"": 0.001}",box20_west
+bspline,bspline_deg3_s0p01,ok,518.2063,518.484,46.09,51.74,69.246,618.549,1257.044,1353.118,711.182,"{""degree"": 3, ""smoothing"": 0.01}",box20_west
+bspline,bspline_deg3_s0p05,ok,503.4188,503.722,29.842,32.498,45.247,386.959,781.246,844.704,444.975,"{""degree"": 3, ""smoothing"": 0.05}",box20_west
+bspline,bspline_deg3_s0p1,ok,498.0513,498.438,22.671,23.597,34.318,278.847,558.843,607.111,320.715,"{""degree"": 3, ""smoothing"": 0.1}",box20_west
+bspline,bspline_deg5_s0p0001,ok,174.3585,174.678,84.071,7.838,91.153,99.922,18.114,120.908,106.03,"{""degree"": 5, ""smoothing"": 0.0001}",box20_west
+bspline,bspline_deg5_s0p001,ok,175.4456,175.769,61.076,7.883,65.934,84.218,18.239,99.243,82.588,"{""degree"": 5, ""smoothing"": 0.001}",box20_west
+bspline,bspline_deg5_s0p01,ok,168.3598,168.664,78.058,8.012,85.259,86.16,18.556,103.629,94.444,"{""degree"": 5, ""smoothing"": 0.01}",box20_west
+bspline,bspline_deg5_s0p05,ok,180.2493,180.564,57.782,7.162,64.229,85.539,17.594,103.636,83.932,"{""degree"": 5, ""smoothing"": 0.05}",box20_west
+bspline,bspline_deg5_s0p1,ok,182.0782,182.417,107.439,8.661,112.311,130.415,18.147,149.866,131.088,"{""degree"": 5, ""smoothing"": 0.1}",box20_west
+local_poly,lpoly_deg2_k16_tric,ok,0.0057,0.483,4.808,3.306,7.161,4.582,6.016,9.18,8.171,"{""degree"": 2, ""neighbors"": 16, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg2_k16_gaus,ok,0.0061,0.459,6.358,5.286,10.071,9.006,9.119,15.289,12.68,"{""degree"": 2, ""neighbors"": 16, ""weight"": ""gaussian""}",box10_interior
+local_poly,lpoly_deg2_k25_tric,ok,0.0056,0.69,6.972,5.324,10.613,10.899,9.306,17.029,13.821,"{""degree"": 2, ""neighbors"": 25, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg2_k25_gaus,ok,0.0057,0.637,8.028,5.281,11.399,12.138,9.33,18.109,14.754,"{""degree"": 2, ""neighbors"": 25, ""weight"": ""gaussian""}",box10_interior
+local_poly,lpoly_deg2_k36_tric,ok,0.0055,0.921,8.552,5.366,11.917,13.078,8.951,18.566,15.241,"{""degree"": 2, ""neighbors"": 36, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg2_k36_gaus,ok,0.0061,0.885,10.268,6.393,14.292,16.458,10.348,22.608,18.45,"{""degree"": 2, ""neighbors"": 36, ""weight"": ""gaussian""}",box10_interior
+local_poly,lpoly_deg3_k16_tric,ok,0.0056,0.695,4.657,2.969,6.721,4.762,7.082,10.198,8.459,"{""degree"": 3, ""neighbors"": 16, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg3_k16_gaus,ok,0.0056,0.7,6.116,5.856,10.292,8.815,10.165,15.965,13.128,"{""degree"": 3, ""neighbors"": 16, ""weight"": ""gaussian""}",box10_interior
+local_poly,lpoly_deg3_k25_tric,ok,0.0059,1.077,7.061,5.345,10.724,10.941,9.138,16.943,13.833,"{""degree"": 3, ""neighbors"": 25, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg3_k25_gaus,ok,0.0064,1.093,7.953,5.441,11.467,12.05,8.948,17.705,14.586,"{""degree"": 3, ""neighbors"": 25, ""weight"": ""gaussian""}",box10_interior
+local_poly,lpoly_deg3_k36_tric,ok,0.0061,1.521,8.538,5.36,11.9,13.064,9.019,18.611,15.256,"{""degree"": 3, ""neighbors"": 36, ""weight"": ""tricube""}",box10_interior
+local_poly,lpoly_deg3_k36_gaus,ok,0.0059,1.571,10.241,6.288,14.162,16.408,10.011,22.284,18.223,"{""degree"": 3, ""neighbors"": 36, ""weight"": ""gaussian""}",box10_interior
