@@ -27,6 +27,7 @@ flowchart TD
     BIF["bicubic_interpolation_forensics<br><b>Status: Validated</b><br>Traces Wikipedia + 1-sided stencil origins; ranks Top 3 11km schemes & proves 5.6x-11.5x ML kink penalty"]
     TMLP["torch_mlp_regressor<br><b>Status: Validated</b><br>Deep PyTorch ResNet: 6.8mm uniform RMSE with cyclic (u, v) cell coordinates"]
     SME["submillimeter_exploration<br><b>Status: Validated</b><br>T7 Bilinear + FeatGrid reaches 0.77mm uniform mean / 0.84mm bidirectional RMSE; T4 data-adaptive ResNet cuts stress RMSE 94%"]
+    OSR["optimal_surface_regressor<br><b>Status: Validated</b><br>10-family Stage-2 learnability benchmark: cubic_k25_s0 (16.0mm), tps (16.5mm), lpoly (16.7mm)"]
     ML["Next: Sub-Millimeter Production Architecture<br><b>Status: Exploring</b><br>Goal: Sub-millimeter production deployment and unified benchmark promotion"]
 
     SPG -->|"motivates"| PROJ
@@ -90,6 +91,7 @@ flowchart TD
 | `bicubic_interpolation_forensics` | `ML Production Architecture` | `quantifies 5.6x-11.5x kink penalty` | Proves `TransDatRO`'s $C^1$ kinks impose a `7.674 mm` vs `0.667–1.364 mm` smooth-ML error penalty, mandating cell-aware / `(u, v)` architectures for sub-mm replication. |
 | `mlp_spatial_regressor` | `torch_mlp_regressor` | `advances to PyTorch ResNets` | Replaces single feedforward MLP with deep PyTorch ResNets and cyclic local cell coordinates, cutting uniform RMSE from 13.0 mm to 6.8 mm. |
 | `torch_mlp_regressor` | `submillimeter_exploration` | `spawns 7-track screening` | Prompts structured multi-track exploration to break the sub-millimeter continuous ceiling. |
+| `rbf_surface_regressor` | `optimal_surface_regressor` | `expands to 10-family learnability benchmark` | Scales Stage-1 surface selection from raw RMSE to Stage-2 ML Learnability across 10 families (`cubic_k25_s0`, `tps_deg2_k25_s1e-5`, `lpoly_deg2_k16_tric`). |
 
 ---
 
@@ -114,3 +116,4 @@ flowchart TD
 | [`submillimeter_exploration`](submillimeter_exploration.md) | `Validated` | Multi-track sub-millimeter exploration; `T7_bilinear_plus_featgrid_8x8` achieves `0.77 mm` uniform mean / `0.84 mm` bidirectional RMSE; `T4` data-adaptive ResNet collapses adaptive stress RMSE by 94% to `2.59 mm`. | [`experiments/submillimeter_exploration/report.md`](../../experiments/submillimeter_exploration/report.md) |
 | [`bicubic_boundary_analysis`](bicubic_boundary_analysis.md) | `Validated` | Proves `pytransdat` `Grid.BiInterp` matches published `TransDatRO` one-sided 3-point finite-difference formulas verbatim; $C^1$ slope kinks at 11 km borders are inherent to the specification. Establishes a 7-scenario taxonomy across 5-cell extended windows with true vertical-axis scaling. | [`experiments/bicubic_boundary_analysis/report.md`](../../experiments/bicubic_boundary_analysis/report.md) | [`pytransdat/trans_grid.py`](../../pytransdat/trans_grid.py) |
 | [`bicubic_interpolation_forensics`](bicubic_interpolation_forensics.md) | `Validated` | Full forensic audit of 4 ANCPI PDFs (`2.22e-15 m` parity), Wikipedia + 1-sided edge-stencil origin, Top-3 $11\,\text{km}$ alternatives (`Catmull-Rom C¹`, `PCHIP C¹`, `Natural Spline C²`), and `5.6x–11.5x` smooth-ML learnability penalty proof. | [`experiments/bicubic_interpolation_forensics/report.md`](../../experiments/bicubic_interpolation_forensics/report.md) | [`src/models/grid_bicubic_variants.py`](../../src/models/grid_bicubic_variants.py) |
+| [`optimal_surface_regressor`](optimal_surface_regressor.md) | `Validated` | 4-stage learnability benchmark across 10 smooth surface families on `RO_GRID_4X4`; shortlists Top-3 Stage-1 base surfaces (`cubic_k25_s0` `16.015 mm`, `tps_deg2_k25_s1e-5` `16.531 mm`, `lpoly_deg2_k16_tric` `16.696 mm`). | [`experiments/optimal_surface_regressor/report.md`](../../experiments/optimal_surface_regressor/report.md) | [`src/models/local_poly_surface.py`](../../src/models/local_poly_surface.py) |

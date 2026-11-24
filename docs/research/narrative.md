@@ -114,3 +114,10 @@ ow 23, col 36, dN, {\text{inf}} = 0.48$).
       - **Top 3 Alternative $11\,\text{km}$ Schemes**: Implemented in [`src/models/grid_bicubic_variants.py`](../../src/models/grid_bicubic_variants.py): **#1 Catmull-Rom ($C^1$, `16.75 mm` RMS vs. `TransDatRO`)**, **#2 PCHIP ($C^1$ monotone, `0.37 mm` bowing)**, and **#3 Natural Cubic Spline ($C^2$, `18.02 mm` RMS)**.
       - **Quantified ML Learnability Penalty**: Smooth Thin-Plate Spline RBF interpolation achieves `0.667 mm` RMSE on `Natural Spline C²` and `1.364 mm` on `Catmull-Rom C¹`, versus `7.674 mm` (`35.498 mm` max) on `TransDatRO`—a **5.6× to 11.5× penalty**.
     - *Impact*: Establishes why smooth global ML models hit a millimeter-to-centimeter wall on `TransDatRO`, validates cell-aware / `(u, v)` architectures, and provides reusable smooth $11\,\text{km}$ targets for future ML benchmarking.
+
+11. **Exhaustive 10-Family Stage-1 Surface Learnability Benchmark ([`optimal_surface_regressor`](optimal_surface_regressor.md))**:
+    - *Question*: Which smooth Stage-1 base surface family trained on `RO_GRID_4X4` best removes the bulk `.spg` distortion shift without memorizing legacy 11 km boundary kinks—leaving low-amplitude, low-roughness residuals for Stage-2 ML models?
+    - *Finding*:
+      - **Learnability-First Ranking**: Evaluating 10 families via Stage-0 subgrid calibration + Stage-1 screening (176 configs) + Stage-2 Top-3 Full-Romania promotion revealed that **Polyharmonic `cubic_k25_s0`** (`16.015 mm` Overall), **Thin Plate Spline `tps_deg2_k25_s1e-5`** (`16.531 mm`, #1 on `16x16`), and **Local Quadratic LOESS `lpoly_deg2_k16_tric`** (`16.696 mm`, 3× faster inference) form the Top-3 Stage-1 base surfaces.
+      - **Methodological Rules**: Always fit on Full `RO_GRID_4X4` (`0.006s`) to avoid coordinate-normalization scale shifts, and use contiguous `CellRegion` subgrids rather than point-thinning to preserve `Roughness Grad RMS`.
+    - *Impact*: Locks in the Top-3 Stage-1 base surfaces for Stage-2 residual ML training.
