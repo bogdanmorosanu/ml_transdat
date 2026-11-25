@@ -6,11 +6,17 @@ from src.data.catalog import (
     GridManager,
     get_default_grid_manager,
 )
-from src.data.regions import CellRegion, concat_datasets, find_worst_case_region
+from src.data.regions import (
+    CellRegion,
+    concat_datasets,
+    find_worst_case_region,
+    generate_region_densified_dataset,
+)
 from src.data.samplers import (
     DEFAULT_SUBGRID_OFFSETS_4X4,
     DEFAULT_SUBGRID_OFFSETS_8X8,
     DEFAULT_SUBGRID_OFFSETS_16X16,
+    DEFAULT_SUBGRID_OFFSETS_32X32,
     build_grid_candidates,
     generate_adaptive_midpoints_df,
     generate_densified_grid_df,
@@ -29,6 +35,7 @@ __all__ = [
     "DEFAULT_SUBGRID_OFFSETS_4X4",
     "DEFAULT_SUBGRID_OFFSETS_8X8",
     "DEFAULT_SUBGRID_OFFSETS_16X16",
+    "DEFAULT_SUBGRID_OFFSETS_32X32",
     "CellRegion",
     "GridDataset",
     "GridId",
@@ -36,6 +43,7 @@ __all__ = [
     "build_grid_candidates",
     "concat_datasets",
     "find_worst_case_region",
+    "generate_region_densified_dataset",
     "generate_adaptive_midpoints_df",
     "generate_densified_grid_df",
     "generate_single_cell_workload_df",

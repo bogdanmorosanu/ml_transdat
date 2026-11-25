@@ -18,6 +18,7 @@ from pytransdat.trans_grid import Grid2D
 DEFAULT_SUBGRID_OFFSETS_4X4: tuple[float, ...] = (0.0, 0.25, 0.50, 0.75)
 DEFAULT_SUBGRID_OFFSETS_8X8: tuple[float, ...] = tuple(i / 8.0 for i in range(8))
 DEFAULT_SUBGRID_OFFSETS_16X16: tuple[float, ...] = tuple(i / 16.0 for i in range(16))
+DEFAULT_SUBGRID_OFFSETS_32X32: tuple[float, ...] = tuple(i / 32.0 for i in range(32))
 
 
 def build_grid_candidates(

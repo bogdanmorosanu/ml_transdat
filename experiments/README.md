@@ -28,6 +28,7 @@ This directory contains modular, self-contained scientific experiments evaluatin
 | [`bicubic_boundary_analysis/`](bicubic_boundary_analysis/) | `analysis` | **Bicubic Cell Boundary Extension Analysis**: Visualizes `pytransdat` `Grid.BiInterp` polynomials extended across neighboring cells (`[-1, 2]` / `[-2, 3]`), Hermite tangents, and grouped extreme scenarios suite (Gradient/Linear & Curvature/Kinks), cross-verified against Avramiuc et al. (2009). | `Validated` | Confirmed `Grid.BiInterp` matches published `TransDatRO` one-sided 3-point finite-difference formulas verbatim; $C^1$ slope kinks at 11 km borders are inherent to the specification. Grouped 7 extreme scenarios with true vertical-axis scaling. |
 | [`bicubic_interpolation_forensics/`](bicubic_interpolation_forensics/) | `analysis` | **Bicubic Interpolation Forensics & 11 km Alternatives**: Audits all 4 ANCPI/published PDFs, proves 100% code parity (`2.22e-15 m`), traces Wikipedia + 1-sided edge-stencil origins, and evaluates 6 alternative 11 km interpolators & Top-3 candidates (`Catmull-Rom`, `PCHIP`, `Natural Spline C²`). | `Validated` | Proved `TransDatRO`'s $C^1$ kinks (up to `1.071 m/step`) cause a `5.6x–11.5x` smooth-ML learnability penalty (`7.674 mm` TPS-RBF RMSE vs. `1.364 mm` Catmull-Rom & `0.667 mm` Natural Spline). Ranked Top 3 smooth replacements. |
 | [`optimal_surface_regressor/`](optimal_surface_regressor/) | `grid_shift` | **Optimal Surface Regressor (10-Family Learnability Benchmark)**: 4-stage screening (Stage 0 subgrid calibration, Stage 1 174-config sweep, Stage 2 Top-3 Full-RO promotion, Stage 3 Champions) across 10 surface families ranked by Stage-2 ML Learnability Score. | `Validated` | Top 4 Champions: `cubic_k25_s0` (`16.015 mm`), `tps_deg2_k25_s1e-5` (`16.531 mm`), `lpoly_deg2_k16_tric` (`16.696 mm`), `matern32_k16_eps5_s1e-5` (`17.387 mm`). |
+| [`hybrid_surface_featgrid/`](hybrid_surface_featgrid/) | `grid_shift` | **Hybrid Stage-1 Surface + Stage-2 Neural Feature Grid**: 48-model subgrid matrix (`3 surfaces × 4 densities × 2 widths × 2 losses` + `k=4` check) on `box10_interior`, promoting `#1` (`cubic_k25_s0` + `32x32` `h128` `huber` `k=2`) to Full Romania. | `Validated` | Subgrid `#1`: `0.351 mm` mean / `0.412 mm` RMSE / `98.87% < 1 mm` on `Adapt 1mm`. Full RO: `0.24 mm` mean (`99.3% < 1 mm`, `P99=0.9 mm`) on `16x16`; `0.651 m` Stage-1 border spikes inflate `Adapt 1mm` RMSE (`14.84 mm` vs `5.42 mm` standalone `FeatGrid_32x32_only`). |
 
 ---
 
@@ -105,4 +106,7 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.bicubic_interpolation_fo
 
 # 18. Optimal Surface Regressor — 10-Family Learnability Benchmark (grid_shift)
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.optimal_surface_regressor.run_unit
+
+# 19. Hybrid Stage-1 Surface + Stage-2 Neural Feature Grid (grid_shift)
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.hybrid_surface_featgrid.run_unit
 ```

@@ -18,6 +18,7 @@ from src.data.samplers import (
     DEFAULT_SUBGRID_OFFSETS_4X4,
     DEFAULT_SUBGRID_OFFSETS_8X8,
     DEFAULT_SUBGRID_OFFSETS_16X16,
+    DEFAULT_SUBGRID_OFFSETS_32X32,
     generate_adaptive_hybrid_train_df,
     generate_adaptive_midpoints_df,
     generate_border_enriched_4x4_df,
@@ -38,6 +39,7 @@ class GridId(str, Enum):
     RO_GRID_4X4 = "ro_grid_4x4"
     RO_GRID_8X8 = "ro_grid_8x8"
     RO_GRID_16X16 = "ro_grid_16x16"
+    RO_GRID_32X32 = "ro_grid_32x32"
     ADAPTIVE_2CM_DN = "adaptive_2cm_dn"
     ADAPTIVE_2CM_DE = "adaptive_2cm_de"
     ADAPTIVE_1CM_DN = "adaptive_1cm_dn"
@@ -94,6 +96,12 @@ _GRID_REGISTRY: dict[GridId, _GridSpec] = {
         meta_path=Path("data/grids/densified/ro_grid_16x16.meta.json"),
         generator=lambda: generate_densified_grid_df(DEFAULT_SUBGRID_OFFSETS_16X16),
         lazy_offsets=DEFAULT_SUBGRID_OFFSETS_16X16,
+    ),
+    GridId.RO_GRID_32X32: _GridSpec(
+        parquet_path=Path("data/grids/densified/ro_grid_32x32.parquet"),
+        meta_path=Path("data/grids/densified/ro_grid_32x32.meta.json"),
+        generator=lambda: generate_densified_grid_df(DEFAULT_SUBGRID_OFFSETS_32X32),
+        lazy_offsets=DEFAULT_SUBGRID_OFFSETS_32X32,
     ),
     GridId.ADAPTIVE_2CM_DN: _GridSpec(
         parquet_path=Path("data/grids/adaptive/adaptive_2cm_dn.parquet"),

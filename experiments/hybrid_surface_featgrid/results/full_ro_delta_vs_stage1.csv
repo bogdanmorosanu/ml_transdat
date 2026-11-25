@@ -1,0 +1,4 @@
+model,ro_test_uniform_16x16_mean_mm,ro_test_uniform_16x16_rmse_mm,delta_ro_test_uniform_16x16_rmse_mm,ro_test_uniform_16x16_lt_1mm_pct,ro_test_adaptive_1mm_mid_mean_mm,ro_test_adaptive_1mm_mid_rmse_mm,delta_ro_test_adaptive_1mm_mid_rmse_mm,ro_test_adaptive_1mm_mid_lt_1mm_pct,total_size_mb
+Stage1_cubic_k25_s0_only,2.84,5.12,0.0,26.5,6.42,22.52,0.0,17.5,2.892
+FeatGrid_32x32_only,0.39,1.09,-4.03,96.97,0.98,5.42,-17.1,82.51,0.656
+Hybrid_cubic_k25_s0_plus_featgrid_32x32,0.24,2.36,-2.76,99.27,1.5,14.84,-7.67,84.63,3.548

@@ -28,6 +28,7 @@ flowchart TD
     TMLP["torch_mlp_regressor<br><b>Status: Validated</b><br>Deep PyTorch ResNet: 6.8mm uniform RMSE with cyclic (u, v) cell coordinates"]
     SME["submillimeter_exploration<br><b>Status: Validated</b><br>T7 Bilinear + FeatGrid reaches 0.77mm uniform mean / 0.84mm bidirectional RMSE; T4 data-adaptive ResNet cuts stress RMSE 94%"]
     OSR["optimal_surface_regressor<br><b>Status: Validated</b><br>10-family Stage-2 learnability benchmark: cubic_k25_s0 (16.0mm), tps (16.5mm), lpoly (16.7mm)"]
+    HSFG["hybrid_surface_featgrid<br><b>Status: Validated</b><br>Cubic k25 + FeatGrid (32x32, h128, Huber): 0.24mm 16x16 mean (99.3% < 1mm); 0.65m border spikes"]
     ML["Next: Sub-Millimeter Production Architecture<br><b>Status: Exploring</b><br>Goal: Sub-millimeter production deployment and unified benchmark promotion"]
 
     SPG -->|"motivates"| PROJ
@@ -58,6 +59,9 @@ flowchart TD
     BBA -->|"deep-dives origins & 11km alternatives in"| BIF
     BIF -->|"quantifies 5.6x-11.5x kink penalty for"| ML
     TMLP -->|"spawns 7-track screening"| SME
+    OSR -->|"supplies Top-3 Stage-1 bases for"| HSFG
+    SME -->|"supplies FeatGrid + Huber priors for"| HSFG
+    HSFG -->|"exposes Stage-1 border spikes for"| ML
 ```
 
 ---
@@ -92,6 +96,9 @@ flowchart TD
 | `mlp_spatial_regressor` | `torch_mlp_regressor` | `advances to PyTorch ResNets` | Replaces single feedforward MLP with deep PyTorch ResNets and cyclic local cell coordinates, cutting uniform RMSE from 13.0 mm to 6.8 mm. |
 | `torch_mlp_regressor` | `submillimeter_exploration` | `spawns 7-track screening` | Prompts structured multi-track exploration to break the sub-millimeter continuous ceiling. |
 | `rbf_surface_regressor` | `optimal_surface_regressor` | `expands to 10-family learnability benchmark` | Scales Stage-1 surface selection from raw RMSE to Stage-2 ML Learnability across 10 families (`cubic_k25_s0`, `tps_deg2_k25_s1e-5`, `lpoly_deg2_k16_tric`). |
+| `optimal_surface_regressor` | `hybrid_surface_featgrid` | `supplies Top-3 Stage-1 bases` | Provides the Top-3 `4x4`-fitted smooth Stage-1 surfaces (`cubic_k25_s0`, `tps_deg2_k25_s1e-5`, `lpoly_deg2_k16_tric`) for the 48-model Stage-2 matrix. |
+| `submillimeter_exploration` | `hybrid_surface_featgrid` | `supplies FeatGrid + Huber priors` | Supplies `NeuralFeatureGridShiftModel`, Huber loss (`beta=5 mm`), and two-stage residual decomposition lessons for `32x32` hybrid evaluation. |
+| `hybrid_surface_featgrid` | `ML Production Architecture` | `exposes Stage-1 border spikes` | Proves `cubic_k25_s0 + FeatGrid (32x32)` reaches `99.3% < 1 mm` in the interior (`0.24 mm` mean), while revealing `~0.65 m` Stage-1 border extrapolation as the remaining bottleneck. |
 
 ---
 
@@ -117,3 +124,4 @@ flowchart TD
 | [`bicubic_boundary_analysis`](bicubic_boundary_analysis.md) | `Validated` | Proves `pytransdat` `Grid.BiInterp` matches published `TransDatRO` one-sided 3-point finite-difference formulas verbatim; $C^1$ slope kinks at 11 km borders are inherent to the specification. Establishes a 7-scenario taxonomy across 5-cell extended windows with true vertical-axis scaling. | [`experiments/bicubic_boundary_analysis/report.md`](../../experiments/bicubic_boundary_analysis/report.md) | [`pytransdat/trans_grid.py`](../../pytransdat/trans_grid.py) |
 | [`bicubic_interpolation_forensics`](bicubic_interpolation_forensics.md) | `Validated` | Full forensic audit of 4 ANCPI PDFs (`2.22e-15 m` parity), Wikipedia + 1-sided edge-stencil origin, Top-3 $11\,\text{km}$ alternatives (`Catmull-Rom C¹`, `PCHIP C¹`, `Natural Spline C²`), and `5.6x–11.5x` smooth-ML learnability penalty proof. | [`experiments/bicubic_interpolation_forensics/report.md`](../../experiments/bicubic_interpolation_forensics/report.md) | [`src/models/grid_bicubic_variants.py`](../../src/models/grid_bicubic_variants.py) |
 | [`optimal_surface_regressor`](optimal_surface_regressor.md) | `Validated` | 4-stage learnability benchmark across 10 smooth surface families on `RO_GRID_4X4`; shortlists Top-3 Stage-1 base surfaces (`cubic_k25_s0` `16.015 mm`, `tps_deg2_k25_s1e-5` `16.531 mm`, `lpoly_deg2_k16_tric` `16.696 mm`). | [`experiments/optimal_surface_regressor/report.md`](../../experiments/optimal_surface_regressor/report.md) | [`src/models/local_poly_surface.py`](../../src/models/local_poly_surface.py) |
+| [`hybrid_surface_featgrid`](hybrid_surface_featgrid.md) | `Validated` | 48-model subgrid matrix + Full-Romania `32x32` evaluation of Stage-1 surfaces + `NeuralFeatureGridShiftModel`; `cubic_k25_s0 + FeatGrid (h128, Huber)` hits `99.3% < 1 mm` (`0.24 mm` mean) on `16x16`, exposing `0.651 m` Stage-1 border spikes. | [`experiments/hybrid_surface_featgrid/report.md`](../../experiments/hybrid_surface_featgrid/report.md) | [`src/models/composite_shift.py`](../../src/models/composite_shift.py) |

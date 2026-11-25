@@ -121,3 +121,14 @@ ow 23, col 36, dN, {\text{inf}} = 0.48$).
       - **Learnability-First Ranking**: Evaluating 10 families via Stage-0 subgrid calibration + Stage-1 screening (176 configs) + Stage-2 Top-3 Full-Romania promotion revealed that **Polyharmonic `cubic_k25_s0`** (`16.015 mm` Overall), **Thin Plate Spline `tps_deg2_k25_s1e-5`** (`16.531 mm`, #1 on `16x16`), and **Local Quadratic LOESS `lpoly_deg2_k16_tric`** (`16.696 mm`, 3× faster inference) form the Top-3 Stage-1 base surfaces.
       - **Methodological Rules**: Always fit on Full `RO_GRID_4X4` (`0.006s`) to avoid coordinate-normalization scale shifts, and use contiguous `CellRegion` subgrids rather than point-thinning to preserve `Roughness Grad RMS`.
     - *Impact*: Locks in the Top-3 Stage-1 base surfaces for Stage-2 residual ML training.
+
+---
+
+## Phase 7: Two-Stage Surface + Neural Residual Hybrids
+
+12. **Stage-1 Smooth Surface + Stage-2 Neural Feature Grid ([`hybrid_surface_featgrid`](hybrid_surface_featgrid.md))**
+    - *Question*: When we pair the Top-3 `RO_GRID_4X4` Stage-1 surfaces (`cubic_k25_s0`, `tps_deg2_k25_s1e-5`, `lpoly_deg2_k16_tric`) with `NeuralFeatureGridShiftModel`, what training density, MLP width, loss function, and harmonic order maximize sub-millimeter generalization—and how does the winner behave across Full Romania?
+    - *Finding*:
+      - **Subgrid Matrix (`box10_interior`)**: Training Stage 2 on `4x4` fails (`7.6–11.2 mm`) because Stage 1 already interpolates `4x4`. Scaling to `RO_GRID_32X32` with `huber` loss (`beta=5 mm`) unlocks `hidden_dim=128` (`0.412 mm` vs. `0.936 mm` under `mse`), while `cyclic_cell_harmonics=2` generalizes better than `4` (`0.412 mm` vs. `0.676 mm`). `cubic_k25_s0` ranked #1 (`0.351 mm` mean / `0.412 mm` RMSE / `98.87% < 1 mm` on unseen `Adapt 1mm`), vindicating `optimal_surface_regressor`'s roughness-based ranking.
+      - **Full-Romania Interior vs. Border Trade-Off**: `Hybrid_cubic_k25_s0_plus_featgrid_32x32` delivers **`0.24 mm` mean (`99.3% < 1 mm`, `P99 = 0.9 mm`)** on `16x16` and `0.1–0.6 mm` across 9-cell extreme scenarios, **but** `cubic_k25_s0`'s `~0.65–0.69 m` concave-border extrapolation spikes—down-weighted by `huber` loss—inflate Full-Romania `Adapt 1mm` `RMSE` (`14.84 mm` vs. `5.42 mm` for standalone `FeatGrid_32x32_only`).
+    - *Impact*: Establishes the `32x32` + `Huber` + `h128` recipe for sub-millimeter interior accuracy while identifying Stage-1 border extrapolation as the key challenge for future hybrid architectures.

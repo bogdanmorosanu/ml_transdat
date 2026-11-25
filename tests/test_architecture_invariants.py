@@ -15,6 +15,7 @@ from src.models import __all__ as MODEL_EXPORTS
 REPO_ROOT = Path(__file__).resolve().parent.parent
 ALLOWED_EXTRA_EXP_FILES = {
     "experiments/optimal_surface_regressor/screen_families.py",
+    "experiments/hybrid_surface_featgrid/screen_subgrid.py",
 }
 
 

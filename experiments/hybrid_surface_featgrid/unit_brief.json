@@ -1,0 +1,207 @@
+{
+  "schema_version": "2.0",
+  "slug": "hybrid_surface_featgrid",
+  "experiment_type": "grid_shift",
+  "status": "completed",
+  "runtime_s": 6983.37,
+  "key_metrics": [
+    {
+      "model": "Stage1_cubic_k25_s0_only",
+      "dataset": "ro_test_uniform_16x16",
+      "direction": "grid_shift_2d",
+      "count": 588032,
+      "mean_2d_mm": 2.8384,
+      "rmse_2d_mm": 5.1199,
+      "crmse_2d_mm": 5.1199,
+      "iqr_2d_mm": 2.7516,
+      "p95_2d_mm": 8.0133,
+      "max_2d_mm": 629.9761,
+      "roughness_grad_rms_mm_km": 2.9415,
+      "roughness_grad_p95_mm_km": 4.8507,
+      "local_jitter_ratio": 0.2454,
+      "learnability_score_mm": 6.5893,
+      "pass_lt_1cm_pct": 97.56,
+      "total_size_mb": 120.6684,
+      "fit_time_s": 0.007,
+      "eval_time_s": 22.2175,
+      "throughput_pts_per_s": 26467.0
+    },
+    {
+      "model": "Stage1_cubic_k25_s0_only",
+      "dataset": "ro_test_adaptive_1mm_mid",
+      "direction": "grid_shift_2d",
+      "count": 564325,
+      "mean_2d_mm": 6.4234,
+      "rmse_2d_mm": 22.5159,
+      "crmse_2d_mm": 22.5153,
+      "iqr_2d_mm": 4.7261,
+      "p95_2d_mm": 16.7312,
+      "max_2d_mm": 691.3488,
+      "roughness_grad_rms_mm_km": 13.1352,
+      "roughness_grad_p95_mm_km": 12.789,
+      "local_jitter_ratio": 0.0708,
+      "learnability_score_mm": 25.4404,
+      "pass_lt_1cm_pct": 86.91,
+      "total_size_mb": 120.6684,
+      "fit_time_s": 0.007,
+      "eval_time_s": 11.5959,
+      "throughput_pts_per_s": 48665.8
+    },
+    {
+      "model": "FeatGrid_32x32_only",
+      "dataset": "ro_test_uniform_16x16",
+      "direction": "grid_shift_2d",
+      "count": 588032,
+      "mean_2d_mm": 0.388,
+      "rmse_2d_mm": 1.0866,
+      "crmse_2d_mm": 1.0866,
+      "iqr_2d_mm": 0.2959,
+      "p95_2d_mm": 0.8708,
+      "max_2d_mm": 225.6982,
+      "roughness_grad_rms_mm_km": 0.7261,
+      "roughness_grad_p95_mm_km": 1.0903,
+      "local_jitter_ratio": 0.3155,
+      "learnability_score_mm": 1.3165,
+      "pass_lt_1cm_pct": 99.95,
+      "total_size_mb": 4082.4983,
+      "fit_time_s": 3532.8662,
+      "eval_time_s": 0.4819,
+      "throughput_pts_per_s": 1220113.0
+    },
+    {
+      "model": "FeatGrid_32x32_only",
+      "dataset": "ro_test_adaptive_1mm_mid",
+      "direction": "grid_shift_2d",
+      "count": 564325,
+      "mean_2d_mm": 0.9815,
+      "rmse_2d_mm": 5.4173,
+      "crmse_2d_mm": 5.4161,
+      "iqr_2d_mm": 0.5369,
+      "p95_2d_mm": 1.9426,
+      "max_2d_mm": 243.8845,
+      "roughness_grad_rms_mm_km": 3.5432,
+      "roughness_grad_p95_mm_km": 3.9256,
+      "local_jitter_ratio": 0.0726,
+      "learnability_score_mm": 6.0196,
+      "pass_lt_1cm_pct": 99.2,
+      "total_size_mb": 4082.4983,
+      "fit_time_s": 3532.8662,
+      "eval_time_s": 0.1812,
+      "throughput_pts_per_s": 3114660.0
+    },
+    {
+      "model": "Hybrid_cubic_k25_s0_plus_featgrid_32x32",
+      "dataset": "ro_test_uniform_16x16",
+      "direction": "grid_shift_2d",
+      "count": 588032,
+      "mean_2d_mm": 0.2371,
+      "rmse_2d_mm": 2.3624,
+      "crmse_2d_mm": 2.3624,
+      "iqr_2d_mm": 0.1581,
+      "p95_2d_mm": 0.5095,
+      "max_2d_mm": 582.8075,
+      "roughness_grad_rms_mm_km": 1.2679,
+      "roughness_grad_p95_mm_km": 0.8446,
+      "local_jitter_ratio": 0.2548,
+      "learnability_score_mm": 2.3291,
+      "pass_lt_1cm_pct": 99.93,
+      "total_size_mb": 4172.2573,
+      "fit_time_s": 3321.6246,
+      "eval_time_s": 21.9143,
+      "throughput_pts_per_s": 26833.3
+    },
+    {
+      "model": "Hybrid_cubic_k25_s0_plus_featgrid_32x32",
+      "dataset": "ro_test_adaptive_1mm_mid",
+      "direction": "grid_shift_2d",
+      "count": 564325,
+      "mean_2d_mm": 1.496,
+      "rmse_2d_mm": 14.8421,
+      "crmse_2d_mm": 14.8398,
+      "iqr_2d_mm": 0.5074,
+      "p95_2d_mm": 2.3704,
+      "max_2d_mm": 650.6148,
+      "roughness_grad_rms_mm_km": 9.7718,
+      "roughness_grad_p95_mm_km": 4.8867,
+      "local_jitter_ratio": 0.0426,
+      "learnability_score_mm": 15.9557,
+      "pass_lt_1cm_pct": 98.94,
+      "total_size_mb": 4172.2573,
+      "fit_time_s": 3321.6246,
+      "eval_time_s": 10.6569,
+      "throughput_pts_per_s": 52953.9
+    }
+  ],
+  "artifacts": {
+    "report": "report.md",
+    "scorecard_csv": "results/scorecard.csv",
+    "scorecard_json": "results/scorecard_summary.json",
+    "scorecard_md": "results/summary_table.md",
+    "plots": [
+      "ro_test_uniform_16x16_grid_shift_2d_spatial_error.png",
+      "ro_test_uniform_16x16_grid_shift_2d_hist_ecdf.png",
+      "ro_test_uniform_16x16_grid_shift_2d_signed_scatter.png",
+      "ro_test_adaptive_1mm_mid_grid_shift_2d_spatial_error.png",
+      "ro_test_adaptive_1mm_mid_grid_shift_2d_hist_ecdf.png",
+      "ro_test_adaptive_1mm_mid_grid_shift_2d_signed_scatter.png",
+      "extreme_scenarios_gradient_and_linear_9cells.png",
+      "extreme_scenarios_curvature_and_kinks_9cells.png"
+    ]
+  },
+  "benchmark_candidates": [
+    {
+      "name": "Hybrid_cubic_k25_s0_plus_featgrid_32x32",
+      "label": "Cubic k25 + Neural Feature Grid (32x32, h128, Huber)",
+      "suite": "grid_shift_models",
+      "train_grid": "ro_grid_32x32",
+      "model_class": "src.models.composite_shift.CompositeResidualShiftModel",
+      "params": {
+        "stage1_model": {
+          "model_class": "src.models.rbf_surface.RBFSurfaceRegressor",
+          "code_sha256": "5ed43747629565705402bbb23c3505394842a408457180baca99d40f99be4714",
+          "config": {
+            "kernel": "cubic",
+            "degree": 1,
+            "smoothing": 0.0,
+            "epsilon": null,
+            "neighbors": 25,
+            "normalize_coords": true
+          }
+        },
+        "stage2_model": {
+          "model_class": "src.models.neural_feature_grid.NeuralFeatureGridShiftModel",
+          "code_sha256": "febf324276da6ff5167e4ab93903e848aa4f22e33b6cf3a3d796f28096146132",
+          "config": {
+            "grid_resolutions": [
+              [
+                53,
+                72
+              ],
+              [
+                105,
+                143
+              ]
+            ],
+            "feature_dim": 8,
+            "hidden_dim": 128,
+            "cyclic_cell_harmonics": 2,
+            "batch_size": 4096,
+            "lr": 0.003,
+            "weight_decay": 1e-06,
+            "max_epochs": 120,
+            "patience": 30,
+            "val_fraction": 0.0,
+            "loss_type": "huber",
+            "lbfgs_steps": 0,
+            "random_state": 42
+          }
+        }
+      },
+      "extra": {}
+    }
+  ],
+  "extra": {
+    "delta_csv": "results\\full_ro_delta_vs_stage1.csv",
+    "delta_md": "results\\full_ro_delta_vs_stage1.md"
+  }
+}

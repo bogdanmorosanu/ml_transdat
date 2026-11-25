@@ -123,6 +123,90 @@ def concat_datasets(datasets: Sequence[GridDataset]) -> GridDataset:
     )
 
 
+def generate_region_densified_dataset(
+    region: CellRegion,
+    subdivisions: int,
+    *,
+    grid2d: Grid2D | None = None,
+) -> GridDataset:
+    """Generate an in-memory ``subdivisions x subdivisions`` densified :class:`GridDataset` for ``region``.
+
+    Generates only the SPG-valid cells inside ``region`` without writing any files
+    to disk, making it suitable for rapid on-the-fly density scaling experiments
+    (e.g., ``32x32`` or ``64x64`` subgrids).
+
+    :param region: Target SPG cell-aligned region.
+    :type region: CellRegion
+    :param subdivisions: Number of uniform subdivisions per cell axis (e.g. ``16``, ``32``).
+    :type subdivisions: int
+    :param grid2d: Optional pre-loaded ``Grid2D`` instance.
+    :type grid2d: Grid2D | None
+    :return: In-memory :class:`GridDataset` with ``st70_n``, ``st70_e``, ``shift_dn_m``, ``shift_de_m``.
+    :rtype: GridDataset
+    :raises ValueError: If ``subdivisions <= 0`` or no valid SPG cells fall inside ``region``.
+    """
+    from pytransdat import TransRO
+    from src.data.catalog import GridDataset, GridId
+
+    if subdivisions <= 0:
+        raise ValueError(f"subdivisions must be positive, got {subdivisions}")
+
+    engine = TransRO()
+    g = grid2d if grid2d is not None else engine._t_gr2d
+    valid_cells = set(get_valid_spg_cells(engine))
+
+    rows = [
+        r
+        for r in range(region.row_start, region.row_start + region.n_rows)
+        if r < g.r_count - 1
+    ]
+    cols = [
+        c
+        for c in range(region.col_start, region.col_start + region.n_cols)
+        if c < g.c_count - 1
+    ]
+    cell_pairs = [(r, c) for r in rows for c in cols if (r, c) in valid_cells]
+    if not cell_pairs:
+        raise ValueError(f"No valid SPG cells found inside region {region!r}.")
+
+    offsets = np.arange(subdivisions, dtype=np.float64) / float(subdivisions)
+    uu, vv = np.meshgrid(offsets, offsets, indexing="ij")
+    u_flat = uu.ravel()
+    v_flat = vv.ravel()
+    pts_per_cell = len(u_flat)
+
+    r_arr = np.repeat(np.array([p[0] for p in cell_pairs], dtype=np.int64), pts_per_cell)
+    c_arr = np.repeat(np.array([p[1] for p in cell_pairs], dtype=np.int64), pts_per_cell)
+    u_arr = np.tile(u_flat, len(cell_pairs))
+    v_arr = np.tile(v_flat, len(cell_pairs))
+
+    n_arr = g.n_min + (r_arr + u_arr) * g.n_step
+    e_arr = g.e_min + (c_arr + v_arr) * g.e_step
+
+    dn_list, de_list = engine._t_gr2d.interp(n_arr.tolist(), e_arr.tolist())
+    df = pd.DataFrame(
+        {
+            "row_idx": r_arr,
+            "col_idx": c_arr,
+            "u": u_arr,
+            "v": v_arr,
+            "st70_n": n_arr,
+            "st70_e": e_arr,
+            "shift_dn_m": np.asarray(dn_list, dtype=np.float64),
+            "shift_de_m": np.asarray(de_list, dtype=np.float64),
+        }
+    )
+    return GridDataset(
+        grid_id=GridId.CUSTOM,
+        df=df,
+        metadata={
+            "region": region.name or f"r{region.row_start}_c{region.col_start}",
+            "subdivisions": subdivisions,
+            "on_the_fly": True,
+        },
+    )
+
+
 def find_worst_case_region(
     size_cells: int,
     *,
