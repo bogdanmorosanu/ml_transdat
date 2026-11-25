@@ -25,6 +25,7 @@ from src.viz.scenarios import (
     EXTREME_SCENARIOS_GROUP1_GRADIENT_LINEAR,
     EXTREME_SCENARIOS_GROUP2_CURVATURE_KINKS,
     eval_pytransdat_1d_safe,
+    plot_extreme_residuals_9cells,
     plot_extreme_scenarios_9cells,
 )
 from src.viz.surfaces import (
@@ -41,6 +42,7 @@ __all__ = [
     "PlotSpec",
     "PlotType",
     "eval_pytransdat_1d_safe",
+    "plot_extreme_residuals_9cells",
     "plot_extreme_scenarios_9cells",
     "plot_hist_ecdf",
     "plot_hist_ecdf_rows",

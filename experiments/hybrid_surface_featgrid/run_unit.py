@@ -48,6 +48,7 @@ def _make_champion_featgrid_32x32() -> NeuralFeatureGridShiftModel:
 class HybridSurfaceFeatGridUnit(GridShiftExperimentUnit):
     """Full-Romania evaluation of Stage-1 Surface + Stage-2 Neural Feature Grid."""
 
+    submillimeter_mode: bool = True
     render_extreme_scenarios: bool = True
 
     @property

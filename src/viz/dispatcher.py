@@ -32,6 +32,15 @@ def _handle_spatial_error_rows(
     return plot_spatial_error_rows(results, out_path, dpi=dpi)
 
 
+def _handle_spatial_error_log_rows(
+    results: Sequence[EvaluationResult],
+    out_path: Path,
+    dpi: int,
+    _ctx: dict[str, Any],
+) -> Path:
+    return plot_spatial_error_rows(results, out_path, dpi=dpi, log_scale=True)
+
+
 def _handle_hist_ecdf_rows(
     results: Sequence[EvaluationResult],
     out_path: Path,
@@ -84,6 +93,7 @@ def _handle_residual_roughness_rows(
 
 _GROUPED_HANDLERS: dict[PlotType, _GroupedPlotHandler] = {
     PlotType.SPATIAL_ERROR: _handle_spatial_error_rows,
+    PlotType.SPATIAL_ERROR_LOG: _handle_spatial_error_log_rows,
     PlotType.HIST_ECDF: _handle_hist_ecdf_rows,
     PlotType.SIGNED_SCATTER: _handle_signed_scatter_rows,
     PlotType.SUBCELL_HEATMAP: _handle_subcell_heatmap_rows,

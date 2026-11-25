@@ -10,12 +10,14 @@ class PlotType(str, Enum):
     """Canonical identifiers for all supported diagnostic and spatial plots."""
 
     SPATIAL_ERROR = "spatial_error"
+    SPATIAL_ERROR_LOG = "spatial_error_log"
     HIST_ECDF = "hist_ecdf"
     SIGNED_SCATTER = "signed_scatter"
     SUBCELL_HEATMAP = "subcell_heatmap"
     VECTOR_QUIVER = "vector_quiver"
     RESIDUAL_ROUGHNESS = "residual_roughness"
     EXTREME_SCENARIOS_9CELLS = "extreme_scenarios_9cells"
+    EXTREME_RESIDUALS_9CELLS = "extreme_residuals_9cells"
     SURFACE_LEARNABILITY_RANKING = "surface_learnability_ranking"
     POINT_DISTRIBUTION = "point_distribution"
     MODEL_COMPARISON = "model_comparison"
@@ -26,6 +28,7 @@ class PlotGroup(str, Enum):
 
     MINIMAL = "minimal"
     STANDARD_DIAGNOSTIC = "standard_diagnostic"
+    SUBMILLIMETER_DIAGNOSTIC = "submillimeter_diagnostic"
     SURFACE_DIAGNOSTIC = "surface_diagnostic"
     EXTENDED_SHIFT = "extended_shift"
 
@@ -37,6 +40,12 @@ PLOT_GROUP_MEMBERS: dict[PlotGroup, tuple[PlotType, ...]] = {
     ),
     PlotGroup.STANDARD_DIAGNOSTIC: (
         PlotType.SPATIAL_ERROR,
+        PlotType.HIST_ECDF,
+        PlotType.SIGNED_SCATTER,
+        PlotType.SUBCELL_HEATMAP,
+    ),
+    PlotGroup.SUBMILLIMETER_DIAGNOSTIC: (
+        PlotType.SPATIAL_ERROR_LOG,
         PlotType.HIST_ECDF,
         PlotType.SIGNED_SCATTER,
         PlotType.SUBCELL_HEATMAP,

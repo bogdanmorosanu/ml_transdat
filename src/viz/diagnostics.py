@@ -10,6 +10,7 @@ from typing import Any
 import matplotlib
 
 matplotlib.use("Agg")
+import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -149,33 +150,79 @@ def _draw_spatial_error_ax(
     err_df: pd.DataFrame,
     summary: dict[str, Any],
     title: str,
+    log_scale: bool = False,
+    vmin_mm: float = 0.05,
+    vmax_mm: float | None = None,
 ) -> None:
     """Paint a single 2D spatial error heatmap onto ``ax``."""
     e_km = err_df["st70_e"].to_numpy(dtype=np.float64) * 1e-3
     n_km = err_df["st70_n"].to_numpy(dtype=np.float64) * 1e-3
     err = err_df["err_2d_m"].to_numpy(dtype=np.float64)
 
-    p99 = summary["p99_2d_m"]
-    vmax = p99 if summary["max_2d_m"] > 2.0 * p99 and p99 > 0 else summary["max_2d_m"]
+    if log_scale:
+        err_mm = err * 1000.0
+        p99_mm = float(summary["p99_2d_m"]) * 1000.0
+        max_mm = float(summary["max_2d_m"]) * 1000.0
+        vmax_eff = (
+            vmax_mm
+            if vmax_mm is not None
+            else max(p99_mm if max_mm > 2.0 * p99_mm and p99_mm > 0 else max_mm, 10.0)
+        )
+        sc = ax.scatter(
+            e_km,
+            n_km,
+            c=np.clip(err_mm, vmin_mm, vmax_eff),
+            cmap="turbo",
+            norm=mcolors.LogNorm(vmin=vmin_mm, vmax=vmax_eff),
+            s=6.5,
+            marker="s",
+            alpha=0.95,
+            edgecolors="none",
+            linewidths=0,
+        )
+        cbar = fig.colorbar(sc, ax=ax, shrink=0.85, pad=0.02)
+        base_ticks = [0.05, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 10.0]
+        ticks = [t for t in base_ticks if vmin_mm <= t <= vmax_eff]
+        if vmax_eff > 12.0:
+            ticks.append(vmax_eff)
+        if ticks:
+            cbar.set_ticks(ticks)
+            labels = [
+                f"≤{t:g}"
+                if i == 0
+                else (
+                    f"≥{t:.1f}"
+                    if i == len(ticks) - 1 and t > 10.0
+                    else (f"≥{t:g}" if i == len(ticks) - 1 else f"{t:g}")
+                )
+                for i, t in enumerate(ticks)
+            ]
+            cbar.set_ticklabels(labels)
+        cbar.set_label(
+            f"2D Horizontal Error (mm, log scale) [max={max_mm:.1f} mm]"
+        )
+    else:
+        p99 = summary["p99_2d_m"]
+        vmax = p99 if summary["max_2d_m"] > 2.0 * p99 and p99 > 0 else summary["max_2d_m"]
 
-    sc = ax.scatter(
-        e_km,
-        n_km,
-        c=err,
-        cmap="inferno",
-        vmin=0.0,
-        vmax=vmax,
-        s=6.5,
-        marker="s",
-        alpha=0.95,
-        edgecolors="none",
-        linewidths=0,
-    )
-    cbar = fig.colorbar(sc, ax=ax, shrink=0.85, pad=0.02)
-    cbar_label = "2D Horizontal Error (m)"
-    if vmax < summary["max_2d_m"]:
-        cbar_label += f" [clamped at p99={p99:.3f} m; max={summary['max_2d_m']:.3f} m]"
-    cbar.set_label(cbar_label)
+        sc = ax.scatter(
+            e_km,
+            n_km,
+            c=err,
+            cmap="inferno",
+            vmin=0.0,
+            vmax=vmax,
+            s=6.5,
+            marker="s",
+            alpha=0.95,
+            edgecolors="none",
+            linewidths=0,
+        )
+        cbar = fig.colorbar(sc, ax=ax, shrink=0.85, pad=0.02)
+        cbar_label = "2D Horizontal Error (m)"
+        if vmax < summary["max_2d_m"]:
+            cbar_label += f" [clamped at p99={p99:.3f} m; max={summary['max_2d_m']:.3f} m]"
+        cbar.set_label(cbar_label)
 
     ax.set_aspect("equal", adjustable="box")
     ax.set_xlabel("Stereo 70 Easting (km)")
@@ -191,11 +238,21 @@ def plot_spatial_error(
     model_name: str,
     direction: str,
     dpi: int = 200,
+    log_scale: bool = False,
+    vmin_mm: float = 0.05,
+    vmax_mm: float | None = None,
 ) -> Path:
     """Plot borderless square heatmap of 2D horizontal errors across Romania."""
     fig, ax = plt.subplots(figsize=(10, 7.5))
     _draw_spatial_error_ax(
-        fig, ax, err_df, summary, f"{model_name} ({direction}) — Spatial 2D Error Map"
+        fig,
+        ax,
+        err_df,
+        summary,
+        f"{model_name} ({direction}) — Spatial 2D Error Map",
+        log_scale=log_scale,
+        vmin_mm=vmin_mm,
+        vmax_mm=vmax_mm,
     )
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -208,6 +265,9 @@ def plot_spatial_error_rows(
     results: Sequence[EvaluationResult],
     out_path: Path,
     dpi: int = 200,
+    log_scale: bool = False,
+    vmin_mm: float = 0.05,
+    vmax_mm: float | None = None,
 ) -> Path:
     """Plot a stacked 1-row-per-model figure of spatial 2D error maps."""
     if not results:
@@ -225,7 +285,16 @@ def plot_spatial_error_rows(
             f"P95={s['p95_2d_m'] * 1000.0:.2f} mm | "
             f"Max={s['max_2d_m'] * 1000.0:.2f} mm"
         )
-        _draw_spatial_error_ax(fig, axes[idx, 0], res.err_df, s, title)
+        _draw_spatial_error_ax(
+            fig,
+            axes[idx, 0],
+            res.err_df,
+            s,
+            title,
+            log_scale=log_scale,
+            vmin_mm=vmin_mm,
+            vmax_mm=vmax_mm,
+        )
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=dpi)

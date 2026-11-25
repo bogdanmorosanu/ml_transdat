@@ -22,7 +22,7 @@ from src.evaluation.metrics import dataframe_to_markdown, format_scorecard_table
 from src.models.base import BaseCoordinateTransformer, BaseGridShiftModel, BaseSpatialModel
 from src.viz.dispatcher import PlotDispatcher
 from src.viz.registry import PlotGroup, PlotSpec, PlotType
-from src.viz.scenarios import plot_extreme_scenarios_9cells
+from src.viz.scenarios import plot_extreme_residuals_9cells, plot_extreme_scenarios_9cells
 
 
 class ExperimentType(str, Enum):
@@ -210,6 +210,14 @@ class TransformationExperimentUnit(ResearchUnit):
     :class:`PlotDispatcher`, and scorecard serialization.
     """
 
+    submillimeter_mode: bool = False
+
+    def _resolve_plots_spec(self, plots: PlotSpec | None) -> PlotSpec | None:
+        """Promote default ``STANDARD_DIAGNOSTIC`` to ``SUBMILLIMETER_DIAGNOSTIC`` when enabled."""
+        if self.submillimeter_mode and plots == PlotGroup.STANDARD_DIAGNOSTIC:
+            return PlotGroup.SUBMILLIMETER_DIAGNOSTIC
+        return plots
+
     def __init__(
         self,
         unit_dir: Path,
@@ -372,7 +380,7 @@ class TransformationExperimentUnit(ResearchUnit):
             )
             all_results.extend(res_list)
             for res in res_list:
-                plot_items.append((res, spec.plots))
+                plot_items.append((res, self._resolve_plots_spec(spec.plots)))
             kept_transformers[spec.name] = spec.transformer
 
         self.save_scorecards(all_results)
@@ -488,6 +496,8 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
     """
 
     render_extreme_scenarios: bool = True
+    render_extreme_residuals: bool | None = None
+    extreme_residual_ylim_mm: float = 5.0
 
     @property
     def experiment_type(self) -> ExperimentType:
@@ -572,7 +582,7 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
             )
             all_results.extend(res_list)
             for res in res_list:
-                plot_items.append((res, spec.plots))
+                plot_items.append((res, self._resolve_plots_spec(spec.plots)))
 
             if spec.keep_in_memory:
                 kept_models[spec.name] = model
@@ -584,16 +594,31 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
         rendered_paths = self.plotter.render_grouped(plot_items, out_dir=self.plots_dir)
         plot_files: list[str] = [p.name for p in rendered_paths]
 
-        if self.render_extreme_scenarios:
+        use_extreme_residuals = (
+            self.submillimeter_mode
+            if self.render_extreme_residuals is None
+            else self.render_extreme_residuals
+        )
+        if self.render_extreme_scenarios or use_extreme_residuals:
             scenario_models = self.get_extreme_scenario_models(kept_models)
             if scenario_models:
-                g1_path, g2_path = plot_extreme_scenarios_9cells(
-                    models=scenario_models,
-                    out_dir=self.plots_dir,
-                )
-                for p_name in (g1_path.name, g2_path.name):
-                    if p_name not in plot_files:
-                        plot_files.append(p_name)
+                if self.render_extreme_scenarios:
+                    g1_path, g2_path = plot_extreme_scenarios_9cells(
+                        models=scenario_models,
+                        out_dir=self.plots_dir,
+                    )
+                    for p_name in (g1_path.name, g2_path.name):
+                        if p_name not in plot_files:
+                            plot_files.append(p_name)
+                if use_extreme_residuals:
+                    r1_path, r2_path = plot_extreme_residuals_9cells(
+                        models=scenario_models,
+                        out_dir=self.plots_dir,
+                        ylim_mm=self.extreme_residual_ylim_mm,
+                    )
+                    for p_name in (r1_path.name, r2_path.name):
+                        if p_name not in plot_files:
+                            plot_files.append(p_name)
 
         extra_brief = self.after_run(kept_models, all_results)
 
