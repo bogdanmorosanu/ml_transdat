@@ -22,7 +22,7 @@ flowchart LR
 
 | Directory | Responsibility | What Belongs Here |
 | :--- | :--- | :--- |
-| `src/data/` | Data & Grid Access | `GridId`, `GridDataset`, `GridManager`, `get_default_grid_manager`, `regions` (`CellRegion`, `find_worst_case_region`, `concat_datasets`), `spg_cache` (`get_default_grid2d`, `get_default_spg_reader`), lazy samplers, on-the-fly grid generators |
+| `src/data/` | Data & Grid Access | `GridId`, `GridDataset`, `GridManager`, `get_default_grid_manager`, `boundaries` (`BoundaryId`, `SpatialBoundary`, `get_boundary`), `regions` (`CellRegion`, `find_worst_case_region`, `concat_datasets`), `spg_cache` (`get_default_grid2d`, `get_default_spg_reader`), lazy samplers, on-the-fly grid generators |
 | `src/geometry/` | Cell Geometry & Features | `CellPlane`, `CellPlane2D`, `extract_grid_cell_planes`, `ShapeCategory`, `CellShapeFeatureExtractor`, `compute_spg_cell_uv`, `encode_cyclic_cell_uv` |
 | `src/models/` | Transformation & ML Models | `BaseSpatialModel`, `BaseGridShiftModel`, `BaseCoordinateTransformer`, `ResidualCoordinateTransformer`, `_features` (`SpatialFeatureEncoder`), `_torch_trainer` (`train_torch_regressor`), `load_embedded_spg_helmert_params`, concrete estimators (`KNNSpatialRegressor`, `DecisionTreeSpatialRegressor`, `AdaptiveQuadtreeRegressor`, `MLPGridShiftModel`, `TorchMLPGridShiftModel`, `NeuralFeatureGridShiftModel`, `CellBilinearShiftModel`, `ParameterizedBicubicGridShiftModel`, `CompositeResidualShiftModel`, `HistGBRGridShiftModel`, `PolynomialSurfaceRegressor`, `RBFSurfaceRegressor`, `BSplineSurfaceRegressor`, `LocalPolynomialSurfaceRegressor`, `Helmert2DConformalShiftModel`, `TwoStepHelmert2DTransformer`, `PyprojEpsg3844Transformer`) |
 | `src/evaluation/` | Metrics & Benchmarking | `MetricType`, `MetricMeta`, `MetricGroup` (`SURFACE_LEARNABILITY`), `compute_spatial_roughness_stats`, `EvaluationResult`, `ModelEvaluator` (`evaluate_models`, `tabulate_results`, `tabulate_delta_vs_baseline`, `compare_models`, `rank_surface_candidates`), `NaN`-safe scorecards & Markdown formatters |
@@ -46,6 +46,7 @@ flowchart LR
   - Full arrays: `dataset.coords` (`(N, 2)` `[st70_n, st70_e]`), `dataset.true_shifts` (`(N, 2)` `[dn, de]`), `dataset.etrs89_rad` (`(N, 2)`).
   - Generator streaming: `GridManager.iter_chunks(grid_id, batch_size)` streams uncached densified grids cell-by-cell lazily via `iter_densified_grid_chunks` without materializing full DataFrames.
   - Cell-aligned regional subgrids: `CellRegion(row_start, col_start, n_rows, n_cols)` + `GridDataset.slice_region(region)` / `GridManager.get_region(grid_id, region)` extract exact `.spg`-aligned rectangular windows (with `.padded(pad_cells)` for training halos and `find_worst_case_region(size_cells)` for proxy benchmarking).
+  - Spatial boundary filtering (zero disk duplication): Static pre-projected/buffered `EPSG:3844` polygons under `data/boundaries/` (generated via `scripts/generate_boundary.py`) power `SpatialBoundary` / `GridDataset.filter_boundary(...)` and `GridManager.get(grid_id, boundary=BoundaryId.ROMANIA)`, plus virtual `*_BORDER` `GridId` aliases (`RO_GRID_32X32_BORDER`, `RO_TEST_UNIFORM_*_BORDER`, `RO_TEST_ADAPTIVE_*_BORDER`) cached in memory without duplicating Parquet files. `TransformationExperimentUnit.eval_boundary` applies boundary filtering to evaluation grids while keeping full-grid training intact.
 
 ---
 

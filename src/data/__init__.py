@@ -1,5 +1,10 @@
 """Data management, grid catalog, and spatial samplers for ``ml_transdat``."""
 
+from src.data.boundaries import (
+    BoundaryId,
+    SpatialBoundary,
+    get_boundary,
+)
 from src.data.catalog import (
     GridDataset,
     GridId,
@@ -36,19 +41,22 @@ __all__ = [
     "DEFAULT_SUBGRID_OFFSETS_8X8",
     "DEFAULT_SUBGRID_OFFSETS_16X16",
     "DEFAULT_SUBGRID_OFFSETS_32X32",
+    "BoundaryId",
     "CellRegion",
     "GridDataset",
     "GridId",
     "GridManager",
+    "SpatialBoundary",
     "build_grid_candidates",
     "concat_datasets",
     "find_worst_case_region",
-    "generate_region_densified_dataset",
     "generate_adaptive_midpoints_df",
     "generate_densified_grid_df",
+    "generate_region_densified_dataset",
     "generate_single_cell_workload_df",
     "generate_spg_nodes_df",
     "generate_stratified_continuous_df",
+    "get_boundary",
     "get_default_grid2d",
     "get_default_grid_manager",
     "get_default_spg_reader",

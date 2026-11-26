@@ -16,6 +16,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from src.data.boundaries import BoundaryId
 from src.data.catalog import GridDataset, GridId, GridManager
 from src.evaluation.evaluator import EvaluationResult, ModelEvaluator
 from src.evaluation.metrics import dataframe_to_markdown, format_scorecard_table
@@ -218,6 +219,8 @@ class TransformationExperimentUnit(ResearchUnit):
             return PlotGroup.SUBMILLIMETER_DIAGNOSTIC
         return plots
 
+    eval_boundary: BoundaryId | str | None = None
+
     def __init__(
         self,
         unit_dir: Path,
@@ -236,10 +239,15 @@ class TransformationExperimentUnit(ResearchUnit):
         return ExperimentType.TRANSFORMATION
 
     def load_grid(
-        self, grid_id: GridId | str, force_regenerate: bool = False
+        self,
+        grid_id: GridId | str,
+        force_regenerate: bool = False,
+        boundary: BoundaryId | str | None = None,
     ) -> GridDataset:
         """Retrieve a :class:`GridDataset` via the unified :class:`GridManager`."""
-        return self.grid_manager.get(grid_id, force_regenerate=force_regenerate)
+        return self.grid_manager.get(
+            grid_id, force_regenerate=force_regenerate, boundary=boundary
+        )
 
     def evaluate_shift_model(
         self,
@@ -253,7 +261,7 @@ class TransformationExperimentUnit(ResearchUnit):
         """Evaluate a fitted :class:`BaseGridShiftModel` across one or more datasets and render plots."""
         results: list[EvaluationResult] = []
         for gid in dataset_ids:
-            ds = self.load_grid(gid)
+            ds = self.load_grid(gid, boundary=self.eval_boundary)
             res = self.evaluator.evaluate_shift_model(
                 model=model,
                 dataset=ds,
@@ -283,7 +291,7 @@ class TransformationExperimentUnit(ResearchUnit):
         print_scorecard: bool = True,
     ) -> list[EvaluationResult]:
         """Evaluate a :class:`BaseCoordinateTransformer` across specified directions."""
-        ds = self.load_grid(dataset_id)
+        ds = self.load_grid(dataset_id, boundary=self.eval_boundary)
         results: list[EvaluationResult] = []
         for direction in directions:
             res = self.evaluator.evaluate_transformer(

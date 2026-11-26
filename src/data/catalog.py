@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 
 from pytransdat.trans_grid import Grid2D
+from src.data.boundaries import BoundaryId, SpatialBoundary, get_boundary
 from src.data.regions import CellRegion, concat_datasets, find_worst_case_region
 from src.data.samplers import (
     DEFAULT_SUBGRID_OFFSETS_4X4,
@@ -55,6 +56,12 @@ class GridId(str, Enum):
     RO_TEST_UNIFORM_16X16 = "ro_test_uniform_16x16"
     RO_TEST_ADAPTIVE_3MM_MID = "ro_test_adaptive_3mm_mid"
     RO_TEST_ADAPTIVE_1MM_MID = "ro_test_adaptive_1mm_mid"
+    RO_GRID_32X32_BORDER = "ro_grid_32x32_border"
+    RO_TEST_UNIFORM_4X4_BORDER = "ro_test_uniform_4x4_border"
+    RO_TEST_UNIFORM_8X8_BORDER = "ro_test_uniform_8x8_border"
+    RO_TEST_UNIFORM_16X16_BORDER = "ro_test_uniform_16x16_border"
+    RO_TEST_ADAPTIVE_3MM_MID_BORDER = "ro_test_adaptive_3mm_mid_border"
+    RO_TEST_ADAPTIVE_1MM_MID_BORDER = "ro_test_adaptive_1mm_mid_border"
     RO_TRAIN_ADAPTIVE_HYBRID = "ro_train_adaptive_hybrid"
     RO_TRAIN_BORDER_ENRICHED_4X4 = "ro_train_border_enriched_4x4"
     CUSTOM = "custom"
@@ -71,6 +78,8 @@ class _GridSpec:
     lazy_chunk_generator: (
         Callable[[int], Iterator[tuple[np.ndarray, np.ndarray]]] | None
     ) = None
+    base_grid_id: GridId | None = None
+    boundary_id: BoundaryId | None = None
 
 
 _GRID_REGISTRY: dict[GridId, _GridSpec] = {
@@ -171,6 +180,30 @@ _GRID_REGISTRY: dict[GridId, _GridSpec] = {
     ),
     GridId.RO_TRAIN_BORDER_ENRICHED_4X4: _GridSpec(
         generator=generate_border_enriched_4x4_df,
+    ),
+    GridId.RO_GRID_32X32_BORDER: _GridSpec(
+        base_grid_id=GridId.RO_GRID_32X32,
+        boundary_id=BoundaryId.ROMANIA,
+    ),
+    GridId.RO_TEST_UNIFORM_4X4_BORDER: _GridSpec(
+        base_grid_id=GridId.RO_TEST_UNIFORM_4X4,
+        boundary_id=BoundaryId.ROMANIA,
+    ),
+    GridId.RO_TEST_UNIFORM_8X8_BORDER: _GridSpec(
+        base_grid_id=GridId.RO_TEST_UNIFORM_8X8,
+        boundary_id=BoundaryId.ROMANIA,
+    ),
+    GridId.RO_TEST_UNIFORM_16X16_BORDER: _GridSpec(
+        base_grid_id=GridId.RO_TEST_UNIFORM_16X16,
+        boundary_id=BoundaryId.ROMANIA,
+    ),
+    GridId.RO_TEST_ADAPTIVE_3MM_MID_BORDER: _GridSpec(
+        base_grid_id=GridId.RO_TEST_ADAPTIVE_3MM_MID,
+        boundary_id=BoundaryId.ROMANIA,
+    ),
+    GridId.RO_TEST_ADAPTIVE_1MM_MID_BORDER: _GridSpec(
+        base_grid_id=GridId.RO_TEST_ADAPTIVE_1MM_MID,
+        boundary_id=BoundaryId.ROMANIA,
     ),
 }
 
@@ -297,6 +330,38 @@ class GridDataset:
         }
         return GridDataset(grid_id=self.grid_id, df=sub_df, metadata=meta)
 
+    def filter_boundary(
+        self,
+        boundary: SpatialBoundary | BoundaryId | str = BoundaryId.ROMANIA,
+        *,
+        grid_id: GridId | None = None,
+    ) -> GridDataset:
+        """Return a new :class:`GridDataset` keeping only points inside ``boundary``.
+
+        :param boundary: :class:`SpatialBoundary` instance or :class:`BoundaryId`.
+        :type boundary: SpatialBoundary | BoundaryId | str
+        :param grid_id: Optional override :class:`GridId` for the returned dataset.
+        :type grid_id: GridId | None
+        :return: Filtered :class:`GridDataset` containing only interior points.
+        :rtype: GridDataset
+        """
+        sb = (
+            boundary
+            if isinstance(boundary, SpatialBoundary)
+            else get_boundary(boundary)
+        )
+        mask = sb.contains(self.coords)
+        sub_df = self.df.loc[mask].reset_index(drop=True)
+        meta = dict(self.metadata)
+        meta["boundary"] = sb.boundary_id.value
+        meta["boundary_source_count"] = len(self.df)
+        meta["boundary_kept_count"] = len(sub_df)
+        return GridDataset(
+            grid_id=grid_id if grid_id is not None else self.grid_id,
+            df=sub_df,
+            metadata=meta,
+        )
+
 
 class GridManager:
     """Unified registry and loader for static and on-the-fly grids.
@@ -315,11 +380,13 @@ class GridManager:
         self._disk_cache_dir = disk_cache_dir
         self._cache: dict[GridId, GridDataset] = {}
         self._region_cache: dict[tuple[GridId, CellRegion, bool], GridDataset] = {}
+        self._boundary_cache: dict[tuple[GridId, BoundaryId], GridDataset] = {}
 
     def clear_cache(self) -> None:
-        """Clear all in-memory cached datasets and regional slices."""
+        """Clear all in-memory cached datasets, regional slices, and boundary views."""
         self._cache.clear()
         self._region_cache.clear()
+        self._boundary_cache.clear()
 
     def get_region(
         self,
@@ -351,31 +418,55 @@ class GridManager:
         self,
         grid_id: GridId | str,
         force_regenerate: bool = False,
+        boundary: BoundaryId | str | None = None,
     ) -> GridDataset:
         """Retrieve a :class:`GridDataset` by identifier.
 
         Resolution order (unless ``force_regenerate=True``):
-        1. In-memory cache
-        2. Static Parquet path (if registered and present on disk)
-        3. Local disk cache (``disk_cache_dir/<grid_id>.parquet``)
-        4. On-the-fly dynamic generator (and persisted to ``disk_cache_dir`` if enabled)
+        1. In-memory cache (and ``_boundary_cache`` when ``boundary`` is set)
+        2. Virtual boundary-filtered grid view (if ``base_grid_id`` is registered)
+        3. Static Parquet path (if registered and present on disk)
+        4. Local disk cache (``disk_cache_dir/<grid_id>.parquet``)
+        5. On-the-fly dynamic generator (and persisted to ``disk_cache_dir`` if enabled)
 
         :param grid_id: Canonical :class:`GridId` or its string value.
         :type grid_id: GridId | str
         :param force_regenerate: If True and a generator exists, regenerate dynamically.
         :type force_regenerate: bool
+        :param boundary: Optional :class:`BoundaryId` to filter points in memory.
+        :type boundary: BoundaryId | str | None
         :return: Loaded or generated :class:`GridDataset`.
         :rtype: GridDataset
         :raises KeyError: If ``grid_id`` is not registered.
         :raises FileNotFoundError: If a static-only grid file is missing on disk.
         """
         gid = GridId(grid_id)
+        if boundary is not None:
+            bid = BoundaryId(boundary)
+            b_key = (gid, bid)
+            if self._cache_enabled and not force_regenerate and b_key in self._boundary_cache:
+                return self._boundary_cache[b_key]
+            base_ds = self.get(gid, force_regenerate=force_regenerate)
+            if base_ds.metadata.get("boundary") == bid.value:
+                return base_ds
+            filtered = base_ds.filter_boundary(bid)
+            if self._cache_enabled:
+                self._boundary_cache[b_key] = filtered
+            return filtered
+
         if self._cache_enabled and not force_regenerate and gid in self._cache:
             return self._cache[gid]
 
         if gid not in _GRID_REGISTRY:
             raise KeyError(f"Unregistered grid id: {gid}")
         spec = _GRID_REGISTRY[gid]
+
+        if spec.base_grid_id is not None and spec.boundary_id is not None:
+            base_ds = self.get(spec.base_grid_id, force_regenerate=force_regenerate)
+            dataset = base_ds.filter_boundary(spec.boundary_id, grid_id=gid)
+            if self._cache_enabled:
+                self._cache[gid] = dataset
+            return dataset
 
         meta: dict[str, Any] = {}
         if spec.meta_path is not None and spec.meta_path.is_file():
@@ -434,6 +525,16 @@ class GridManager:
         if gid not in _GRID_REGISTRY:
             raise KeyError(f"Unregistered grid id: {gid}")
         spec = _GRID_REGISTRY[gid]
+
+        if spec.base_grid_id is not None and spec.boundary_id is not None:
+            if self._cache_enabled and gid in self._cache:
+                return self._cache[gid].iter_chunks(batch_size=batch_size)
+            sb = get_boundary(spec.boundary_id)
+            return (
+                (c[m], s[m])
+                for c, s in self.iter_chunks(spec.base_grid_id, batch_size=batch_size)
+                if np.any(m := sb.contains(c))
+            )
 
         disk_cache_file = (
             self._disk_cache_dir / f"{gid.value}.parquet"
