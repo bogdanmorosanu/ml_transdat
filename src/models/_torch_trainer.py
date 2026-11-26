@@ -104,12 +104,26 @@ def train_torch_regressor(
 
     train_cpu_tensors = tuple(torch.from_numpy(arr[train_idx]) for arr in inputs)
     train_y_cpu = torch.from_numpy(targets[train_idx])
-    loader = DataLoader(
-        TensorDataset(*train_cpu_tensors, train_y_cpu),
-        batch_size=batch_size,
-        shuffle=True,
-        drop_last=False,
-    )
+
+    train_gpu_tensors: tuple[torch.Tensor, ...] | None = None
+    train_y_gpu: torch.Tensor | None = None
+    loader: DataLoader[tuple[torch.Tensor, ...]] | None = None
+    if torch.device(device).type == "cuda":
+        try:
+            train_gpu_tensors = tuple(t.to(device) for t in train_cpu_tensors)
+            train_y_gpu = train_y_cpu.to(device)
+        except torch.cuda.OutOfMemoryError:
+            train_gpu_tensors = None
+            train_y_gpu = None
+            torch.cuda.empty_cache()
+
+    if train_gpu_tensors is None:
+        loader = DataLoader(
+            TensorDataset(*train_cpu_tensors, train_y_cpu),
+            batch_size=batch_size,
+            shuffle=True,
+            drop_last=False,
+        )
 
     optimizer = torch.optim.AdamW(net.parameters(), lr=lr, weight_decay=weight_decay)
     if lr_scheduler.lower() == "cosine":
@@ -128,17 +142,34 @@ def train_torch_regressor(
 
     for _ in range(max_epochs):
         net.train()
-        epoch_loss = 0.0
+        running_loss = torch.zeros((), device=device)
         n_batches = 0
-        for batch in loader:
-            *bx, by = (t.to(device) for t in batch)
-            optimizer.zero_grad()
-            pred = forward_fn(*bx)
-            loss = criterion(pred, by)
-            loss.backward()
-            optimizer.step()
-            epoch_loss += float(loss.item())
-            n_batches += 1
+        if train_gpu_tensors is not None and train_y_gpu is not None:
+            n_train = train_y_gpu.shape[0]
+            perm = torch.randperm(n_train, device=device)
+            for start in range(0, n_train, batch_size):
+                idx = perm[start : start + batch_size]
+                bx = tuple(t[idx] for t in train_gpu_tensors)
+                by = train_y_gpu[idx]
+                optimizer.zero_grad(set_to_none=True)
+                pred = forward_fn(*bx)
+                loss = criterion(pred, by)
+                loss.backward()
+                optimizer.step()
+                running_loss += loss.detach()
+                n_batches += 1
+        else:
+            assert loader is not None
+            for batch in loader:
+                *bx, by = (t.to(device) for t in batch)
+                optimizer.zero_grad(set_to_none=True)
+                pred = forward_fn(*bx)
+                loss = criterion(pred, by)
+                loss.backward()
+                optimizer.step()
+                running_loss += loss.detach()
+                n_batches += 1
+        epoch_loss = float(running_loss.item())
 
         if val_tensors is not None and val_y is not None:
             net.eval()

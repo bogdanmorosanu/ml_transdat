@@ -1,0 +1,7 @@
+model,ro_test_uniform_16x16_mean_mm,ro_test_uniform_16x16_rmse_mm,delta_ro_test_uniform_16x16_rmse_mm,ro_test_uniform_16x16_lt_1mm_pct,ro_test_adaptive_1mm_mid_mean_mm,ro_test_adaptive_1mm_mid_rmse_mm,delta_ro_test_adaptive_1mm_mid_rmse_mm,ro_test_adaptive_1mm_mid_lt_1mm_pct,total_size_mb
+Stage1_lpoly_deg2_k16_tric_only,2.29,5.17,0.0,41.98,5.93,23.47,0.0,29.66,2.405
+TorchMLP_32x32_only,1.22,2.83,-2.34,50.89,3.68,14.28,-9.19,23.04,0.471
+Hybrid_lpoly_deg2_k16_tric_plus_resnet_32x32,0.57,2.62,-2.55,89.71,2.13,13.82,-9.66,62.13,2.876
+Hybrid_lpoly_deg2_k16_tric_plus_resnet_32x32_h256,0.33,2.82,-2.35,97.96,1.76,15.15,-8.32,75.86,4.082
+Hybrid_lpoly_deg2_k16_tric_plus_resnet_32x32_h512,0.33,2.91,-2.26,98.2,1.76,15.25,-8.23,77.18,8.743
+Hybrid_lpoly_deg2_k16_tric_plus_resnet_32x32_h256_ms_rff,0.31,2.97,-2.2,98.39,1.66,15.32,-8.15,79.31,4.082
