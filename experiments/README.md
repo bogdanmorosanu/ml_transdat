@@ -30,6 +30,7 @@ This directory contains modular, self-contained scientific experiments evaluatin
 | [`optimal_surface_regressor/`](optimal_surface_regressor/) | `grid_shift` | **Optimal Surface Regressor (10-Family Learnability Benchmark)**: 4-stage screening (Stage 0 subgrid calibration, Stage 1 174-config sweep, Stage 2 Top-3 Full-RO promotion, Stage 3 Champions) across 10 surface families ranked by Stage-2 ML Learnability Score. | `Validated` | Top 4 Champions: `cubic_k25_s0` (`16.015 mm`), `tps_deg2_k25_s1e-5` (`16.531 mm`), `lpoly_deg2_k16_tric` (`16.696 mm`), `matern32_k16_eps5_s1e-5` (`17.387 mm`). |
 | [`hybrid_surface_featgrid/`](hybrid_surface_featgrid/) | `grid_shift` | **Hybrid Stage-1 Surface + Stage-2 Neural Feature Grid**: 48-model subgrid matrix (`3 surfaces × 4 densities × 2 widths × 2 losses` + `k=4` check) on `box10_interior`, promoting `#1` (`cubic_k25_s0` + `32x32` `h128` `huber` `k=2`) to Full Romania. | `Validated` | Subgrid `#1`: `0.351 mm` mean / `0.412 mm` RMSE / `98.87% < 1 mm` on `Adapt 1mm`. Full RO: `0.24 mm` mean (`99.3% < 1 mm`, `P99=0.9 mm`) on `16x16`; `0.651 m` Stage-1 border spikes inflate `Adapt 1mm` RMSE (`14.84 mm` vs `5.42 mm` standalone `FeatGrid_32x32_only`). |
 | [`hybrid_surface_resnet/`](hybrid_surface_resnet/) | `grid_shift` | **Hybrid Stage-1 Surface + Stage-2 Grid-Free ResNet**: 56-run Option-B subgrid matrix on `box10_interior` (`3 surfaces × 4 densities × 2 widths × 2 activations` + `h256` & `MSE` checks), promoting `lpoly_deg2_k16_tric` + `TorchMLP` (`0 MB` lookup) to Full Romania (`h128`/`h256`/`h512` + multi-scale RFF). | `Validated` | Subgrid `#1`: `1.279 mm` mean / `1.577 mm` RMSE on `Adapt 1mm` (`lpoly` `32x32` `h128` `silu` `huber`). Full RO Champion (`h256_ms_rff`): **`0.31 mm`** `U16` mean (**`98.39% < 1 mm`**), `1.66 mm` `A1` mean (`79.31% < 1 mm`, `0 MB` lookup grid). |
+| [`submillimeter_exploration_v2/`](submillimeter_exploration_v2/) | `grid_shift` | **Sub-Millimeter Exploration v2 (12-Track Screening)**: Benchmarks 21 untested PyTorch INRs (`KAN`, `WIRE`, `FINER`, `MFN`, `MoE`/`FBPINN`), structured hybrids (`NeuralBicubic`, `3-lvl FeatGrid`, `K-Planes`), and zero-PyTorch ML/classical models (`ELM`, `LS-SVM`, `XGBoost`, `LinearLeafTree`, `LocalKriging`, `PU-RBF`, `LOESS deg=3`, `2D Wavelets`) vs. 4 anchors on `box10_interior`. | `Validated` | `V2_6b_catmull_featgrid_3lvl` hits **`0.111 mm`** `U16` mean / **`0.154 mm`** `A1` RMSE (`100% < 1 mm`, `0.665 µs/pt`, `2.78 MB`); zero-lookup `WIRE` (`V2_2a`) breaks `1 mm` (`0.945 mm` `A1` RMSE). |
 
 ---
 
@@ -113,4 +114,7 @@ D:\anaconda3\envs\ml_transdat\python.exe -m experiments.hybrid_surface_featgrid.
 
 # 20. Hybrid Stage-1 Surface + Stage-2 Grid-Free ResNet (grid_shift)
 D:\anaconda3\envs\ml_transdat\python.exe -m experiments.hybrid_surface_resnet.run_unit
+
+# 21. Sub-Millimeter Exploration v2 — 12-Track Screening (grid_shift)
+D:\anaconda3\envs\ml_transdat\python.exe -m experiments.submillimeter_exploration_v2.run_unit
 ```

@@ -30,6 +30,7 @@ flowchart TD
     OSR["optimal_surface_regressor<br><b>Status: Validated</b><br>10-family Stage-2 learnability benchmark: cubic_k25_s0 (16.0mm), tps (16.5mm), lpoly (16.7mm)"]
     HSFG["hybrid_surface_featgrid<br><b>Status: Validated</b><br>Cubic k25 + FeatGrid (32x32, h128, Huber): 0.24mm 16x16 mean (99.3% < 1mm); 0.65m border spikes"]
     HSRN["hybrid_surface_resnet<br><b>Status: Validated</b><br>LocalPoly k16 + ResNet (32x32, h256, MS-RFF): 0.31mm 16x16 mean (98.39% < 1mm); 0 MB lookup"]
+    SME2["submillimeter_exploration_v2<br><b>Status: Validated</b><br>12-track screen + Full-RO check: Bilinear+FeatGrid3lvl 0.068mm U16 / 0.098mm A1 (1.94 MB); FBPINN 0.893mm A1 (0 MB)"]
     ML["Next: Sub-Millimeter Production Architecture<br><b>Status: Exploring</b><br>Goal: Sub-millimeter production deployment and unified benchmark promotion"]
 
     SPG -->|"motivates"| PROJ
@@ -66,6 +67,10 @@ flowchart TD
     OSR -->|"supplies Top-3 Stage-1 bases for"| HSRN
     SME -->|"supplies grid-free ResNet + Huber priors for"| HSRN
     HSRN -->|"closes grid-free gap toward"| ML
+    HSFG -->|"motivates border-safe 3-lvl screening in"| SME2
+    HSRN -->|"motivates 12-track INR & zero-PT screening in"| SME2
+    BIF -->|"supplies Catmull-Rom Stage-1 base for"| SME2
+    SME2 -->|"delivers 0.068mm FeatGrid3lvl & FBPINN champions for"| ML
 ```
 
 ---
@@ -106,6 +111,9 @@ flowchart TD
 | `optimal_surface_regressor` | `hybrid_surface_resnet` | `supplies Top-3 Stage-1 bases` | Provides the Top-3 `4x4`-fitted smooth Stage-1 surfaces (`cubic_k25_s0`, `tps_deg2_k25_s1e-5`, `lpoly_deg2_k16_tric`) for the zero-lookup Stage-2 ResNet matrix. |
 | `submillimeter_exploration` | `hybrid_surface_resnet` | `supplies grid-free ResNet + Huber priors` | Supplies `TorchMLPGridShiftModel` (`cyclic_cell_pos`, RFF) and Huber loss (`beta=5 mm`) lessons for `32x32` grid-free hybrid evaluation. |
 | `hybrid_surface_resnet` | `ML Production Architecture` | `closes grid-free gap toward` | Proves `lpoly_deg2_k16_tric + ResNet (h256, MS-RFF)` reaches `98.39% < 1 mm` (`0.31 mm` mean) on `16x16` with `0 MB` lookup grid. |
+| `hybrid_surface_featgrid` | `submillimeter_exploration_v2` | `motivates border-safe 3-lvl screening` | Exposes Stage-1 RBF border spikes and motivates testing border-safe bases + 3-level feature grids alongside untested model families. |
+| `hybrid_surface_resnet` | `submillimeter_exploration_v2` | `motivates 12-track INR & zero-PT screening` | Motivates benchmarking modern INRs (`KAN`, `WIRE`, `FINER`, `MFN`, `FBPINN`, `MoE`) and zero-PyTorch models (`XGBoost`, `LinearLeafTree`, `LOESS deg=3`, `Kriging`, `PU-RBF`, `ELM`, `LS-SVM`, `Wavelets`). |
+| `submillimeter_exploration_v2` | `ML Production Architecture` | `delivers 0.068mm FeatGrid3lvl & FBPINN champions` | Proves `CellBilinear + 3-lvl FeatGrid` hits `0.068 mm` `U16` mean / `0.098 mm` `A1` RMSE (`100% < 1 mm`, `1.94 MB`, `0.59 µs/pt`) nationwide, and `FBPINN` (`8×10`) hits `0.893 mm` `A1` RMSE (`0 MB` lookup). |
 
 ---
 
@@ -133,3 +141,4 @@ flowchart TD
 | [`optimal_surface_regressor`](optimal_surface_regressor.md) | `Validated` | 4-stage learnability benchmark across 10 smooth surface families on `RO_GRID_4X4`; shortlists Top-3 Stage-1 base surfaces (`cubic_k25_s0` `16.015 mm`, `tps_deg2_k25_s1e-5` `16.531 mm`, `lpoly_deg2_k16_tric` `16.696 mm`). | [`experiments/optimal_surface_regressor/report.md`](../../experiments/optimal_surface_regressor/report.md) | [`src/models/local_poly_surface.py`](../../src/models/local_poly_surface.py) |
 | [`hybrid_surface_featgrid`](hybrid_surface_featgrid.md) | `Validated` | 48-model subgrid matrix + Full-Romania `32x32` evaluation of Stage-1 surfaces + `NeuralFeatureGridShiftModel`; `cubic_k25_s0 + FeatGrid (h128, Huber)` hits `99.3% < 1 mm` (`0.24 mm` mean) on `16x16`, exposing `0.651 m` Stage-1 border spikes. | [`experiments/hybrid_surface_featgrid/report.md`](../../experiments/hybrid_surface_featgrid/report.md) | [`src/models/composite_shift.py`](../../src/models/composite_shift.py) |
 | [`hybrid_surface_resnet`](hybrid_surface_resnet.md) | `Validated` | 56-run Option-B subgrid matrix + Full-Romania `32x32` capacity/RFF sweep of Stage-1 surfaces + grid-free `TorchMLPGridShiftModel` (`0 MB` lookup); `lpoly_deg2_k16_tric + ResNet (h256, MS-RFF)` hits `98.39% < 1 mm` (`0.31 mm` mean) on `16x16`. | [`experiments/hybrid_surface_resnet/report.md`](../../experiments/hybrid_surface_resnet/report.md) | [`src/models/torch_mlp.py`](../../src/models/torch_mlp.py) |
+| [`submillimeter_exploration_v2`](submillimeter_exploration_v2.md) | `Validated` | Exhaustive 12-track screening (25 models on `box10_interior`) + Full-Romania `*_BORDER` check (`8` models); `V2_6a_bilinear_featgrid_3lvl` hits **`0.068 mm` `U16` mean / `0.098 mm` `A1` RMSE (`100% < 1 mm`, `1.94 MB`, `0.59 µs/pt`)** and `FBPINN` hits `0.893 mm` `A1` RMSE (`0 MB` lookup). | [`experiments/submillimeter_exploration_v2/report.md`](../../experiments/submillimeter_exploration_v2/report.md) | [`src/models/neural_inrs.py`](../../src/models/neural_inrs.py) |

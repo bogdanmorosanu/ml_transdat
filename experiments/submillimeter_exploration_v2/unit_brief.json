@@ -1,0 +1,29 @@
+{
+  "schema_version": "2.0",
+  "slug": "submillimeter_exploration_v2",
+  "experiment_type": "grid_shift",
+  "status": "Validated",
+  "runtime_s": 905.13,
+  "key_metrics": {
+    "num_models_screened": 25,
+    "best_overall_model": "V2_6b_catmull_featgrid_3lvl",
+    "best_overall_a1_rmse_mm": 0.154,
+    "best_zero_pytorch_model": "A3_Quadtree_1mm",
+    "best_zero_pytorch_a1_rmse_mm": 0.555
+  },
+  "artifacts": [
+    "experiments/submillimeter_exploration_v2/report.md",
+    "experiments/submillimeter_exploration_v2/results/v2_screening_scorecard.csv",
+    "experiments/submillimeter_exploration_v2/results/v2_screening_scorecard.md",
+    "experiments/submillimeter_exploration_v2/results/v2_full_ro_validation.csv",
+    "experiments/submillimeter_exploration_v2/results/v2_full_ro_validation.md",
+    "experiments/submillimeter_exploration_v2/plots/v2_accuracy_vs_latency_pareto.png",
+    "experiments/submillimeter_exploration_v2/plots/v2_accuracy_vs_memory_pareto.png",
+    "experiments/submillimeter_exploration_v2/plots/v2_family_comparison_bar.png"
+  ],
+  "benchmark_candidates": [],
+  "extra": {
+    "eval_region": "box10_interior",
+    "note": "Exhaustive 12-track screening round (25 models) prior to Full-Romania promotion."
+  }
+}

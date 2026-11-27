@@ -82,6 +82,17 @@ For our detailed investigation into whether the derivative discontinuity (slope 
 
 ---
 
+## Category 4: Modern Implicit Neural Representations & Advanced Spatial Regressors (v2 Sub-Millimeter Supplement)
+
+Executed prior to `submillimeter_exploration_v2` to ensure no major 2021–2025 neural coordinate architecture or non-neural spatial regressor was overlooked:
+- **Kolmogorov-Arnold & Geometric Coordinate Networks (`KAN`, `FKAN`, `GeoKAN`)**: Edge-based learnable univariate splines or Fourier expansions and adaptive metric warping for continuous spatial fields ([R4.3](references.md#category-4-modern-implicit-neural-representations-scientific-ml--advanced-spatial-regressors-20232026-supplement), [R4.4](references.md#category-4-modern-implicit-neural-representations-scientific-ml--advanced-spatial-regressors-20232026-supplement), [R4.5](references.md#category-4-modern-implicit-neural-representations-scientific-ml--advanced-spatial-regressors-20232026-supplement)).
+- **Wavelet, Variable-Periodic & Multiplicative INRs (`WIRE`, `FINER`, `MFN`)**: Complex Gabor wavelets (`WIRE`), variable-periodic sines (`FINER`), and multiplicative filter expansions (`FourierNet`/`GaborNet`) for sharp 2D edge localization without spectral bias ([R4.6](references.md#category-4-modern-implicit-neural-representations-scientific-ml--advanced-spatial-regressors-20232026-supplement), [R4.7](references.md#category-4-modern-implicit-neural-representations-scientific-ml--advanced-spatial-regressors-20232026-supplement), [R4.8](references.md#category-4-modern-implicit-neural-representations-scientific-ml--advanced-spatial-regressors-20232026-supplement)).
+- **Domain Decomposition & Spatial Mixture-of-Experts (`FBPINN`, `MoE`)**: Overlapping subdomain basis networks and coordinate-routed experts to handle multi-scale regional distortions ([R4.9](references.md#category-4-modern-implicit-neural-representations-scientific-ml--advanced-spatial-regressors-20232026-supplement)).
+- **Multi-Resolution Hash Grids & Factorized Planes (`Instant-NGP`, `K-Planes`)**: Compact multi-scale spatial feature tables and low-rank 2D plane factorizations for continuous geospatial field compression ([R4.10](references.md#category-4-modern-implicit-neural-representations-scientific-ml--advanced-spatial-regressors-20232026-supplement)).
+- **Discontinuity-Aware Partition of Unity RBF (`PU-RBF` / `NL-PUM`) & Non-Neural Geodetic Regressors (`GPR/Kriging`, `LS-SVM`, `ELM`, `XGBoost`)**: Patch-blended RBFs near $C^1$ kinks, predictive uncertainty via Kriging, analytical ELM solves, and residual-framed gradient boosting ([R4.1](references.md#category-4-modern-implicit-neural-representations-scientific-ml--advanced-spatial-regressors-20232026-supplement), [R4.11](references.md#category-4-modern-implicit-neural-representations-scientific-ml--advanced-spatial-regressors-20232026-supplement), [R4.12](references.md#category-4-modern-implicit-neural-representations-scientific-ml--advanced-spatial-regressors-20232026-supplement)).
+
+---
+
 ## Searched & Not Found (Knowledge Gaps)
 
 1. **ETRS89 ↔ Stereo 70 (Romania) via Machine Learning**: No published papers, preprints, or technical reports were found applying ML/ANNs to `Stereo 70`, `TransDatRO`, or Romania's `.spg` distortion grid.

@@ -1,0 +1,9 @@
+model,track,family,zero_pytorch,u16_mean_mm,u16_rmse_mm,u16_lt_1mm_pct,a1_mean_mm,a1_rmse_mm,a1_p95_mm,a1_max_mm,a1_lt_1mm_pct,a1_wall_rmse_mm,fit_time_s,latency_us_pt,throughput_kpts_s,weights_kb,lookup_kb,est_full_ro_mb
+V2_6a_bilinear_featgrid_3lvl_FullRO,V2-6,Micro-Grid Hybrid,No,0.068,0.081,100.0,0.082,0.098,0.186,0.789,100.0,0.104,107.05,0.588,1699.9,85.3,1897.0,1.94
+V2_6b_catmull_featgrid_3lvl_FullRO,V2-6,Micro-Grid Hybrid,No,0.068,0.082,100.0,0.084,0.103,0.196,1.106,100.0,0.111,93.16,0.783,1277.3,85.4,2760.4,2.78
+A3_Quadtree_1mm,Anchor,Geometric Lookup,Yes,0.495,0.596,94.08,0.48,0.599,1.083,9.097,92.36,0.591,0.0,1.306,766.0,9.6,76688.8,74.91
+V2_4b_lpoly_fbpinn_FullRO,V2-4,Modern INR (FBPINN),No,0.423,0.559,92.98,0.663,0.893,1.813,10.917,80.12,1.012,1088.25,18.866,53.0,5379.5,0.0,5.26
+V2_12b_loess_deg3_16x16_FullRO,V2-12,Zero-PT Local Poly,Yes,0.245,0.546,91.89,0.951,1.402,3.035,11.077,63.3,1.672,0.17,20.473,48.8,39617.0,0.0,38.69
+V2_10a_lpoly_xgboost_FullRO,V2-10,Zero-PT Tree Ensemble,Yes,0.816,1.1,71.18,1.137,1.559,2.998,77.706,56.71,1.668,187.81,14.903,67.1,60822.3,0.0,59.4
+V2_1a_lpoly_rbf_kan_FullRO,V2-1,Modern INR (KAN),No,2.187,2.394,8.44,2.328,2.618,4.518,13.503,10.87,2.658,292.75,12.741,78.5,4270.3,0.0,4.18
+V2_2a_lpoly_wire_FullRO,V2-2,Modern INR (Wavelet),No,2.181,3.174,41.7,2.287,3.26,6.992,27.182,37.36,2.703,189.29,11.661,85.8,3366.6,0.0,3.29
