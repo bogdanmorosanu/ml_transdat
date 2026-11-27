@@ -20,6 +20,14 @@ from src.viz.diagnostics import (
     plot_vector_quiver_rows,
 )
 from src.viz.dispatcher import PlotDispatcher
+from src.viz.hybrid import (
+    plot_hybrid_cancellation_scatter,
+    plot_hybrid_extreme_residuals_9cells,
+    plot_hybrid_spatial_3panel,
+    plot_hybrid_subcell_phase_heatmap,
+    render_hybrid_deep_dive,
+    select_hybrid_eval_grid,
+)
 from src.viz.registry import PlotGroup, PlotSpec, PlotType, resolve_plot_types
 from src.viz.scenarios import (
     EXTREME_SCENARIOS_GROUP1_GRADIENT_LINEAR,
@@ -46,6 +54,10 @@ __all__ = [
     "plot_extreme_scenarios_9cells",
     "plot_hist_ecdf",
     "plot_hist_ecdf_rows",
+    "plot_hybrid_cancellation_scatter",
+    "plot_hybrid_extreme_residuals_9cells",
+    "plot_hybrid_spatial_3panel",
+    "plot_hybrid_subcell_phase_heatmap",
     "plot_memory_breakdown_stacked",
     "plot_model_comparison",
     "plot_multi_dataset_comparison",
@@ -62,5 +74,7 @@ __all__ = [
     "plot_surface_learnability_ranking",
     "plot_vector_quiver",
     "plot_vector_quiver_rows",
+    "render_hybrid_deep_dive",
     "resolve_plot_types",
+    "select_hybrid_eval_grid",
 ]

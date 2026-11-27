@@ -21,7 +21,9 @@ from src.data.catalog import GridDataset, GridId, GridManager
 from src.evaluation.evaluator import EvaluationResult, ModelEvaluator
 from src.evaluation.metrics import dataframe_to_markdown, format_scorecard_table
 from src.models.base import BaseCoordinateTransformer, BaseGridShiftModel, BaseSpatialModel
+from src.models.composite_shift import CompositeResidualShiftModel
 from src.viz.dispatcher import PlotDispatcher
+from src.viz.hybrid import render_hybrid_deep_dive
 from src.viz.registry import PlotGroup, PlotSpec, PlotType
 from src.viz.scenarios import plot_extreme_residuals_9cells, plot_extreme_scenarios_9cells
 
@@ -506,6 +508,7 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
     render_extreme_scenarios: bool = True
     render_extreme_residuals: bool | None = None
     extreme_residual_ylim_mm: float = 5.0
+    render_hybrid_deep_dive: bool | None = None
 
     @property
     def experiment_type(self) -> ExperimentType:
@@ -530,6 +533,37 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
         if labeled:
             return labeled
         return dict(fitted_models)
+
+    def _select_champion_hybrid(
+        self,
+        specs: Sequence[ExperimentModelSpec],
+        fitted_models: dict[str, BaseGridShiftModel],
+        results: Sequence[EvaluationResult],
+    ) -> tuple[ExperimentModelSpec, CompositeResidualShiftModel] | None:
+        """Select the champion :class:`CompositeResidualShiftModel` for deep-dive plots."""
+        for spec in specs:
+            model = fitted_models.get(spec.name)
+            if spec.benchmark_candidate and isinstance(model, CompositeResidualShiftModel):
+                return spec, model
+
+        mean_2d_by_model: dict[str, float] = {}
+        for res in results:
+            val = float(res.summary.get("mean_2d_m", float("inf")))
+            prev = mean_2d_by_model.get(res.model_name)
+            if prev is None or val < prev:
+                mean_2d_by_model[res.model_name] = val
+
+        best_pair: tuple[ExperimentModelSpec, CompositeResidualShiftModel] | None = None
+        best_err = float("inf")
+        for spec in specs:
+            model = fitted_models.get(spec.name)
+            if not isinstance(model, CompositeResidualShiftModel):
+                continue
+            err = mean_2d_by_model.get(spec.name, float("inf"))
+            if best_pair is None or err < best_err:
+                best_pair = (spec, model)
+                best_err = err
+        return best_pair
 
     def after_run(
         self,
@@ -627,6 +661,27 @@ class GridShiftExperimentUnit(TransformationExperimentUnit):
                     for p_name in (r1_path.name, r2_path.name):
                         if p_name not in plot_files:
                             plot_files.append(p_name)
+
+        use_hybrid_deep_dive = (
+            self.submillimeter_mode
+            if self.render_hybrid_deep_dive is None
+            else self.render_hybrid_deep_dive
+        )
+        if use_hybrid_deep_dive:
+            champion_pair = self._select_champion_hybrid(specs, kept_models, all_results)
+            if champion_pair is not None:
+                champ_spec, champ_model = champion_pair
+                champ_label = champ_spec.extreme_scenario_label or champ_spec.name
+                hybrid_paths = render_hybrid_deep_dive(
+                    hybrid_model=champ_model,
+                    model_name=champ_label,
+                    eval_grids=champ_spec.eval_grids,
+                    load_grid_fn=lambda gid: self.load_grid(gid, boundary=self.eval_boundary),
+                    out_dir=self.plots_dir,
+                )
+                for p in hybrid_paths:
+                    if p.name not in plot_files:
+                        plot_files.append(p.name)
 
         extra_brief = self.after_run(kept_models, all_results)
 

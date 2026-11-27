@@ -86,9 +86,10 @@ Uses the **Template Method** pattern:
 
 ## 5. Declarative Visualization Layer (`src/viz/`)
 
-- **Constants (`PlotType` & `PlotGroup`)**: Defined in [`src/viz/registry.py`](../src/viz/registry.py). Includes `PlotGroup.SURFACE_DIAGNOSTIC` (`SPATIAL_ERROR`, `HIST_ECDF`, `RESIDUAL_ROUGHNESS`).
+- **Constants (`PlotType` & `PlotGroup`)**: Defined in [`src/viz/registry.py`](../src/viz/registry.py). Includes `PlotGroup.SURFACE_DIAGNOSTIC` (`SPATIAL_ERROR`, `HIST_ECDF`, `RESIDUAL_ROUGHNESS`) and `PlotGroup.HYBRID_DEEP_DIVE` (`HYBRID_EXTREME_RESIDUALS_9CELLS`, `HYBRID_CANCELLATION_SCATTER`, `HYBRID_SPATIAL_3PANEL`, `HYBRID_SUBCELL_PHASE_HEATMAP`).
 - **Dispatcher (`PlotDispatcher`)**: `PlotDispatcher.render_grouped(...)` groups evaluation results by `(dataset_id, direction, plot_type)` into **one unified PNG per `PlotType`** (`{dataset_id}_{direction}_{plot_type}.png`) where **each model occupies its own row** (`plot_spatial_error_rows`, `plot_hist_ecdf_rows`, `plot_signed_scatter_rows`, `plot_subcell_heatmap_rows`, `plot_vector_quiver_rows`, `plot_residual_roughness_rows`).
 - **9-Cell Extreme Scenario Transects & Learnability Ranking**: `plot_extreme_scenarios_9cells(...)` renders the canonical 99 km (9-cell: 4 left + target + 4 right) Group 1 (`Gradient & Linear`) and Group 2 (`Curvature & Kinks`) comparisons against `TransDatRO`. `plot_surface_learnability_ranking(...)` renders the `cRMSE` vs. `Roughness RMS` Pareto frontier and Top-K decomposed cost chart.
+- **Hybrid Champion Deep-Dive (`src/viz/hybrid.py`)**: `render_hybrid_deep_dive(...)` renders stage-by-stage diagnostics for the champion `CompositeResidualShiftModel` in sub-millimeter experiments (`plot_hybrid_extreme_residuals_9cells`, `plot_hybrid_cancellation_scatter`, `plot_hybrid_spatial_3panel`, `plot_hybrid_subcell_phase_heatmap`).
 - **Cross-Model & Cross-Dataset Plots**: `plot_model_comparison(..., precision_unit="mm")`, `plot_multi_dataset_comparison(...)` (zero-re-inference grouped bars), `plot_speed_workloads(...)`, and 2-panel `plot_memory_breakdown_stacked(...)` in [`src/viz/benchmarks.py`](../src/viz/benchmarks.py).
 
 ---

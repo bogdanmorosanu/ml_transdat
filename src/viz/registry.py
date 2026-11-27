@@ -18,6 +18,10 @@ class PlotType(str, Enum):
     RESIDUAL_ROUGHNESS = "residual_roughness"
     EXTREME_SCENARIOS_9CELLS = "extreme_scenarios_9cells"
     EXTREME_RESIDUALS_9CELLS = "extreme_residuals_9cells"
+    HYBRID_EXTREME_RESIDUALS_9CELLS = "hybrid_extreme_residuals_9cells"
+    HYBRID_CANCELLATION_SCATTER = "hybrid_cancellation_scatter"
+    HYBRID_SPATIAL_3PANEL = "hybrid_spatial_3panel"
+    HYBRID_SUBCELL_PHASE_HEATMAP = "hybrid_subcell_phase_heatmap"
     SURFACE_LEARNABILITY_RANKING = "surface_learnability_ranking"
     POINT_DISTRIBUTION = "point_distribution"
     MODEL_COMPARISON = "model_comparison"
@@ -31,6 +35,7 @@ class PlotGroup(str, Enum):
     SUBMILLIMETER_DIAGNOSTIC = "submillimeter_diagnostic"
     SURFACE_DIAGNOSTIC = "surface_diagnostic"
     EXTENDED_SHIFT = "extended_shift"
+    HYBRID_DEEP_DIVE = "hybrid_deep_dive"
 
 
 PLOT_GROUP_MEMBERS: dict[PlotGroup, tuple[PlotType, ...]] = {
@@ -61,6 +66,12 @@ PLOT_GROUP_MEMBERS: dict[PlotGroup, tuple[PlotType, ...]] = {
         PlotType.SIGNED_SCATTER,
         PlotType.SUBCELL_HEATMAP,
         PlotType.VECTOR_QUIVER,
+    ),
+    PlotGroup.HYBRID_DEEP_DIVE: (
+        PlotType.HYBRID_EXTREME_RESIDUALS_9CELLS,
+        PlotType.HYBRID_CANCELLATION_SCATTER,
+        PlotType.HYBRID_SPATIAL_3PANEL,
+        PlotType.HYBRID_SUBCELL_PHASE_HEATMAP,
     ),
 }
 
